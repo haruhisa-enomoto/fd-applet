@@ -1,0 +1,1 @@
+{"vertices":["1","a","a*b","2","b","3"],"arrows":[{"from":"a","to":"1"},{"from":"a*b","to":"a"},{"from":"2","to":"a"},{"from":"b","to":"a*b"},{"from":"b","to":"2"},{"from":"3","to":"b"},{"from":"1","to":"2","isTau":true},{"from":"a","to":"b","isTau":true},{"from":"2","to":"3","isTau":true}]}

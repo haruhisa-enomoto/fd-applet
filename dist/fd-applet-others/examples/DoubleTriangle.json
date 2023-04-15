@@ -1,0 +1,1 @@
+{"quiver":{"vertices":["1","2","3","4"],"arrows":[{"label":"a","from":"1","to":"3"},{"label":"b","from":"3","to":"2"},{"label":"c","from":"2","to":"1"},{"label":"d","from":"1","to":"4"},{"label":"e","from":"4","to":"2"}]},"monoRelations":[["c","d"],["b","c"],["d","e"],["c","a","b"]],"biRelations":[]}

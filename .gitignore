@@ -1,0 +1,12 @@
+.gradle
+!gradle/wrapper/gradle-wrapper.jar
+
+/build
+/release
+/deploy
+
+*.jar
+*.zip
+
+.vscode
+.idea

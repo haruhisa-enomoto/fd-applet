@@ -1,5 +1,4 @@
 .gradle
-!gradle/wrapper/gradle-wrapper.jar
 
 /build
 /release
@@ -10,3 +9,5 @@
 
 .vscode
 .idea
+
+!.gradle/wrapper/gradle-wrapper.jar

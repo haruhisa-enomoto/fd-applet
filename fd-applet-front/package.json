@@ -18,10 +18,8 @@
     "@types/react-window": "^1.8.5",
     "@types/uuid": "^9.0.1",
     "file-saver": "^2.0.5",
-    "nth-check": "^2.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
     "react-use-measure": "^2.1.1",
     "react-vis-graph-wrapper": "^0.1.3",
     "react-window": "^1.8.8",
@@ -60,7 +58,8 @@
     "@typescript-eslint/parser": "^5.57.1",
     "eslint": "^8.37.0",
     "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-unused-imports": "^2.0.0"
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "react-scripts": "5.0.1"
   },
   "proxy": "http://localhost:8080/"
 }

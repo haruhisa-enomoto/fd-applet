@@ -5,7 +5,7 @@ build/
 !**/src/test/**/build/
 
 # This directory will be copied from front-end build files
-src/main/resources/files/
+src/main/resources/files
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

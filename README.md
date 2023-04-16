@@ -9,4 +9,4 @@ FD Applet is a web application composed of
 
 The project is organized as a Gradle multi-project.
 
-See [FD Applet]<https://haruhisa-enomoto.github.io/fd-applet/> for details about usage and installation for users.
+See [FD Applet](https://haruhisa-enomoto.github.io/fd-applet/) for details about usage and installation for users.

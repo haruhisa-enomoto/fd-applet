@@ -1,0 +1,465 @@
+import { useRef, useState } from "react";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Divider,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  Paper,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Stack } from "@mui/system";
+import VisGraph, { GraphData, Options, Network } from "react-vis-graph-wrapper";
+
+import DeleteIcon from "@mui/icons-material/Delete";
+import BackspaceIcon from "@mui/icons-material/Backspace";
+import FitScreenIcon from "@mui/icons-material/FitScreen";
+import SaveIcon from "@mui/icons-material/Save";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import UpdateButton from "../common/UpdateButton";
+import { NotifyToast, NotifyContents } from "../common/NotifyToast";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+
+import { saveAs } from "file-saver";
+import { ComboOption, Combo } from "../common/Combo";
+import LargeList from "../common/LargeList";
+import MyBackdrop from "../common/MyBackdrop";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+import SyncIcon from "@mui/icons-material/Sync";
+
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import ARDialog from "../common/ARDialog";
+
+type SlimQuiverData = {
+  vertices: string[];
+  arrows: { label: string; from: string; to: string }[];
+};
+
+function fatten(quiver: SlimQuiverData): GraphData {
+  return {
+    nodes: quiver.vertices.map((str) => ({
+      id: str,
+      // label: str,
+      title: str,
+    })),
+    edges: quiver.arrows,
+  };
+}
+
+const defaultData: GraphData = {
+  nodes: [
+    { id: "1", label: "1", title: "1" },
+    { id: "2", label: "2", title: "2" },
+    { id: "3", label: "3", title: "3" },
+  ],
+  edges: [
+    { label: "a", from: "2", to: "1" },
+    { label: "b", from: "3", to: "2" },
+  ],
+};
+
+const defaultOptions: Options = {
+  nodes: {
+    font: {
+      face: "roboto",
+    },
+  },
+  edges: {
+    arrows: "to",
+    color: {
+      inherit: true,
+    },
+    font: {
+      face: "roboto",
+      size: 20,
+    },
+    smooth: {
+      enabled: true,
+      type: "dynamic",
+      roundness: 0.5,
+    },
+  },
+  physics: {
+    solver: "forceAtlas2Based",
+    // solver: "barnesHut",
+    // forceAtlas2Based: {
+    //   theta: 1,
+    //   springConstant: 0.1,
+    //   gravitationalConstant: -20,
+    // },
+  },
+  layout: {
+    improvedLayout: false,
+  },
+};
+// val supportTauTilting: List<Module<T>>,
+// val support: List<T>,
+// val torsionClass: Subcat<T>,
+// val silting: Pair<List<T>, List<T>>,
+// val semibrick: List<Module<T>>,
+// val wideSubcat: Subcat<T>,
+// val supportTauMinusTilting: List<Module<T>>,
+// val support2: List<T>,
+// val torsionFreeClass: Subcat<T>,
+// val semibrick2: List<Module<T>>,
+// val cosilting: Pair<List<T>, List<T>>,
+
+type TauTiltingData = {
+  supportTauTilting: string[];
+  support: string[];
+  torsionClass: string[];
+  silting: { first: string[]; second: string[] };
+  semibrick: string[];
+  wideSubcat: string[];
+  supportTauMinusTilting: string[];
+  support2: string[];
+  torsionFreeClass: string[];
+  semibrick2: string[];
+  cosilting: { first: string[]; second: string[] };
+};
+
+function Database(prop: {
+  setNotify: (value: boolean) => void;
+  setStatus: (value: NotifyContents) => void;
+  setOpenBack: (value: boolean) => void;
+}) {
+  const { setNotify, setStatus, setOpenBack } = prop;
+
+  const [total, setTotal] = useState(0);
+  const [index, setIndex] = useState("0");
+  const [data, setData] = useState<TauTiltingData>();
+  const [prepared, setPrepared] = useState(false);
+
+  async function prepare() {
+    setOpenBack(true);
+    const response = await fetch("tau-tilting");
+    if (!response.ok) {
+      setStatus({
+        message: await response.text(),
+        severity: "error",
+      });
+      setNotify(true);
+      setOpenBack(false);
+      return;
+    }
+    const data: number = await response.json();
+    console.log(data);
+    setTotal(data);
+    setStatus({
+      message: `There are ${data} support τ-tilting modules, etc.`,
+      duration: 4000,
+    });
+    setNotify(true);
+    setOpenBack(false);
+    setPrepared(true);
+  }
+
+  async function getData() {
+    const n = parseInt(index);
+    if (isNaN(n) || n < 0 || n >= total) {
+      setStatus({
+        message: `n must be an integer from 0 until ${total}.`,
+        severity: "error",
+      });
+      setNotify(true);
+      return;
+    }
+    setOpenBack(true);
+    const response = await fetch(`tau-tilting`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: n.toString(),
+    });
+    if (!response.ok) {
+      setStatus({
+        message: await response.text(),
+        severity: "error",
+      });
+      setNotify(true);
+      setOpenBack(false);
+      return;
+    }
+    const data: TauTiltingData = await response.json();
+    setData(data);
+    console.log(data);
+    setStatus({
+      message: "Success!",
+      duration: 2000,
+    });
+    setNotify(true);
+    setOpenBack(false);
+  }
+
+  return (
+    <Accordion>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
+        <Typography>Database</Typography>
+      </AccordionSummary>
+      <Divider />
+      <AccordionDetails>
+        <UpdateButton onClick={prepare} />
+        <Typography variant="subtitle1" m={1}>
+          Select ID: 0, 1, ..., {total - 1}.
+        </Typography>
+        <Grid container spacing={2} justifyContent="space-around">
+          <Grid item>
+            <TextField
+              value={index}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setIndex(event.target.value);
+              }}
+              label="n"
+              fullWidth
+            />
+          </Grid>
+          <Grid item>
+            <UpdateButton onClick={getData} />
+          </Grid>
+
+          <Grid item xs={12} lg={3}>
+            <Typography>Support τ-tilting module:</Typography>
+            {data && <LargeList data={data.supportTauTilting} />}
+          </Grid>
+          <Grid item xs={12} lg={3}>
+            <Typography>Semibrick</Typography>
+            {data && <LargeList data={data.semibrick} />}
+          </Grid>
+          <Grid item xs={12} lg={3}>
+            <Typography>Torsion class</Typography>
+            {data && <LargeList data={data.torsionClass} />}
+          </Grid>
+          <Grid item xs={12} lg={3}>
+            <Typography>Support part</Typography>
+            {data && <LargeList data={data.support} />}
+          </Grid>
+          <Grid item xs={12} lg={3}>
+            <Typography>Support τ-inv-tilting module:</Typography>
+            {data && <LargeList data={data.supportTauMinusTilting} />}
+          </Grid>
+          <Grid item xs={12} lg={3}>
+            <Typography>Semibrick for torf</Typography>
+            {data && <LargeList data={data.semibrick2} />}
+          </Grid>
+          <Grid item xs={12} lg={3}>
+            <Typography>Torsion-free class</Typography>
+            {data && <LargeList data={data.torsionFreeClass} />}
+          </Grid>
+          <Grid item xs={12} lg={3}>
+            <Typography>Support part2</Typography>
+            {data && <LargeList data={data.support2} />}
+          </Grid>
+        </Grid>
+      </AccordionDetails>
+    </Accordion>
+  );
+}
+
+const options: ComboOption[] = [
+  { key: "s-tau-tilt", label: "Support τ-tilting module" },
+  { key: "tau-tilt-pair", label: "τ-tilting pair" },
+  { key: "silt", label: "2-term silting complex" },
+  { key: "-", label: "-" },
+  { key: "tors", label: "Torsion class" },
+  { key: "sbrick", label: "Semibrick" },
+  { key: "wide", label: "Wide subcategories" },
+  { key: "smc", label: "2-simple minded collection" },
+  { key: "-", label: "-" },
+  { key: "torf", label: "Torsion-free class" },
+  { key: "s-tau-minus-tilt", label: "Support τ^{-}-tilting module" },
+  { key: "cosilt", label: "2-term cosilting complex" },
+  { key: "-", label: "-" },
+  { key: "tau-tilt", label: "τ-tilting module" },
+  { key: "tau-rigid", label: "τ-rigid module" },
+  { key: "tau-minus-tilt", label: "τ^{-}-tilting module" },
+  { key: "tau-minus-rigid", label: "τ^{-}-rigid module" },
+];
+
+function ListUp(prop: {
+  setNotify: (value: boolean) => void;
+  setStatus: (value: NotifyContents) => void;
+  setOpenBack: (value: boolean) => void;
+}) {
+  const { setNotify, setStatus, setOpenBack } = prop;
+
+  const [selected, setSelected] = useState("s-tau-tilt");
+
+  const [data, setData] = useState<string[][]>([]);
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  async function getData() {
+    if (selected === null) return;
+    setOpenBack(true);
+    const response = await fetch("tau-tilting/" + selected);
+    if (!response.ok) {
+      setStatus({
+        message: await response.text(),
+        severity: "error",
+      });
+      setNotify(true);
+      setOpenBack(false);
+      return;
+    }
+    const data = await response.json();
+    console.log(data);
+    setData(data);
+    setOpenBack(false);
+    setStatus({
+      message: "Success!",
+      duration: 2000,
+    });
+    setNotify(true);
+  }
+
+  return (
+    <Accordion>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
+        <Typography>
+          List up τ-tilting modules, torsion classes, 2-SMC, silting, tors, etc.
+        </Typography>
+      </AccordionSummary>
+      <Divider />
+      <AccordionDetails>
+        <Grid container spacing={2} justifyContent="space-around">
+          <Grid item>
+            <Combo
+              title="Choose types"
+              options={options}
+              selected={selected}
+              setSelected={setSelected}
+            />
+          </Grid>
+          <Grid item>
+            <IconButton onClick={getData} color="primary" sx={{ m: 1 }}>
+              <SyncIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+        <Grid container spacing={2} minWidth={0}>
+          <Grid item xs={6}>
+            <LargeList data={data.map((modules) => modules.join(", "))} />
+          </Grid>{" "}
+          <Grid item xs={6}>
+            {/* <LargeList
+              data={data.map((modules) => modules.join(", "))}
+            />LargeList> */}
+          </Grid>
+        </Grid>
+      </AccordionDetails>
+      <Button onClick={() => setOpenDialog(true)}>Hey</Button>
+      <ARDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        setStatus={setStatus}
+        setOpenBack={setOpenBack}
+        setNotify={setNotify}
+      />
+    </Accordion>
+  );
+}
+
+export default function TauTiltingTab(prop: {
+  computed: boolean;
+  setComputed: (val: boolean) => void;
+}) {
+  const [notify, setNotify] = useState(false);
+  const [status, setStatus] = useState<NotifyContents>({ message: "" });
+  const [openBack, setOpenBack] = useState(false);
+
+  const [total, setTotal] = useState(0);
+  const [index, setIndex] = useState("0");
+  const [data, setData] = useState<TauTiltingData>();
+
+  async function prepare() {
+    setOpenBack(true);
+    const response = await fetch("tau-tilting");
+    if (!response.ok) {
+      setStatus({
+        message: await response.text(),
+        severity: "error",
+      });
+      setNotify(true);
+      setOpenBack(false);
+      return;
+    }
+    const data: number = await response.json();
+    console.log(data);
+    setTotal(data);
+    setStatus({
+      message: `There are ${data} support τ-tilting modules, etc.`,
+      duration: 4000,
+    });
+    setNotify(true);
+    prop.setComputed(true);
+    setOpenBack(false);
+  }
+
+  async function getData() {
+    const n = parseInt(index);
+    if (isNaN(n) || n < 0 || n >= total) {
+      setStatus({
+        message: `n must be an integer from 0 until ${total}.`,
+        severity: "error",
+      });
+      setNotify(true);
+      return;
+    }
+    setOpenBack(true);
+    const response = await fetch(`tau-tilting`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: n.toString(),
+    });
+    if (!response.ok) {
+      setStatus({
+        message: await response.text(),
+        severity: "error",
+      });
+      setNotify(true);
+      setOpenBack(false);
+      return;
+    }
+    const data: TauTiltingData = await response.json();
+    setData(data);
+    console.log(data);
+    setStatus({
+      message: "Success!",
+      duration: 2000,
+    });
+    setNotify(true);
+    setOpenBack(false);
+  }
+
+  return (
+    <>
+      {!prop.computed && <UpdateButton onClick={prepare} />}
+
+      <ListUp
+        setNotify={setNotify}
+        setStatus={setStatus}
+        setOpenBack={setOpenBack}
+      />
+      {/* <Database
+        setNotify={setNotify}
+        setStatus={setStatus}
+        setOpenBack={setOpenBack}
+      /> */}
+
+      <NotifyToast open={notify} setOpen={setNotify} status={status} />
+
+      <MyBackdrop open={openBack} />
+    </>
+  );
+}

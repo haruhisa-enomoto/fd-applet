@@ -1,6 +1,0 @@
-[submodule "fd-applet-server"]
-	path = fd-applet-server
-	url = https://github.com/haruhisa-enomoto/fd-applet-server.git
-[submodule "fd-applet-front"]
-	path = fd-applet-front
-	url = https://github.com/haruhisa-enomoto/fd-applet-front.git

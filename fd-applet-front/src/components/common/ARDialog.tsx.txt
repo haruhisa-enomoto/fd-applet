@@ -1,0 +1,35 @@
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import { NotifyContents } from "./NotifyToast";
+
+export interface SimpleDialogProps {
+  open: boolean;
+  setOpen: (value: boolean) => void;
+  setNotify: (value: boolean) => void;
+  setStatus: (value: NotifyContents) => void;
+  setOpenBack: (value: boolean) => void;
+}
+
+export default function ARDialog(props: SimpleDialogProps) {
+  const { open, setOpen, setNotify, setStatus, setOpenBack } = props;
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  // const handleListItemClick = (value: string) => {
+  //   onClose(value);
+  // };
+
+  return (
+    <Dialog open={open} onClose={handleClose} keepMounted>
+      <DialogTitle>Set backup account</DialogTitle>
+      {/* <GenericQuiver
+        api="ar-quiver"
+        setNotify={setNotify}
+        setOpenBack={setOpenBack}
+        setStatus={setStatus}
+      /> */}
+    </Dialog>
+  );
+}

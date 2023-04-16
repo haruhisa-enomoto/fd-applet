@@ -1,0 +1,125 @@
+package stringalg
+
+import basic.Module
+import basic.RFAlgebra
+import graph.*
+
+
+open class RFStringAlgebra<T, U>(
+    quiver: Quiver<T, U>, relations: List<Monomial<T, U>>
+) : StringAlgebra<T, U>(quiver, relations), RFAlgebra {
+    init {
+        require(this.isRepFinite()) {
+            "This is not representation-finite. "
+        }
+    }
+
+    constructor(algebra: MonomialAlgebra<T, U>) : this(algebra.quiver, algebra.relations)
+
+    // Use [Set] since we often check containment in [normalize].
+    override val modules: Set<StringModule<T, U>> = stringModules(nonIsomorphic = true).toSet()
+
+    private val _bricks by lazy { bricks() }
+    private val _semibricks by lazy { obtainSemibricks() }
+
+    // A private property to cache the result of dim Hom(X, Y).
+    private val homMap =
+        mutableMapOf<Pair<Module, Module>, Int>()
+
+    // Every time [hom] is called, it's cached in [homMap].
+    override fun hom(mX: Module, mY: Module): Int {
+        return homMap.getOrPut(mX to mY) { mX.hom(mY)!! }
+    }
+
+    private fun normalize(mX: StringModule<T, U>): StringModule<T, U> {
+        return if (mX in modules) mX else !mX
+    }
+
+    override fun dim(): Int = (this as StringAlgebra<T, U>).dim()!!
+
+    override fun bricks(): List<Module> {
+        return modules.filter { hom(it, it) == 1 }
+    }
+
+
+    override fun arQuiver(): TranslationQuiver<Module> {
+        // For safety, we construct the AR quiver in two ways:
+        // First by sink maps and second by source maps.
+        val irreducibles = mutableListOf<Arrow<Module, Nothing>>()
+        val irreducibles2 = mutableListOf<Arrow<Module, Nothing>>()
+        val tau = mutableMapOf<Module, Module>()
+        for (mX in modules) {
+            val (middles, mTauX) = mX.sinkSequence()
+            if (mTauX != null) {
+                tau[mX] = normalize(mTauX)
+            }
+            for (mM in middles) {
+                irreducibles.add(Arrow(null, normalize(mM), mX))
+            }
+        }
+        for (mX in modules) {
+            val temp = mX.sourceSequence().first
+            for (mN in temp) {
+                irreducibles2.add(Arrow(null, mX, normalize(mN)))
+            }
+        }
+        if (irreducibles == irreducibles2) {
+            throw IllegalStateException("Something is wrong")
+        }
+        return TranslationQuiver(Quiver(modules, irreducibles), tau)
+    }
+
+    private fun obtainSemibricks(): List<List<Module>> {
+        val neighbor = _bricks.associateWith { mX ->
+            _bricks.filter {
+                hom(mX, it) == 0 && hom(it, mX) == 0
+            }
+        }
+        return cliques(neighbor)
+    }
+
+    override fun semibricks(): List<List<Module>> {
+        return _semibricks
+    }
+
+    override fun homRightPerp(cC: Collection<Module>): List<Module> {
+        return modules.filter { mY ->
+            cC.all { hom(it, mY) == 0 }
+        }
+    }
+
+    override fun homLeftPerp(cC: Collection<Module>): List<Module> {
+        return modules.filter { mX ->
+            cC.all { hom(mX, it) == 0 }
+        }
+    }
+
+    override fun torsionClasses(): List<List<Module>> {
+        // At this point, just take [homLeftPerp] of semibricks.
+        val total = _semibricks.size
+        val result = mutableListOf<List<Module>>()
+        val num = 5
+        val interval = total * 5/ 1000
+        for ((index, element) in _semibricks.withIndex()) {
+            if (index % 1000 == 0) {
+                println("Currently ${(1000 * index) / total}/1000, $index/$total.")
+            }
+            result.add(homLeftPerp(element))
+        }
+        return result
+//        return _semibricks.map { homLeftPerp(it) }
+    }
+
+    override fun torsionFreeClasses(): List<List<Module>> {
+        return _semibricks.map { homRightPerp(it) }
+    }
+
+    override fun torsionClosure(cC: Collection<Module>): List<Module> {
+        return homLeftPerp(homRightPerp(cC))
+    }
+
+    override fun torsionFreeClosure(cC: Collection<Module>): List<Module> {
+        return homRightPerp(homLeftPerp(cC))
+    }
+
+}

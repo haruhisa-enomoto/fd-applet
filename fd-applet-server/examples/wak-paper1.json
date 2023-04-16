@@ -1,0 +1,1 @@
+{"quiver":{"vertices":["1","2","3","4","5"],"arrows":[{"label":"a","from":"1","to":"2"},{"label":"b","from":"2","to":"1"},{"label":"c","from":"2","to":"3"},{"label":"d","from":"3","to":"4"},{"label":"e","from":"4","to":"5"},{"label":"f","from":"5","to":"4"}]},"monoRelations":[["a","b"],["a","c"],["b","a"],["c","d"],["d","e"],["e","f"],["f","e"]],"biRelations":[]}

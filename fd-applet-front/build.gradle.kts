@@ -20,6 +20,21 @@ node {
 }
 
 
+tasks.register("updatePackageJsonVersion") {
+    description = "Update package.json version to match the project version"
+
+    doLast {
+        val packageJsonFile = java.nio.file.Paths.get(project.projectDir.path, "package.json").toFile()
+        val packageJson = packageJsonFile.readText()
+        val updatedPackageJson = packageJson.replace(Regex("\"version\":\\s*\"(.*?)\""), "\"version\": \"${project.version}\"")
+        packageJsonFile.writeText(updatedPackageJson)
+    }
+}
+
+tasks.npmInstall {
+    dependsOn("updatePackageJsonVersion")
+}
+
 tasks {
     register<NpmTask>("npmStart") {
         dependsOn("npmInstall")

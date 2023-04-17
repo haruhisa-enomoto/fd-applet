@@ -6,9 +6,6 @@ plugins {
     application
 }
 
-group = rootProject.group
-version = rootProject.version
-
 repositories {
     mavenCentral()
     gradlePluginPortal()
@@ -34,11 +31,38 @@ kotlin {
     jvmToolchain(17)
 }
 
-tasks.processResources {
-    inputs.files(project(":").tasks.named("copyFrontendBuild").map { it.outputs.files })
+tasks.register("runWithoutFrontend", JavaExec::class) {
+    group = "run"
+    description = "Run the server without the frontend"
+
+    dependsOn("classes")
+    mainClass.set(serverClassName)
+    classpath(sourceSets["main"].runtimeClasspath)
 }
 
-tasks.jar {
+tasks.register("copyFrontendBuild", Copy::class) {
+    group = "copy"
+    description = "Copy frontend build files to the server resources directory"
+
+    mustRunAfter(":fd-applet-front:npmBuild")
+
+    from("${project.rootDir}/fd-applet-front/build")
+    into("${project.rootDir}/fd-applet-server/src/main/resources/files")
+}
+
+tasks.processResources {
+    inputs.files(tasks.named("copyFrontendBuild").map { it.outputs.files })
+}
+
+tasks.buildFatJar {
+    dependsOn(":fd-applet-front:npmBuild", "copyFrontendBuild")
+}
+
+
+tasks.register("makeNakayamaDataset", Jar::class) {
+    group = "jar"
+    description = "Run makeNakayamaDataset"
+
     manifest {
         attributes["Main-Class"] = "${group}.makeNakayamaDataset.MainKt"
     }

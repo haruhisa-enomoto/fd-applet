@@ -7,6 +7,9 @@ import kotlinx.serialization.Serializable
  *
  * @param T the type of vertex labels.
  * @param U the type of arrow labels.
+ * @property length the length of the monomial, which is the number of arrows.
+ * @property from the source vertex of the first arrow in the monomial.
+ * @property to the target vertex of the last arrow in the monomial.
  * @property arrows the list of arrows forming the monomial.
  */
 @Serializable
@@ -25,19 +28,8 @@ data class Monomial<T, U>(val arrows: List<Arrow<T, U>>) {
         }
     }
 
-    /**
-     * The length of the monomial, which is the number of arrows.
-     */
     val length = arrows.size
-
-    /**
-     * The source vertex of the first arrow in the monomial.
-     */
     val from = arrows.first().from
-
-    /**
-     * The target vertex of the last arrow in the monomial.
-     */
     val to = arrows.last().to
     
     /**

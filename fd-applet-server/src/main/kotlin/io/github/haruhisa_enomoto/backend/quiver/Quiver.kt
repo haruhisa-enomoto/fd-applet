@@ -57,17 +57,6 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Returns a CSV string representation of the quiver, consisting of `arrow, source, target`.
-     *
-     * @return the CSV string representation of the quiver.
-     */
-    fun toCSV(): String {
-        return vertices.joinToString(",") + "\n" + arrows.joinToString("\n") {
-            "${it}, ${it.from} , ${it.to}"
-        }
-    }
-
-    /**
      * Recursive depth-first search for finding all paths beginning from [currentPath].
      *
      * @param currentPath the current path in the depth-first search.
@@ -119,9 +108,9 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
 
     /**
      * Returns all simple cycles in the quiver.
-     * A cycle is "simple" if no same vertices are visited except first and last.
-     * This returns only one representative for each cycle:
-     * e.g. if [a, b, c] is a cycle, this doesn't report [b, c, a] and [c, a, b].
+     * A cycle is considered "simple" if no vertex is visited more than once, except for the first and last vertices.
+     * This method returns only one representative for each cycle:
+     * For example, if [a, b, c] is a cycle, this method will not report [b, c, a] and [c, a, b].
      *
      * @return a sequence of simple cycles in the quiver.
      */
@@ -144,11 +133,11 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Returns whether the quiver has finitely many primitive cycles:
-     * cycles which cannot be written as a power of smaller cycles.
-     * This occurs if and only if none of the simple cycles share common vertices.
+     * Determines whether the quiver has a finite number of primitive cycles:
+     * cycles that cannot be expressed as a power of smaller cycles.
+     * This condition holds if and only if none of the simple cycles share common vertices.
      *
-     * @return true if the quiver has finitely many primitive cycles, false otherwise.
+     * @return true if the quiver has a finite number of primitive cycles, false otherwise.
      */
     fun primitiveCycleFinite(): Boolean {
         val seen = mutableSetOf<T>()
@@ -160,11 +149,11 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Returns whether the quiver is acyclic. If [vtx] is given, this returns whether
-     * there are only finitely many paths starting from [vtx].
+     * Determines whether the quiver is acyclic. If [vtx] is provided, this method checks
+     * if there are only a finite number of paths starting from [vtx].
      *
-     * @param vtx the vertex to check for acyclicity.
-     * @return true if the quiver is acyclic, false otherwise.
+     * @param vtx the vertex to check for acyclicity (optional).
+     * @return true if the quiver is acyclic or if the specified vertex has only finite paths, false otherwise.
      */
     fun isAcyclic(vtx: T? = null): Boolean {
         val checkList = if (vtx == null) vertices else listOf(vtx)
@@ -177,10 +166,10 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Returns all paths from the given vertex [vtx].
+     * Retrieves all paths starting from the given vertex [vtx].
      *
-     * @param vtx the vertex to get paths from.
-     * @return a list of all paths starting from the given vertex.
+     * @param vtx the vertex from which to obtain paths.
+     * @return a list of all paths originating from the specified vertex.
      * @throws IllegalArgumentException if there are infinitely many paths.
      */
     fun pathsFrom(vtx: T): List<Word<T, U>> {

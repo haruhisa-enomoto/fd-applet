@@ -224,8 +224,8 @@ abstract class Algebra<T> {
     /**
      * Returns the dimension of Ext^1([mX], [mY]).
      *
-     * @param mX
-     * @param mY
+     * @param mX an indecomposable module (`null` represents 0).
+     * @param mY an indecomposable module (`null` represents 0).
      * @return the dimension of Ext^1([mX], [mY]).
      */
     fun ext1(mX: Indec<T>?, mY: Indec<T>?): Int {
@@ -239,12 +239,11 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the dimension of Ext^[n] ([mX], [mY]) (n is default 1).
+     * Returns the dimension of Ext^1([mX], [mYY]).
      *
-     * @param mX
-     * @param mY
-     * @param n
-     * @return the dimension of Ext^[n] ([mX], [mY]).
+     * @param mX an indecomposable module (`null` represents 0).
+     * @param mYY a module as a collection of indecomposables.
+     * @return the dimension of Ext^1([mX], [mYY]).
      */
     fun ext(mX: Indec<T>?, mY: Indec<T>?, n: Int = 1): Int {
         if (mX == null || mY == null) return 0
@@ -259,20 +258,45 @@ abstract class Algebra<T> {
         return ext(mX.syzygy(n - 1), mY)
     }
 
+    /**
+     * Returns the dimension of Ext^1([mX], [mYY]).
+     *
+     * @param mX an indecomposable module (`null` represents 0).
+     * @param mYY a module as a collection of indecomposables.
+     * @return the dimension of Ext^1([mX], [mYY]).
+     */
     fun ext(mX: Indec<T>?, mYY: Collection<Indec<T>?>, n: Int = 1): Int {
         return mYY.sumOf { ext(mX, it, n) }
     }
 
+    /**
+     * Returns the dimension of Ext^1([mXX], [mY]).
+     *
+     * @param mXX a module as a collection of indecomposables.
+     * @param mY an indecomposable module (`null` represents 0).
+     * @return the dimension of Ext^1([mXX], [mY]).
+     */
     fun ext(mXX: Collection<Indec<T>?>, mY: Indec<T>?, n: Int = 1): Int {
         return mXX.sumOf { ext(it, mY, n) }
     }
 
+    /**
+     * Returns the dimension of Ext^1([mXX], [mYY]).
+     *
+     * @param mXX a module as a collection of indecomposables.
+     * @param mYY a module as a collection of indecomposables.
+     * @return the dimension of Ext^1([mXX], [mYY]).
+     */
     fun ext(mXX: Collection<Indec<T>?>, mYY: Collection<Indec<T>?>, n: Int = 1): Int {
         return mXX.sumOf { ext(it, mYY, n) }
     }
 
     /**
      * Returns whether Ext^i([mX], [mY]) = 0 for all i > 0.
+     *
+     * @param mX an indecomposable module (`null` represents 0).
+     * @param mY an indecomposable module (`null` represents 0).
+     * @return whether Ext^i([mX], [mY]) = 0 for all i > 0.
      */
     fun higherExtZero(mX: Indec<T>?, mY: Indec<T>?): Boolean {
         if (mX == null || mY == null) return true

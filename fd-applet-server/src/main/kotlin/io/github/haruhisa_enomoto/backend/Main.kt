@@ -130,20 +130,3 @@ fun main() {
 
 
 }
-
-
-// Below: Old csv data
-
-
-fun csvToQuiver(list: List<String>): Quiver<String, String> {
-    val vertexList = list[0].split(",").map { it.trim() }
-    val arrowList = list.drop(1).map { it -> it.split(",").map { it.trim() } }.map { Arrow(it[0], it[1], it[2]) }
-    return Quiver(vertexList, arrowList)
-}
-
-fun csvToMonomialAlgebra(list: List<String>): MonomialAlgebra<String, String> {
-    val quiverList = list.dropLast(1)
-    val quiver = csvToQuiver(quiverList)
-    val relations = list.last().split(",").myTrim().map { quiver.strToMonomial(it) }
-    return MonomialAlgebra(quiver, relations)
-}

@@ -65,15 +65,4 @@ data class TranslationQuiver<T>(
             quiver.arrows +
                     tau.entries.map { (key, value) -> Arrow(null, key, value, isTau = true) })
     }
-
-    /**
-     * Converts the translation quiver to a CSV string.
-     *
-     * @return a CSV string representing the translation quiver.
-     */
-    fun toCSV(): String {
-        val quiverCSV = quiver.toCSV()
-        val temp = tau.map { "," + it.key + "," + it.value + ",true" }.joinToString("\n")
-        return quiverCSV + "\n" + temp
-    }
 }

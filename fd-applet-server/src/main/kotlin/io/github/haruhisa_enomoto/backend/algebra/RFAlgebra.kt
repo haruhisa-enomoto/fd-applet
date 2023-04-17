@@ -15,13 +15,10 @@ import io.github.haruhisa_enomoto.backend.types.TauTiltingData
 import io.github.haruhisa_enomoto.backend.types.toTauTiltingPair
 
 /**
- * A class for Representation-Finite algebras (=RF algebras).
- *
- * @param T
- * @property algebra
- * @property indecs
- * @property normalize
- * @constructor Create empty R f algebra
+ * This class represents a representation-finite algebra.
+ * @param algebra The algebra.
+ * @param indecs The indecomposable modules.
+ * @param normalize A function that normalizes an indecomposable module.
  */
 class RFAlgebra<T>(
     private val algebra: Algebra<T>, val indecs: List<Indec<T>>, private val normalize: (Indec<T>) -> Indec<T>,
@@ -33,6 +30,8 @@ class RFAlgebra<T>(
     }
 
     override val vertices = algebra.vertices
+
+    // The following properties are lazy.
 
     private val _arQuiver by lazy { makeARQuiver() }
     private val tau by lazy { _arQuiver.tau }

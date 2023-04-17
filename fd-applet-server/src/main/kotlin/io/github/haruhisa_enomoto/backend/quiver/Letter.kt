@@ -13,6 +13,7 @@ import kotlinx.serialization.Serializable
  * @property arrow the arrow associated with the letter.
  * Note that the same [arrow] is used for both the arrow and its inverse.
  * @property isArrow `true` if the letter represents the arrow, `false` if it represents the inverse of the arrow.
+ * @property label the label of the letter. This is the same as [arrow]'s label.
  * @property from the source vertex of the letter (this is [arrow]'s target if [isArrow] is false).
  * @property to the target vertex of the letter (this is [arrow]'s source if [isArrow] is false).
  * @throws IllegalArgumentException if [arrow]'s label is `null`.
@@ -41,7 +42,7 @@ data class Letter<T, U>(
     }
 
     /**
-     * Returns the concatenated word formed by this letter and `other` arrow.
+     * Returns the concatenated word formed by this letter and [other] arrow.
      *
      * @param other the arrow to be concatenated with this letter.
      * @return a Word object representing the concatenation of this letter and the other arrow.
@@ -51,7 +52,7 @@ data class Letter<T, U>(
     }
 
     /**
-     * Returns the concatenated word formed by this letter and `other` letter.
+     * Returns the concatenated word formed by this letter and [other] letter.
      *
      * @param other the letter to be concatenated with this letter.
      * @return a Word object representing the concatenation of this letter and the other letter.
@@ -61,7 +62,7 @@ data class Letter<T, U>(
     }
 
     /**
-     * Returns the concatenated word formed by this letter and `other` word.
+     * Returns the concatenated word formed by this letter and [other] word.
      *
      * @param other the word to be concatenated with this letter.
      * @return a Word object representing the concatenation of this letter and the other word.

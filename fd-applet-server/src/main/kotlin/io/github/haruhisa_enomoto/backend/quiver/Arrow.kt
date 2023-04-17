@@ -39,7 +39,7 @@ data class Arrow<T, U>(
     operator fun not(): Letter<T, U> = toLetter().not()
 
     /**
-     * Concatenates this arrow with `other` arrow, forming a new word.
+     * Concatenates this arrow with [other] arrow, forming a new word.
      *
      * @param other the arrow to be concatenated with this arrow.
      * @return a Word object representing the concatenation of this arrow and the other arrow.
@@ -49,7 +49,7 @@ data class Arrow<T, U>(
     }
 
     /**
-     * Concatenates this arrow with `other` letter, forming a new word.
+     * Concatenates this arrow with [other] letter, forming a new word.
      *
      * @param other the letter to be concatenated with this arrow.
      * @return a Word object representing the concatenation of this arrow and the other letter.
@@ -59,7 +59,7 @@ data class Arrow<T, U>(
     }
 
     /**
-     * Concatenates this arrow with `other` word, forming a new word.
+     * Concatenates this arrow with [other] word, forming a new word.
      *
      * @param other the word to be concatenated with this arrow.
      * @return a Word object representing the concatenation of this arrow and the other word.

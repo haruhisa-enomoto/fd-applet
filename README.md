@@ -26,9 +26,9 @@ See [FD Applet](https://haruhisa-enomoto.github.io/fd-applet/) for details about
 
 Replace `<task>` with one of the following (which are in the `Main` group):
 
-- `runFrontend`: Run the frontend
+- `runFront`: Run the frontend
 - `runServer`: Run the server (without building the frontend)
 - `buildServerJar`: Build the server fat JAR in `build/fd-applet-fat.jar`
 - `distAll`: Create distribution archives for all platforms
 
-During development, you'll typically run `runFrontend` and `runServer` simultaneously.
+During development, you'll typically run `runFront` and `runServer` simultaneously.

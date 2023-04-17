@@ -18,7 +18,7 @@ tasks.register("runServer") {
     dependsOn(":fd-applet-server:runWithoutFrontend")
 }
 
-tasks.register("runFrontend") {
+tasks.register("runFront") {
     group = "main"
     description = "Run the frontend"
 

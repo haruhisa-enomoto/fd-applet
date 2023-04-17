@@ -1,11 +1,11 @@
 package io.github.haruhisa_enomoto.backend.graph
 
 /**
- * Yields all maximal cliques using the Bron-Kerbosch algorithm.
- * Assumes a simple graph: no loop and no multiple edges.
+ * Generates all maximal cliques using the Bron-Kerbosch algorithm.
+ * Assumes a simple graph: no loops and no multiple edges.
  *
  * @param T the type of vertices of a graph.
- * @param neighbor the map (dictionary) of neighbors of each vertex.
+ * @param neighbor the map (dictionary) of neighbors for each vertex.
  * @return a sequence of all maximal cliques.
  */
 fun <T> maximalCliqueSequence(neighbor: Map<T, List<T>>): Sequence<List<T>>  = sequence {
@@ -42,10 +42,10 @@ fun <T> maximalCliqueSequence(neighbor: Map<T, List<T>>): Sequence<List<T>>  = s
 
 /**
  * Returns all maximal cliques using the Bron-Kerbosch algorithm.
- * Assumes a simple graph: no loop and no multiple edges.
+ * Assumes a simple graph: no loops and no multiple edges.
  *
  * @param T the type of vertices of a graph.
- * @param neighbor the map (dictionary) of neighbors of each vertex.
+ * @param neighbor the map (dictionary) of neighbors for each vertex.
  * @return a list of all maximal cliques.
  */
 fun <T> maximalCliques(neighbor: Map<T, List<T>>): List<List<T>> {
@@ -53,11 +53,11 @@ fun <T> maximalCliques(neighbor: Map<T, List<T>>): List<List<T>> {
 }
 
 /**
- * Yields all (not necessarily maximal) cliques using the Bron-Kerbosch algorithm.
- * Assumes a simple graph: no loop and no multiple edges.
+ * Generates all (not necessarily maximal) cliques using the Bron-Kerbosch algorithm.
+ * Assumes a simple graph: no loops and no multiple edges.
  *
  * @param T the type of vertices of a graph.
- * @param neighbor the map (dictionary) of neighbors of each vertex.
+ * @param neighbor the map (dictionary) of neighbors for each vertex.
  * @return a sequence of all cliques.
  */
 fun <T> cliqueSequence(neighbor: Map<T, List<T>>): Sequence<List<T>> = sequence {
@@ -89,10 +89,10 @@ fun <T> cliqueSequence(neighbor: Map<T, List<T>>): Sequence<List<T>> = sequence 
 
 /**
  * Returns all (not necessarily maximal) cliques using the Bron-Kerbosch algorithm.
- * Assumes a simple graph: no loop and no multiple edges.
+ * Assumes a simple graph: no loops and no multiple edges.
  *
  * @param T the type of vertices of a graph.
- * @param neighbor the map (dictionary) of neighbors of each vertex.
+ * @param neighbor the map (dictionary) of neighbors for each vertex.
  * @return a list of all cliques.
  */
 fun <T> cliques(neighbor: Map<T, List<T>>): List<List<T>> {
@@ -102,9 +102,9 @@ fun <T> cliques(neighbor: Map<T, List<T>>): List<List<T>> {
 /**
  * Assumes that the cardinality of every maximal clique is [rank].
  * Reports all cliques `clique` of rank [rank]-1,
- * and the list of vertices `list` which makes `clique` maximal.
+ * and the list of vertices `list` which make `clique` maximal.
  *
- * @param neighbor the map (dictionary) of neighbors of each vertex.
+ * @param neighbor the map (dictionary) of neighbors for each vertex.
  * @param rank the cardinality of all maximal cliques.
  * @return a sequence of `Pair(clique, list)`.
  */

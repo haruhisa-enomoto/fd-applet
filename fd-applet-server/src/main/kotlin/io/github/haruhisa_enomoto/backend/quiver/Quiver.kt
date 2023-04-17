@@ -133,7 +133,7 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Determines whether the quiver has a finite number of primitive cycles:
+     * Returns whether the quiver has a finite number of primitive cycles:
      * cycles that cannot be expressed as a power of smaller cycles.
      * This condition holds if and only if none of the simple cycles share common vertices.
      *
@@ -149,7 +149,7 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Determines whether the quiver is acyclic. If [vtx] is provided, this method checks
+     * Returns whether the quiver is acyclic. If [vtx] is provided, this method checks
      * if there are only a finite number of paths starting from [vtx].
      *
      * @param vtx the vertex to check for acyclicity (optional).

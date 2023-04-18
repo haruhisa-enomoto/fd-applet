@@ -1008,7 +1008,7 @@ data class GraphHom<T, U>(
 }
 
 /**
- * Returns the composition of two graph maps, null if zero.
+ * Returns the composition of two graph maps, `null` if zero.
  * Be careful about the order: [hom1] is first, then [hom2].
  * @hom1 the first map
  * @hom2 the second map

@@ -12,6 +12,7 @@ package io.github.haruhisa_enomoto.backend.quiver
  * @property projectives the list of projective vertices.
  * @property injectives the list of injective vertices.
  *
+ * @constructor Creates a translation quiver with the given [quiver] and [tau].
  * @throws IllegalArgumentException if the axiom of translation quiver is not satisfied.
  */
 data class TranslationQuiver<T>(

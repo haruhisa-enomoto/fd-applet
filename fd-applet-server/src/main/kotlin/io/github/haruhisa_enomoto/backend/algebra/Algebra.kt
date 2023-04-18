@@ -4,11 +4,11 @@ import io.github.haruhisa_enomoto.backend.quiver.Arrow
 import io.github.haruhisa_enomoto.backend.quiver.Quiver
 
 /**
- * A class representing bound quiver algebras of the form kQ/I
- * for a finite quiver Q and a two-sided ideal I.
+ * A class representing bound quiver algebras of the form `kQ/I` over a field `k`
+ * for a finite quiver `Q` and a two-sided ideal `I`.
  *
- * @param T the type of vertices of Q.
- * @property vertices the list of vertices of Q.
+ * @param T the type of vertices of the quiver.
+ * @property vertices the list of vertices of the quiver.
  */
 abstract class Algebra<T> {
     abstract val vertices: List<T>
@@ -21,14 +21,14 @@ abstract class Algebra<T> {
     val syzygyMap = mutableMapOf<Indec<T>, List<Indec<T>>>()
 
     /**
-     * Returns whether the algebra is a string algebra or not.
+     * Returns whether this algebra is a string algebra or not.
      *
      * @return `true` if it is a string algebra, `false` otherwise.
      */
     abstract fun isStringAlgebra(): Boolean
 
     /**
-     * Returns whether the algebra is a gentle algebra or not.
+     * Returns whether this algebra is a gentle algebra or not.
      *
      * @return `true` if it is a gentle algebra, `false` otherwise.
      */
@@ -38,38 +38,38 @@ abstract class Algebra<T> {
      * Returns the number of indecomposable modules.
      * Returns `null` if not representation-finite.
      *
-     * @return the number of indecomposable modules, or null if not representation-finite.
+     * @return the number of indecomposable modules, or `null` if not representation-finite.
      */
     abstract fun numberOfIndecs(): Int?
 
     /**
-     * Returns the dimension of the algebra.
+     * Returns the dimension of this algebra.
      * Returns `null` if not finite-dimensional.
      *
-     * @return the dimension of the algebra, or null if not finite-dimensional.
+     * @return the dimension of this algebra, or `null` if not finite-dimensional.
      */
     abstract fun dim(): Int?
 
     /**
-     * Returns the rank of the algebra, which is the number of vertices.
+     * Returns the rank of this algebra, which is the number of vertices.
      *
-     * @return the rank of the algebra.
+     * @return the rank of this algebra.
      */
     fun rank() = vertices.size
 
     /**
-     * Returns whether the algebra is finite-dimensional or not.
+     * Returns whether this algebra is finite-dimensional or not.
      *
-     * @return `true` if the algebra is finite-dimensional, `false` otherwise.
+     * @return `true` if this algebra is finite-dimensional, `false` otherwise.
      */
     fun isFiniteDimensional() = (dim() != null)
 
     /**
-     * Returns the dimension of Hom([mX], [mY]).
+     * Returns the dimension of `Hom([mX], [mY])`.
      *
-     * @param mX an indecomposable module (`null` represents 0).
-     * @param mY an indecomposable module (`null` represents 0).
-     * @return the dimension of Hom([mX], [mY])
+     * @param mX an indecomposable module (`null` represents `0`).
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @return the dimension of `Hom([mX], [mY])`
      */
     fun hom(mX: Indec<T>?, mY: Indec<T>?): Int {
         if (mX == null || mY == null) return 0
@@ -77,56 +77,56 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns whether Hom([mX], [mY]) vanishes.
+     * Returns whether `Hom([mX], [mY])` vanishes.
      *
-     * @param mX an indecomposable module (`null` represents 0).
-     * @param mY an indecomposable module (`null` represents 0).
-     * @return `true` if Hom([mX], [mY]) = 0, `false` otherwise.
+     * @param mX an indecomposable module (`null` represents `0`).
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @return `true` if `Hom([mX], [mY]) = 0`, `false` otherwise.
      */
     fun homZero(mX: Indec<T>?, mY: Indec<T>?): Boolean {
         return hom(mX, mY) == 0
     }
 
     /**
-     * Returns the dimension of Hom([mX], [mYY]).
+     * Returns the dimension of `Hom([mX], [mYY])`.
      *
-     * @param mX an indecomposable module (`null` represents 0).
+     * @param mX an indecomposable module (`null` represents `0`).
      * @param mYY a module as a collection of indecomposables.
-     * @return the dimension of Hom([mX], [mYY])
+     * @return the dimension of `Hom([mX], [mYY])`
      */
     fun hom(mX: Indec<T>?, mYY: Collection<Indec<T>?>): Int {
         return mYY.sumOf { hom(mX, it) }
     }
 
     /**
-     * Returns the dimension of Hom([mXX], [mY]).
+     * Returns the dimension of `Hom([mXX], [mY])`.
      *
      * @param mXX a module as a collection of indecomposables.
-     * @param mY an indecomposable module (`null` represents 0).
-     * @return the dimension of Hom([mXX], [mY])
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @return the dimension of `Hom([mXX], [mY])`.
      */
     fun hom(mXX: Collection<Indec<T>?>, mY: Indec<T>?): Int {
         return mXX.sumOf { hom(it, mY) }
     }
 
     /**
-     * Returns the dimension of Hom([mXX], [mYY]).
+     * Returns the dimension of `Hom([mXX], [mYY])`.
      *
      * @param mXX a module as a collection of indecomposables.
      * @param mYY a module as a collection of indecomposables.
-     * @return the dimension of Hom([mXX], [mYY])
+     * @return the dimension of `Hom([mXX], [mYY])`.
      */
     fun hom(mXX: Collection<Indec<T>?>, mYY: Collection<Indec<T>?>): Int {
         return mXX.sumOf { mX -> hom(mX, mYY) }
     }
 
     /**
-     * Returns the dimension of \underline{Hom}([mX], [mY]),
+     * Returns the dimension of `\underline{Hom}([mX], [mY])`,
      * the projectively stable Hom.
      *
-     * @param mX an indecomposable module (`null` represents 0).
-     * @param mY an indecomposable module (`null` represents 0).
-     * @return the dimension of \underline{Hom}([mX], [mY]).
+     * @param mX an indecomposable module (`null` represents `0`).
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @return the dimension of `\underline{Hom}([mX], [mY])`.
      */
     fun stableHom(mX: Indec<T>?, mY: Indec<T>?): Int {
         if (mX == null || mY == null) return 0
@@ -134,48 +134,48 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the dimension of \underline{Hom}([mX], [mYY]),
+     * Returns the dimension of `\underline{Hom}([mX], [mYY])`,
      * the projectively stable Hom.
      *
-     * @param mX an indecomposable module (`null` represents 0).
+     * @param mX an indecomposable module (`null` represents `0`).
      * @param mYY a module as a collection of indecomposables.
-     * @return the dimension of \underline{Hom}([mX], [mYY]).
+     * @return the dimension of `\underline{Hom}([mX], [mYY])`.
      */
     fun stableHom(mX: Indec<T>?, mYY: Collection<Indec<T>?>): Int {
         return mYY.sumOf { stableHom(mX, it) }
     }
 
     /**
-     * Returns the dimension of \underline{Hom}([mXX], [mY]),
+     * Returns the dimension of `\underline{Hom}([mXX], [mY])`,
      * the projectively stable Hom.
      *
      * @param mXX a module as a collection of indecomposables.
-     * @param mY an indecomposable module (`null` represents 0).
-     * @return the dimension of \underline{Hom}([mXX], [mY]).
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @return the dimension of `\underline{Hom}([mXX], [mY])`.
      */
     fun stableHom(mXX: Collection<Indec<T>?>, mY: Indec<T>?): Int {
         return mXX.sumOf { stableHom(it, mY) }
     }
 
     /**
-     * Returns the dimension of \underline{Hom}([mXX], [mY]),
+     * Returns the dimension of `\underline{Hom}([mXX], [mYY])`,
      * the projectively stable Hom.
      *
      * @param mXX a module as a collection of indecomposables.
      * @param mYY a module as a collection of indecomposables.
-     * @return the dimension of \underline{Hom}([mXX], [mYY]).
+     * @return the dimension of `\underline{Hom}([mXX], [mYY])`.
      */
     fun stableHom(mXX: Collection<Indec<T>?>, mYY: Collection<Indec<T>?>): Int {
         return mXX.sumOf { mX -> stableHom(mX, mYY) }
     }
 
     /**
-     * Returns the dimension of \overline{Hom}([mX], [mY]),
+     * Returns the dimension of `\overline{Hom}([mX], [mY])`,
      * the injectively stable Hom.
      *
-     * @param mX an indecomposable module (`null` represents 0).
-     * @param mY an indecomposable module (`null` represents 0).
-     * @return the dimension of \overline{Hom}([mXX], [mYY]).
+     * @param mX an indecomposable module (`null` represents `0`).
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @return the dimension of `\overline{Hom}([mX], [mY])`.
      */
     fun injStableHom(mX: Indec<T>?, mY: Indec<T>?): Int {
         if (mX == null || mY == null) return 0
@@ -183,52 +183,52 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the dimension of \overline{Hom}([mX], [mYY]),
+     * Returns the dimension of `\overline{Hom}([mX], [mYY])`,
      * the injectively stable Hom.
      *
-     * @param mX an indecomposable module (`null` represents 0).
+     * @param mX an indecomposable module (`null` represents `0`).
      * @param mYY a module as a collection of indecomposables.
-     * @return the dimension of \overline{Hom}([mX], [mYY]).
+     * @return the dimension of `\overline{Hom}([mX], [mYY])`.
      */
     fun injStableHom(mX: Indec<T>?, mYY: Collection<Indec<T>?>): Int {
         return mYY.sumOf { injStableHom(mX, it) }
     }
 
     /**
-     * Returns the dimension of \overline{Hom}([mXX], [mY]),
+     * Returns the dimension of `\overline{Hom}([mXX], [mY])`,
      * the injectively stable Hom.
      *
      * @param mXX a module as a collection of indecomposables.
-     * @param mY an indecomposable module (`null` represents 0).
-     * @return the dimension of \overline{Hom}([mXX], [mY]).
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @return the dimension of `\overline{Hom}([mXX], [mY])`.
      */
     fun injStableHom(mXX: Collection<Indec<T>?>, mY: Indec<T>?): Int {
         return mXX.sumOf { injStableHom(it, mY) }
     }
 
     /**
-     * Returns the dimension of \overline{Hom}([mXX], [mYY]),
+     * Returns the dimension of `\overline{Hom}([mXX], [mYY])`,
      * the injectively stable Hom.
      *
      * @param mXX a module as a collection of indecomposables.
      * @param mYY a module as a collection of indecomposables.
-     * @return the dimension of \overline{Hom}([mXX], [mYY]).
+     * @return the dimension of `\overline{Hom}([mXX], [mYY])`.
      */
     fun injStableHom(mXX: Collection<Indec<T>?>, mYY: Collection<Indec<T>?>): Int {
         return mXX.sumOf { mX -> injStableHom(mX, mYY) }
     }
 
     /**
-     * Returns the dimension of Ext^1([mX], [mY]).
+     * Returns the dimension of `Ext^1([mX], [mY])`.
      *
-     * @param mX an indecomposable module (`null` represents 0).
-     * @param mY an indecomposable module (`null` represents 0).
-     * @return the dimension of Ext^1([mX], [mY]).
+     * @param mX an indecomposable module (`null` represents `0`).
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @return the dimension of `Ext^1([mX], [mY])`.
      */
     fun ext1(mX: Indec<T>?, mY: Indec<T>?): Int {
         if (mX == null || mY == null) return 0
         /**
-         * By the AR duality, Ext^1(X, Y) = D stableHom(tauMinus Y, X).
+         * By the AR duality, `Ext^1(X, Y) = D stableHom(tauMinus Y, X)`.
          */
         return ext1Map.getOrPut(mX to mY) {
             stableHom(tauMinus(mY), mX)
@@ -236,17 +236,18 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the dimension of Ext^1([mX], [mYY]).
+     * Returns the dimension of `Ext^[n] ([mX], [mY])`.
      *
-     * @param mX an indecomposable module (`null` represents 0).
-     * @param mYY a module as a collection of indecomposables.
-     * @return the dimension of Ext^1([mX], [mYY]).
+     * @param mX an indecomposable module (`null` represents `0`).
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @param n the degree of `Ext`.
+     * @return the dimension of `Ext^[n] ([mX], [mY])`.
      */
     fun ext(mX: Indec<T>?, mY: Indec<T>?, n: Int = 1): Int {
         if (mX == null || mY == null) return 0
         /**
-         * By the AR duality, Ext^1(X, Y) = D stableHom(tauMinus Y, X).
-         * If n > 1, then Ext^n(X, Y) = Ext^1( \Omega^{n-1} X, Y)
+         * By the AR duality, `Ext^1(X, Y) = D stableHom(tauMinus Y, X)`.
+         * If `n > 1`, then `Ext^n(X, Y) = Ext^1( \Omega^{n-1} X, Y)`
          */
         if (n == 0) return hom(mX, mY)
         if (n == 1) return ext1(mX, mY)
@@ -256,66 +257,69 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the dimension of Ext^1([mX], [mYY]).
+     * Returns the dimension of `Ext^[n] ([mX], [mYY])`.
      *
-     * @param mX an indecomposable module (`null` represents 0).
+     * @param mX an indecomposable module (`null` represents `0`).
      * @param mYY a module as a collection of indecomposables.
-     * @return the dimension of Ext^1([mX], [mYY]).
+     * @param n the degree of `Ext`.
+     * @return the dimension of `Ext^[n] ([mX], [mYY])`.
      */
     fun ext(mX: Indec<T>?, mYY: Collection<Indec<T>?>, n: Int = 1): Int {
         return mYY.sumOf { ext(mX, it, n) }
     }
 
     /**
-     * Returns the dimension of Ext^1([mXX], [mY]).
+     * Returns the dimension of `Ext^[n] ([mXX], [mY])`.
      *
      * @param mXX a module as a collection of indecomposables.
-     * @param mY an indecomposable module (`null` represents 0).
-     * @return the dimension of Ext^1([mXX], [mY]).
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @param n the degree of `Ext`.
+     * @return the dimension of `Ext^[n] ([mXX], [mY])`.
      */
     fun ext(mXX: Collection<Indec<T>?>, mY: Indec<T>?, n: Int = 1): Int {
         return mXX.sumOf { ext(it, mY, n) }
     }
 
     /**
-     * Returns the dimension of Ext^1([mXX], [mYY]).
+     * Returns the dimension of `Ext^[n] ([mXX], [mYY])`.
      *
      * @param mXX a module as a collection of indecomposables.
      * @param mYY a module as a collection of indecomposables.
-     * @return the dimension of Ext^1([mXX], [mYY]).
+     * @param n the degree of `Ext`.
+     * @return the dimension of `Ext^[n] ([mXX], [mYY])`.
      */
     fun ext(mXX: Collection<Indec<T>?>, mYY: Collection<Indec<T>?>, n: Int = 1): Int {
         return mXX.sumOf { ext(it, mYY, n) }
     }
 
     /**
-     * Returns whether Ext^i([mX], [mY]) = 0 for all i > 0.
+     * Returns whether `Ext^i([mX], [mY]) = 0` for all `i > 0`.
      *
-     * @param mX an indecomposable module (`null` represents 0).
-     * @param mY an indecomposable module (`null` represents 0).
-     * @return whether Ext^i([mX], [mY]) = 0 for all i > 0.
+     * @param mX an indecomposable module (`null` represents `0`).
+     * @param mY an indecomposable module (`null` represents `0`).
+     * @return whether `Ext^i([mX], [mY]) = 0` for all `i > 0`.
      */
     fun higherExtZero(mX: Indec<T>?, mY: Indec<T>?): Boolean {
         if (mX == null || mY == null) return true
         val syzygies = mX.allSyzygies()
-        // The list of all modules appearing in \Omega^{>0}([mX]).
+        // The list of all modules appearing in \Omega^{>0}([mX])`.
         return ext(syzygies, mY, 1) == 0
     }
 
     /**
-     * Returns whether Ext^i([mXX], [mY]) = 0 for all i > 0.
+     * Returns whether `Ext^i([mXX], [mY]) = 0` for all `i > 0`.
      *
      * @param mXX a module as a collection of indecomposables.
-     * @param mY an indecomposable module (`null` represents 0).
+     * @param mY an indecomposable module (`null` represents `0`).
      */
     fun higherExtZero(mXX: Collection<Indec<T>?>, mY: Indec<T>?): Boolean {
         return mXX.all { higherExtZero(it, mY) }
     }
 
     /**
-     * Returns whether Ext^i([mX], [mYY]) = 0 for all i > 0.
+     * Returns whether `Ext^i([mX], [mYY]) = 0` for all `i > 0`.
      *
-     * @param mX an indecomposable module (`null` represents 0).
+     * @param mX an indecomposable module (`null` represents `0`).
      * @param mYY a module as a collection of indecomposables.
      */
     fun higherExtZero(
@@ -326,7 +330,7 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns whether Ext^i([mXX], [mYY]) = 0 for all i > 0.
+     * Returns whether `Ext^i([mXX], [mYY]) = 0` for all `i > 0`.
      *
      * @param mXX a module as a collection of indecomposables.
      * @param mYY a module as a collection of indecomposables.
@@ -340,7 +344,7 @@ abstract class Algebra<T> {
 
     /**
      * For a given collection [mCC] of modules, returns the list of modules
-     * `mX` such that Ext^1(mX, [mCC]) = 0. Note that this only considers the first ext.
+     * `mX` such that `Ext^1(mX, [mCC]) = 0`. Note that this only considers the first ext.
      *
      * @param mCC a collection of modules as a collection of indecomposables.
      */
@@ -350,7 +354,7 @@ abstract class Algebra<T> {
 
     /**
      * For a given collection [mCC] of modules, returns the list of modules
-     * `mY` such that Ext^1([mCC], `mY`) = 0. Note that this only considers the first ext.
+     * `mY` such that `Ext^1([mCC], `mY`) = 0`. Note that this only considers the first ext.
      *
      * @param mCC a collection of modules as a collection of indecomposables.
      */
@@ -359,32 +363,32 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the Auslander-Reiten translate of [mX],
-     * or null if [mX] is projective.
+     * Returns the Auslander-Reiten translationof [mX],
+     * or `null` if [mX] is projective.
      *
      * @param mX an indecomposable module.
-     * @return the Auslander-Reiten translate of [mX], or null if [mX] is projective.
+     * @return the Auslander-Reiten translationof [mX], or `null` if [mX] is projective.
      */
     fun tauPlus(mX: Indec<T>): Indec<T>? {
         return tauPlus.getOrPut(mX) { mX.tauPlus() }
     }
 
     /**
-     * Returns the inverse of the Auslander-Reiten translate of [mX],
-     * or null if [mX] is injective.
+     * Returns the inverse of the Auslander-Reiten translationof [mX],
+     * or `null` if [mX] is injective.
      *
      * @param mX an indecomposable module.
-     * @return the Auslander-Reiten translate of [mX], or null if [mX] is injective.
+     * @return the Auslander-Reiten translationof [mX], or `null` if [mX] is injective.
      */
     fun tauMinus(mX: Indec<T>): Indec<T>? {
         return tauMinus.getOrPut(mX) { mX.tauMinus() }
     }
 
     /**
-     * Returns a simple module corresponding to [vtx].
+     * Returns the simple module corresponding to [vtx].
      *
      * @param vtx a vertex of the graph.
-     * @return a simple module corresponding to [vtx].
+     * @return the simple module corresponding to [vtx].
      */
     abstract fun simpleAt(vtx: T): Indec<T>
 
@@ -396,10 +400,10 @@ abstract class Algebra<T> {
     fun simples() = vertices.map { simpleAt(it) }
 
     /**
-     * Returns an indecomposable projective module corresponding to [vtx].
+     * Returns the indecomposable projective module corresponding to [vtx].
      *
      * @param vtx a vertex of the graph.
-     * @return an indecomposable projective module corresponding to [vtx].
+     * @return the indecomposable projective module corresponding to [vtx].
      */
     abstract fun projAt(vtx: T): Indec<T>
 
@@ -412,10 +416,10 @@ abstract class Algebra<T> {
     fun projs() = vertices.map { projAt(it) }
 
     /**
-     * Returns an indecomposable injective module corresponding to [vtx].
+     * Returns the indecomposable injective module corresponding to [vtx].
      *
      * @param vtx a vertex of the graph.
-     * @return an indecomposable injective module corresponding to [vtx].
+     * @return the indecomposable injective module corresponding to [vtx].
      */
     abstract fun injAt(vtx: T): Indec<T>
 
@@ -427,10 +431,10 @@ abstract class Algebra<T> {
     fun injs() = vertices.map { injAt(it) }
 
     /**
-     * Returns whether the algebra is representation-finite:
+     * Returns whether this algebra is representation-finite:
      * there are only finitely many indecomposable modules up to isomorphisms.
      *
-     * @return whether the algebra is representation-finite.
+     * @return whether this algebra is representation-finite.
      */
     abstract fun isRepFinite(): Boolean
 
@@ -442,6 +446,9 @@ abstract class Algebra<T> {
      * and for each vertex `X`, draw an arrow from `X` to
      * indecomposable summands of the syzygy of `X`.
      * This will start drawing from modules in [mXX].
+     *
+     * Note: This function may not terminate for non-monomial algebras, as there could be infinitely many syzygies.
+     * For monomial algebras, the function will eventually stop.
      *
      * @param mXX a list of indecomposable modules.
      * @param cosyzygy whether to draw cosyzygies instead of syzygies.
@@ -469,10 +476,10 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the projective dimension of [mXX], null if infinity.
+     * Returns the projective dimension of [mXX], `null` if infinite.
      *
      * @param mXX a module as a list of indecomposables.
-     * @return the projective dimension of [mXX], null if infinity.
+     * @return the projective dimension of [mXX], `null` if infinite.
      */
     fun projDim(mXX: List<Indec<T>>): Int? {
         if (mXX.isEmpty()) return 0
@@ -480,10 +487,10 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the injective dimension of [mXX], null if infinity.
+     * Returns the injective dimension of [mXX], `null` if infinite.
      *
      * @param mXX a module as a list of indecomposables.
-     * @return the injective dimension of [mXX], null if infinity.
+     * @return the injective dimension of [mXX], `null` if infinite.
      */
     fun injDim(mXX: List<Indec<T>>): Int? {
         if (mXX.isEmpty()) return 0
@@ -491,14 +498,14 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the dominant dimension of [mXX], defined as follows.
-     * Take the minimal injective resolution of [mXX]:
-     * 0 -> [mXX] -> I^0 -> I^1 -> I^2 -> ...
-     * The dominant dimension is the least n such that I^n is not projective, or null (infinity)
-     * if all are projective (e.g. [mXX] is projective-injective module).
+     * Returns the dominant dimension of [mXX], determined using the minimal injective resolution:
+     * `0 -> [mXX] -> I^0 -> I^1 -> I^2 -> ...`
+     * The dominant dimension is the least n such that I^n is not projective.
+     * If all are projective (e.g., `this` is a proj-injective module),
+     * it returns `null` for infinity.
      *
      * @param mXX a module as a list of indecomposables.
-     * @return the dominant dimension of [mXX], or null if infinity.
+     * @return the dominant dimension of [mXX], or `null` if infinite.
      */
     fun dominantDim(mXX: List<Indec<T>>): Int? {
         val injRemoved = mXX.mapNotNull { it.dominantDim() }
@@ -507,14 +514,14 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the co-dominant dimension of [mXX], defined as follows.
-     * Take the minimal projective resolution of [mXX]:
-     *  -> P_n -> ... -> P_1 -> P_0 -> this -> 0
-     * The co-dominant dimension is the least n such that P_n is not injective, or null (infinity)
-     * if all are projective-injective (e.g. [mXX] is proj-injective module).
+     * Returns the co-dominant dimension of [mXX], determined using the minimal projective resolution:
+     * `... -> P_2 -> P_1 -> P_0 -> [mXX] -> 0`
+     * The co-dominant dimension is the least n such that P^n is not injective.
+     * If all are projective (e.g., `this` is a proj-injective module),
+     * it returns `null` for infinity.
      *
      * @param mXX a module as a list of indecomposables.
-     * @return the co-dominant dimension of [mXX], or null if infinity.
+     * @return the co-dominant dimension of [mXX], or `null` if infinite.
      */
     fun coDominantDim(mXX: List<Indec<T>>): Int? {
         val projRemoved = mXX.mapNotNull { it.coDominantDim() }
@@ -584,11 +591,11 @@ abstract class Algebra<T> {
 
     /**
      * Take the minimal projective resolution of [mXX]:
-     * 0 -> \Omega^{n+1} X -> P_n -> ... -> P_1 -> P_0 -> [mXX] -> 0.
+     * `0 -> \Omega^{n+1} X -> P_n -> ... -> P_1 -> P_0 -> [mXX] -> 0`.
      * This sequence yields:
-     * Pair(P_0, \Omega X), Pair(P_1, \Omega^2 X), ...
-     * where P_i is represented by top vertices, not modules.
-     * If the sequence stops, the last element is (P_n, emptyList).
+     * `Pair(P_0, \Omega X), Pair(P_1, \Omega^2 X), ...`
+     * where `P_i` is represented by top vertices, not modules.
+     * If the sequence stops, the last element is `(P_n, emptyList)`.
      *
      * @param mXX a module as a list of indecomposables.
      */
@@ -604,11 +611,11 @@ abstract class Algebra<T> {
 
     /**
      * Take the minimal projective resolution of [mXX]:
-     * 0 -> \Omega^{n+1} X -> P_n -> ... -> P_1 -> P_0 -> [mXX] -> 0.
-     * This sequence yields:
-     * listOf(Pair(P_0, \Omega X), Pair(P_1, \Omega^2 X), ..., Pair(P_n, \Omega^{n+1} X)),
-     * where P_i is represented by top vertices, not modules.
-     * If the sequence stops, the last element is (P_i, emptyList).
+     * `0 -> \Omega^{n+1} X -> P_n -> ... -> P_1 -> P_0 -> [mXX] -> 0`.
+     * This list returns
+     * `[Pair(P_0, \Omega X), Pair(P_1, \Omega^2 X), ..., Pair(P_n, \Omega^{n+1} X)]`,
+     * where `P_i` is represented by top vertices, not modules.
+     * If the sequence stops, the last element is `(P_i, emptyList)`.
      *
      * @param mXX a module as a list of indecomposables.
      */
@@ -618,12 +625,12 @@ abstract class Algebra<T> {
 
     /**
      * Take the minimal projective resolution of [mXX]:
-     * 0 -> \Omega^{n+1} X -> P_n -> ... -> P_1 -> P_0 -> [mXX] -> 0.
+     * `0 -> \Omega^{n+1} X -> P_n -> ... -> P_1 -> P_0 -> [mXX] -> 0`.
      * This sequence yields:
-     * P_0, P_1, P_2, ...
-     * where P_i is represented by **top vertices, not modules**.
-     * If [mXX] has finite projective dimension with last part 0 -> P_n, then
-     * the last element is P_n.
+     * `P_0, P_1, P_2, ...`
+     * where `P_i` is represented by **top vertices, not modules**.
+     * If [mXX] has finite projective dimension with last part `0 -> P_n`, then
+     * the last element is `P_n`.
      *
      * @param mXX a module as a list of indecomposables.
      */
@@ -632,13 +639,12 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Suppose [mXX] has a projective resolution
-     * 0 -> \Omega^{n+1} X -> P_n -> ... -> P_1 -> P_0 -> [mXX] -> 0
-     * Then this returns
-     * `listOf(P_0, P_1, ..., P_n)`
-     * where P_i is represented by list of **top vertices, not modules**.
-     * Even if computation stops, this always returns list with n + 1 elements,
-     * with last part filled with empty list (= zero module)
+     * Computes the minimal projective resolution of [mXX] up to [n]-th term:
+     * `P_n -> ... -> P_1 -> P_0 -> [mXX] -> 0`
+     * Then this returns the list `[P_0, P_1, ..., P_n]`,
+     * where `P_i` is represented by list of **top vertices, not modules**.
+     * Even if computation stops, this always returns list with `n + 1` elements,
+     * with the last part filled with empty list (= `0`)
      *
      * @param mXX a module as a list of indecomposables.
      */
@@ -649,11 +655,11 @@ abstract class Algebra<T> {
 
     /**
      * Take the minimal projective resolution of [mXX]:
-     * 0 -> [mXX] -> I^0 -> I^1 -> ...
+     * `0 -> [mXX] -> I^0 -> I^1 -> ...`.
      * This sequence yields:
-     * Pair(I^0, \Sigma X), Pair(I^1, \Sigma^2 X), ...
-     * where I^i is represented by **socle vertices, not modules**.
-     * If the sequence stops, the last element is (I^n, emptyList).
+     * `Pair(I^0, \Sigma X), Pair(I^1, \Sigma^2 X), ...`
+     * where `I^i` is represented by **socle vertices, not modules**.
+     * If the sequence stops, the last element is `(I^n, emptyList)`.
      *
      * @param mXX a module as a list of indecomposables.
      */
@@ -669,10 +675,10 @@ abstract class Algebra<T> {
 
     /**
      * Take the minimal injective resolution of [mXX]:
-     * 0 -> [mXX] -> I^0 -> I^1 -> ...
+     * `0 -> [mXX] -> I^0 -> I^1 -> ...`
      * This sequence yields:
-     * I^0, I^1, I^2, ...
-     * where I^i is represented by **socle vertices, not modules**.
+     * `I^0, I^1, I^2, ...`
+     * where `I^i` is represented by **socle vertices, not modules**.
      *
      * @param mXX a module as a list of indecomposables.
      */
@@ -681,12 +687,12 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Take the minimal injective resolution of [mXX]:
-     * 0 -> [mXX] -> I^0 -> I^1 -> ...
-     * This sequence yields:
-     * I^0, I^1, I^2, ..., I^n
-     * where I^i is represented by **socle vertices, not modules**.
-     * Even if this stops, this returns with last filled with listOf() = zero.
+     * Computes the minimal injective resolution of [mXX] up to the [n]-th term:
+     * `0 -> [mXX] -> I^0 -> I^1 -> .. -> I^n`
+     * This returns the list `[I^0, I^1, I^2, ..., I^n]`,
+     * where `I^i` is represented by **socle vertices, not modules**.
+     * Even if this stops, this returns with the list of `n + 1` elements,
+     * with the last part filled with empty list (= `0`).
      *
      * @param mXX a module as a list of indecomposables.
      */
@@ -697,7 +703,7 @@ abstract class Algebra<T> {
 
     /**
      * Suppose [mXX] has an injective resolution
-     * 0 -> [mXX] -> I^0 -> I^1 -> ... -> I^n -> \Sigma^{n+1} X -> 0
+     * `0 -> [mXX] -> I^0 -> I^1 -> ... -> I^n -> \Sigma^{n+1} X -> 0`
      * Then this returns
      * `listOf(Pair(I^0, \Sigma X), Pair(I^1, \Sigma^2 X), ..., Pair(I^n, \Sigma^{n+1} X))`
      * where I^i is represented by list of **socle vertices, not modules**.
@@ -710,9 +716,9 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the global dimension of the algebra, or null if it is infinite.
+     * Returns the global dimension of this algebra, or `null` if infinite.
      *
-     * @return the global dimension of the algebra, or null if it is infinite.
+     * @return the global dimension of this algebra, or `null` if infinite.
      */
     fun globalDim(): Int? {
         val val1 = projDim(simples())
@@ -724,42 +730,42 @@ abstract class Algebra<T> {
     }
 
     /**
-     * Returns the right self-injective dimension of the algebra, that is,
+     * Returns the right self-injective dimension of this algebra, that is,
      * the injective dimension of the regular module as a right module.
      *
-     * @return the right self-injective dimension of the algebra, or null if it is infinite.
+     * @return the right self-injective dimension of this algebra, or `null` if infinite.
      */
     fun rightSelfInjDim(): Int? = injDim(projs())
 
     /**
-     * Returns the left self-injective dimension of the algebra, that is,
+     * Returns the left self-injective dimension of this algebra, that is,
      * the injective dimension of the regular module as a left module.
      *
-     * @return the left self-injective dimension of the algebra, or null if it is infinite.
+     * @return the left self-injective dimension of this algebra, or `null` if infinite.
      */
     fun leftSelfInjDim(): Int? = projDim(injs())
 
 
     /**
-     * Returns the dominant dimension of the algebra,
+     * Returns the dominant dimension of this algebra,
      * which is the dominant dimension of the regular module as a right module.
      *
-     * @return the dominant dimension of the algebra, or null if it is infinite.
+     * @return the dominant dimension of this algebra, or `null` if infinite.
      */
     fun dominantDim(): Int? = dominantDim(projs())
 
     /**
-     * Returns whether the algebra is Iwanaga-Gorenstein, that is,
-     * whether the right and left self-injective dimensions are finite.
+     * Returns whether this algebra is Iwanaga-Gorenstein, that is,
+     * whether the right and left self-injective dimensions are both finite.
      *
-     * @return whether the algebra is Iwanaga-Gorenstein.
+     * @return whether this algebra is Iwanaga-Gorenstein.
      */
     fun isIG(): Boolean = (rightSelfInjDim() != null && leftSelfInjDim() != null)
 
     /**
-     * Returns whether the algebra is self-injective.
+     * Returns whether this algebra is self-injective.
      *
-     * @return whether the algebra is self-injective.
+     * @return whether this algebra is self-injective.
      */
     fun isSelfInjective(): Boolean = projs().all { it.isInjective() }
 

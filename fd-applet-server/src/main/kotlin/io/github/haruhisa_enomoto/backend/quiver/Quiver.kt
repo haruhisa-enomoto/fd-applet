@@ -16,6 +16,7 @@ import kotlinx.serialization.Serializable
  * @param U the type of arrow labels.
  * @property vertices the list of vertices of the quiver.
  * @property arrows the list of arrows of the quiver.
+ * @constructor Creates a quiver with the given vertices and arrows.
  * @throws IllegalArgumentException if some vertices in [arrows] are not in [vertices],
  * or if some letters in [arrows] are inverses.
  */
@@ -110,7 +111,7 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
      * Returns all simple cycles in the quiver.
      * A cycle is considered "simple" if no vertex is visited more than once, except for the first and last vertices.
      * This method returns only one representative for each cycle:
-     * For example, if [a, b, c] is a cycle, this method will not report [b, c, a] and [c, a, b].
+     * For example, if `[a, b, c]` is a cycle, this method will not report `[b, c, a]` and `[c, a, b]`.
      *
      * @return a sequence of simple cycles in the quiver.
      */

@@ -4,12 +4,23 @@ import io.github.haruhisa_enomoto.backend.quiver.Quiver
 import io.github.haruhisa_enomoto.backend.quiver.Word
 import io.github.haruhisa_enomoto.backend.stringalg.StringIndec
 
+/**
+ * An abstract class for algebras with the quiver [quiver].
+ * This is a subclass of [Algebra] containing quiver-specific methods.
+ *
+ * @param T the type of vertices.
+ * @param U the type of arrows.
+ * @property quiver the quiver of the algebra.
+ */
 abstract class QuiverAlgebra<T, U>(
     val quiver: Quiver<T, U>
 ): Algebra<T>() {
     final override val vertices = quiver.vertices.toList()
     val arrows = quiver.arrows
 
+    /**
+     * Prints the information of this algebra.
+     */
     abstract fun printInfo()
 
     abstract val isWordFinite: Boolean

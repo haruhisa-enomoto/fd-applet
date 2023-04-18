@@ -16,6 +16,7 @@ import kotlinx.serialization.Serializable
  * @property label the label of the letter. This is the same as [arrow]'s label.
  * @property from the source vertex of the letter (this is [arrow]'s target if [isArrow] is false).
  * @property to the target vertex of the letter (this is [arrow]'s source if [isArrow] is false).
+ * @constructor Creates a letter with the given arrow with [isArrow].
  * @throws IllegalArgumentException if [arrow]'s label is `null`.
  */
 @Serializable

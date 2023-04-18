@@ -28,6 +28,7 @@ class Word<T, U> private constructor(
          * @param to the target vertex of the word
          * @param check if true, validates the word before creating the instance
          * @return a new instance of the [Word] class
+         * @throws IllegalArgumentException if [check] is true and the word is invalid
          */
         fun <T, U> from(
             letters: List<Letter<T, U>>, from: T, to: T, check: Boolean = true

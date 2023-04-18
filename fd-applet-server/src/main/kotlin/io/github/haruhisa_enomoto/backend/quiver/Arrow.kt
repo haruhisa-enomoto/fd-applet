@@ -12,6 +12,8 @@ import kotlinx.serialization.Serializable
  * @property label the label of an arrow. If `null`, the arrow is considered anonymous,
  * which is especially useful for translation quivers.
  * @property isTau if true, this arrow represents a translation arrow in the translation quiver.
+ *
+ * @constructor Creates an arrow with the given source, target, and label.
  */
 @Serializable
 data class Arrow<T, U>(

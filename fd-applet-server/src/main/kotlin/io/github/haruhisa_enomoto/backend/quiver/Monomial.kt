@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
  * @property from the source vertex of the first arrow in the monomial.
  * @property to the target vertex of the last arrow in the monomial.
  * @property arrows the list of arrows forming the monomial.
+ * @constructor Creates a monomial with the given list of arrows.
  */
 @Serializable
 data class Monomial<T, U>(val arrows: List<Arrow<T, U>>) {

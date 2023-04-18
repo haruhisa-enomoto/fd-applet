@@ -50,43 +50,56 @@ abstract class Indec<T> {
 
     /**
      * Returns the dimension of `Hom(this, [other])`.
+     * It is recommended to use [Algebra.hom] instead because [Algebra.hom] caches the result.
      *
      * @param other the other module.
      * @return the dimension of `Hom(this, [other])`.
+     * @see Algebra.hom
      */
     abstract fun hom(other: Indec<T>): Int
 
     /**
      * Returns the dimension of projectively stable Hom space
      * `\overline{Hom}(this, [other])`.
+     * It is recommended to use [Algebra.stableHom] instead
+     * because [Algebra.stableHom] caches the result.
      *
      * @param other the other module.
      * @return the dimension of `\overline{Hom}(this, [other])`.
+     * @see Algebra.stableHom
      */
     abstract fun stableHom(other: Indec<T>): Int
 
     /**
      * Returns the dimension of injectively stable Hom space
      * `\overline{Hom}(this, [other])`.
+     * It is recommended to use [Algebra.injStableHom] instead
+     * because [Algebra.injStableHom] caches the result.
      *
      * @param other the other module.
      * @return the dimension of `\overline{Hom}(this, [other])`.
+     * @see Algebra.injStableHom
      */
     abstract fun injStableHom(other: Indec<T>): Int
 
     /**
      * Returns the dimension of `Ext^1(this, [other])`.
+     * It is recommended to use [Algebra.ext1] instead because [Algebra.ext1] caches the result.
      *
      * @param other the other module.
      * @return the dimension of `Ext^1(this, [other])`.
+     * @see Algebra.ext1
      */
     abstract fun ext1(other: Indec<T>): Int
 
     /**
      * Returns the dimension of `Ext^[n] (this, [other])`.
+     * It is recommended to use [Algebra.ext] instead because [Algebra.ext] caches the result.
      *
      * @param other the other module.
      * @param n the degree of `Ext` (default: `1`).
+     * @return the dimension of `Ext^[n] (this, [other])`.
+     * @see Algebra.ext
      */
     fun ext(other: Indec<T>, n: Int = 1) = algebra.ext(this, other, n)
 
@@ -167,7 +180,7 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns the [n]-th syzygy of this module (n should be non-negative).
+     * Returns the [n]-th syzygy of this module ([n] should be non-negative).
      *
      * @param n the degree of syzygy.
      * @return the [n]-th syzygy of this module.
@@ -188,9 +201,8 @@ abstract class Indec<T> {
      */
     abstract fun cosyzygy(): List<Indec<T>>
 
-
     /**
-     * Returns the [n]-th cosyzygy of this module (n should be non-negative).
+     * Returns the [n]-th cosyzygy of this module ([n] should be non-negative).
      *
      * @param n the degree of cosyzygy.
      * @return the [n]-th cosyzygy of this module.

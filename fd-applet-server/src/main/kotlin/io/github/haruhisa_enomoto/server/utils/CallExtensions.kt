@@ -1,7 +1,7 @@
 package io.github.haruhisa_enomoto.server.utils
 
 import io.github.haruhisa_enomoto.backend.algebra.QuiverAlgebra
-import io.github.haruhisa_enomoto.backend.algebra.RFAlgebra
+import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.types.Subcat
 import io.github.haruhisa_enomoto.server.storage.SessionStorage
 import io.ktor.server.application.*
@@ -15,9 +15,9 @@ fun ApplicationCall.getAlgebra(): QuiverAlgebra<String, String> {
     return SessionStorage.getAlgebra(clientId) ?: throw IllegalArgumentException("Please click Update button.")
 }
 
-fun ApplicationCall.getRFAlgebra(): RFAlgebra<String> {
+fun ApplicationCall.getRfAlgebra(): RfAlgebra<String> {
     val clientId = attributes[clientIdKey]
-    return SessionStorage.getRFAlgebra(clientId) ?: throw IllegalArgumentException("Please click Update button.")
+    return SessionStorage.getRfAlgebra(clientId) ?: throw IllegalArgumentException("Please click Update button.")
 }
 
 fun ApplicationCall.setSubcatList(subcatList: List<Subcat<String>>) {

@@ -1,7 +1,7 @@
 package io.github.haruhisa_enomoto.server.storage
 
 import io.github.haruhisa_enomoto.backend.algebra.QuiverAlgebra
-import io.github.haruhisa_enomoto.backend.algebra.RFAlgebra
+import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.types.Subcat
 import java.util.concurrent.ConcurrentHashMap
 
@@ -18,22 +18,22 @@ object SessionStorage {
         storage.remove(id)
     }
 
-    fun createRFAlgebra(id: String) {
+    fun createRfAlgebra(id: String) {
         val sessionState = storage[id]
         require(sessionState != null) {
             "Please click Update button."
         }
         if (sessionState.rfAlgebra == null) {
-            sessionState.rfAlgebra = sessionState.algebra.toRFAlgebra()
+            sessionState.rfAlgebra = sessionState.algebra.toRfAlgebra()
         }
     }
 
-    fun getRFAlgebra(id: String): RFAlgebra<String>? {
+    fun getRfAlgebra(id: String): RfAlgebra<String>? {
         val sessionState = storage[id] ?: return null
         return if (sessionState.rfAlgebra != null) {
             sessionState.rfAlgebra
         } else {
-            sessionState.rfAlgebra = sessionState.algebra.toRFAlgebra()
+            sessionState.rfAlgebra = sessionState.algebra.toRfAlgebra()
             sessionState.rfAlgebra
         }
     }

@@ -18,6 +18,11 @@ abstract class Algebra<T> {
     private val ext1Map = mutableMapOf<Pair<Indec<T>, Indec<T>>, Int>()
     private val tauPlus = mutableMapOf<Indec<T>, Indec<T>?>()
     private val tauMinus = mutableMapOf<Indec<T>, Indec<T>?>()
+
+    /**
+     * A map to cache the result of syzygy calculations in [Indec.syzygy].
+     * Not intended to be used directly.
+     */
     val syzygyMap = mutableMapOf<Indec<T>, List<Indec<T>>>()
 
     /**
@@ -770,9 +775,9 @@ abstract class Algebra<T> {
     fun isSelfInjective(): Boolean = projs().all { it.isInjective() }
 
     /**
-     * Creates an instance of [RFAlgebra] (the class of representation-finite algebras) from this algebra.
+     * Creates an instance of [RfAlgebra] (the class of representation-finite algebras) from this algebra.
      *
      * @throws IllegalArgumentException if this algebra is not representation-finite.
      */
-    abstract fun toRFAlgebra(): RFAlgebra<T>
+    abstract fun toRfAlgebra(): RfAlgebra<T>
 }

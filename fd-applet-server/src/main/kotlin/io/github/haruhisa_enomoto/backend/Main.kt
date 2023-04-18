@@ -1,9 +1,6 @@
 package io.github.haruhisa_enomoto.backend
 
-import io.github.haruhisa_enomoto.backend.algebra.RFAlgebra
-import io.github.haruhisa_enomoto.backend.quiver.Arrow
-import io.github.haruhisa_enomoto.backend.quiver.Quiver
-import io.github.haruhisa_enomoto.backend.stringalg.MonomialAlgebra
+import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.stringalg.StringAlgebra
 import io.github.haruhisa_enomoto.backend.utils.toListWithLeq
 import io.github.haruhisa_enomoto.server.utils.*
@@ -43,9 +40,9 @@ fun main() {
     println("Left self-inj dim: ${myAlg.leftSelfInjDim()}")
 
 
-    val myRFAlg: RFAlgebra<String>
+    val myRFAlg: RfAlgebra<String>
     if (myAlg.isRepFinite()) {
-        myRFAlg = myAlg.toRFAlgebra()!!
+        myRFAlg = myAlg.toRfAlgebra()!!
         println("This is representation-finite with ${myRFAlg.indecs.size} indecomposables.")
         println("The number of brick is ${myRFAlg.bricks().size}.")
     } else {

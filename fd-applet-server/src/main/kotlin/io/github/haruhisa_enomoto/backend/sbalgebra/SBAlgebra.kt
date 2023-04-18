@@ -1,7 +1,7 @@
 package io.github.haruhisa_enomoto.backend.sbalgebra
 
 import io.github.haruhisa_enomoto.backend.algebra.Indec
-import io.github.haruhisa_enomoto.backend.algebra.RFAlgebra
+import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.quiver.Monomial
 import io.github.haruhisa_enomoto.backend.quiver.Word
 import io.github.haruhisa_enomoto.backend.quiver.toTrivialWord
@@ -94,7 +94,7 @@ class SBAlgebra<T, U>(
         return biRelations.map { com -> BiserialIndec(this, com) }
     }
 
-    override fun toRFAlgebra(): RFAlgebra<T> {
+    override fun toRfAlgebra(): RfAlgebra<T> {
         require(isRepFinite()) {
             "Not representation-finite."
         }
@@ -108,6 +108,6 @@ class SBAlgebra<T, U>(
             mX as BiserialIndec<T, *>
             return if (mX in allModules) mX else mX.flip()
         }
-        return RFAlgebra(this, allModules) { normalize(it) }
+        return RfAlgebra(this, allModules) { normalize(it) }
     }
 }

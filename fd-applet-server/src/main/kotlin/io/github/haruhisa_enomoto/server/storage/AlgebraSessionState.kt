@@ -1,12 +1,12 @@
 package io.github.haruhisa_enomoto.server.storage
 
 import io.github.haruhisa_enomoto.backend.algebra.QuiverAlgebra
-import io.github.haruhisa_enomoto.backend.algebra.RFAlgebra
+import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.types.Subcat
 
 data class AlgebraSessionState(
     var algebra: QuiverAlgebra<String, String>,
-    var rfAlgebra: RFAlgebra<String>? = null,
+    var rfAlgebra: RfAlgebra<String>? = null,
     var subcatList: List<Subcat<String>> = listOf()) {
 
     fun clear(newAlgebra: QuiverAlgebra<String, String>) {

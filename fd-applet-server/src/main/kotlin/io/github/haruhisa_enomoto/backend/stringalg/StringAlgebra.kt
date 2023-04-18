@@ -1,7 +1,7 @@
 package io.github.haruhisa_enomoto.backend.stringalg
 
 import io.github.haruhisa_enomoto.backend.algebra.Indec
-import io.github.haruhisa_enomoto.backend.algebra.RFAlgebra
+import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.quiver.Monomial
 import io.github.haruhisa_enomoto.backend.quiver.Quiver
 import io.github.haruhisa_enomoto.backend.sbalgebra.SBAlgebra
@@ -62,7 +62,7 @@ open class StringAlgebra<T, U>(
         } else null
     }
 
-    override fun toRFAlgebra(): RFAlgebra<T> {
+    override fun toRfAlgebra(): RfAlgebra<T> {
         require(isRepFinite()) {
             "Not representation-finite."
         }
@@ -74,7 +74,7 @@ open class StringAlgebra<T, U>(
             mX as StringIndec<T, *>
             return if (mX in allModules) mX else !mX
         }
-        return RFAlgebra(this, allModules) { normalize(it) }
+        return RfAlgebra(this, allModules) { normalize(it) }
     }
 
     fun toSBAlgebra(): SBAlgebra<T, U> {

@@ -3,7 +3,7 @@ package io.github.haruhisa_enomoto.backend.stringalg
 
 import io.github.haruhisa_enomoto.backend.algebra.Indec
 import io.github.haruhisa_enomoto.backend.algebra.QuiverAlgebra
-import io.github.haruhisa_enomoto.backend.algebra.RFAlgebra
+import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.quiver.Monomial
 import io.github.haruhisa_enomoto.backend.quiver.Word
 import io.github.haruhisa_enomoto.backend.sbalgebra.SBAlgebra
@@ -77,7 +77,7 @@ open class BinomialAlgebra<T, U>(
         TODO("Not yet implemented")
     }
 
-    override fun toRFAlgebra(): RFAlgebra<T> {
+    override fun toRfAlgebra(): RfAlgebra<T> {
         TODO("Not yet implemented")
     }
 

@@ -25,7 +25,7 @@ fun Route.algebraPostRoutes() {
 
     get("/rf-algebra") {
         val clientId = call.attributes[clientIdKey]
-        SessionStorage.createRFAlgebra(clientId)
+        SessionStorage.createRfAlgebra(clientId)
         call.respond(HttpStatusCode.Created)
     }
 }

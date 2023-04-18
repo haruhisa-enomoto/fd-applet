@@ -54,7 +54,7 @@ fun test() {
     for (series in kupischGenerator(rank, bound)) {
         val algebra = kupischToNakayama(series)
 //        println(algebra.relations)
-        val rfAlgebra = algebra.toRFAlgebra()!!
+        val rfAlgebra = algebra.toRfAlgebra()!!
         if (rfAlgebra.isIG()) continue
 //        val wak = rfAlgebra.wakamatsuTiltingProset()
 //        val pureWak = wak.elements.filter {

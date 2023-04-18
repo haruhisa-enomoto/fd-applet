@@ -15,12 +15,20 @@ import io.github.haruhisa_enomoto.backend.types.TauTiltingData
 import io.github.haruhisa_enomoto.backend.types.toTauTiltingPair
 
 /**
- * This class represents a representation-finite algebra.
- * @param algebra The algebra.
- * @param indecs The indecomposable modules.
- * @param normalize A function that normalizes an indecomposable module.
+ * A class for representation-finite algebras [algebra],
+ * together with a list [indecs] of the complete set of indecomposable modules.
+ * Throughout this class, all "modules" are finitely generated **basic** modules,
+ * and all "subcategories" are assumed to be subcategories
+ * of the category of finitely generated modules.
+ *
+ * @param T the type of vertex labels.
+ * @property algebra the algebra.
+ * @property indecs the list of all indecomposable modules.
+ * @property normalize a function that normalizes a given indecomposable module to the one in [indecs].
+ * @constructor Creates a representation-finite algebra.
+ * @throws IllegalArgumentException if [algebra] is not representation-finite.
  */
-class RFAlgebra<T>(
+class RfAlgebra<T>(
     private val algebra: Algebra<T>, val indecs: List<Indec<T>>, private val normalize: (Indec<T>) -> Indec<T>,
 ) : Algebra<T>() {
     init {
@@ -31,7 +39,7 @@ class RFAlgebra<T>(
 
     override val vertices = algebra.vertices
 
-    // The following properties are lazy.
+    // The following properties are for caching.
 
     private val _arQuiver by lazy { makeARQuiver() }
     private val tau by lazy { _arQuiver.tau }
@@ -61,14 +69,31 @@ class RFAlgebra<T>(
 
     override fun isRepFinite() = true
 
-    override fun toRFAlgebra() = this
+    override fun toRfAlgebra() = this
 
+    /**
+     * Returns the finitistic dimension of [algebra], that is,
+     * the maximum of the projective dimensions of indecomposable modules
+     * with finite projective dimension.
+     *
+     * @return the finitistic dimension of [algebra].
+     */
     fun finitisticDim(): Int = indecs.mapNotNull { it.projDim() }.max()
 
+    /**
+     * Returns the list of bricks.
+     *
+     * @return the list of bricks.
+     */
     fun bricks(): List<Indec<T>> {
-        return indecs.filter { hom(it, it) == 1 }
+        return indecs.filter { it.isBrick() }
     }
 
+    /**
+     * Returns the Auslander-Reiten quiver of [algebra].
+     *
+     * @return the Auslander-Reiten quiver of [algebra].
+     */
     fun arQuiver(): TranslationQuiver<Indec<T>> {
         return _arQuiver
     }
@@ -84,10 +109,14 @@ class RFAlgebra<T>(
             val mTauX = mX.tauPlus()
             if (mTauX != null) {
                 tau[mX] = normalize(mTauX)
-                if (tau[mX] !in indecs) throw IllegalStateException("")
+                if (tau[mX] !in indecs) throw IllegalStateException(
+                    "The normalization of $mTauX does not belong to $indecs"
+                )
             }
             for (mM in middles) {
-                if (normalize(mM) !in indecs) throw IllegalStateException("")
+                if (normalize(mM) !in indecs) throw IllegalStateException(
+                    "The normalization of $mM does not belong to $indecs"
+                )
                 irreducibles.add(Arrow(null, normalize(mM), mX))
             }
         }
@@ -98,7 +127,9 @@ class RFAlgebra<T>(
             }
         }
         if (irreducibles.toSet() != irreducibles2.toSet()) {
-            throw IllegalStateException("Something is wrong")
+            throw IllegalStateException(
+                "The two ways of constructing the AR quiver are different."
+            )
         }
         return TranslationQuiver(Quiver(indecs, irreducibles), tau)
     }
@@ -112,38 +143,99 @@ class RFAlgebra<T>(
         return cliques(neighbor)
     }
 
+    /**
+     * Returns the list of semibricks, pair-wise Hom-orthogonal bricks.
+     *
+     * @return the list of semibricks.
+     */
     fun semibricks(): List<List<Indec<T>>> {
         return _semibricks
     }
 
+    /**
+     * Returns the right hom-perpendicular category of [cC],
+     * the subcategory consisting of `X` such that `Hom([cC], X) = 0`.
+     *
+     * @param cC a subcategory.
+     * @return the right hom-perpendicular category of [cC].
+     */
     fun homRightPerp(cC: Subcat<T>): Subcat<T> {
         return indecs.filter { hom(cC, it) == 0 }
     }
 
+    /**
+     * Returns the left hom-perpendicular category of [cC],
+     * the subcategory consisting of `X` such that `Hom(X, [cC]) = 0`.
+     *
+     * @param cC a subcategory.
+     * @return the left hom-perpendicular category of [cC].
+     */
     fun homLeftPerp(cC: Subcat<T>): Subcat<T> {
         return indecs.filter { hom(it, cC) == 0 }
     }
 
-    fun homRightPerpBricks(cC: Subcat<T>): Subcat<T> {
+    /**
+     * Returns the list of bricks `X` such that `Hom([cC], X) = 0`.
+     *
+     * @param cC a subcategory.
+     * @return the list of bricks `X` such that `Hom([cC], X) = 0`.
+     */
+    fun homRightPerpBricks(cC: Subcat<T>): List<Indec<T>> {
         return _bricks.filter { hom(cC, it) == 0 }
     }
 
-    fun homLeftPerpBricks(cC: Subcat<T>): Subcat<T> {
+    /**
+     * Returns the list of bricks `X` such that `Hom(X, [cC]) = 0`.
+     *
+     * @param cC a subcategory.
+     * @return the list of bricks `X` such that `Hom(X, [cC]) = 0`.
+     */
+    fun homLeftPerpBricks(cC: Subcat<T>): List<Indec<T>> {
         return _bricks.filter { hom(it, cC) == 0 }
     }
 
+    /**
+     * Generates the sequence of torsion classes of [algebra].
+     *
+     * @return the sequence of torsion classes of [algebra].
+     */
     fun torsionClassSequence(): Sequence<Subcat<T>> {
         return _semibricks.asSequence().map { homLeftPerp(it) }
     }
 
-    fun torsionFreeClassSequence(): Sequence<Subcat<T>> {
-        return _semibricks.asSequence().map { homRightPerp(it) }
-    }
-
+    /**
+     * Returns the list of torsion classes of [algebra].
+     *
+     * @return the list of torsion classes of [algebra].
+     */
     fun torsionClasses(): List<Subcat<T>> {
         return torsionClassSequence().toList()
     }
 
+    /**
+     * Generates the sequence of torsion-free classes of [algebra].
+     *
+     * @return the sequence of torsion-free classes of [algebra].
+     */
+    fun torsionFreeClassSequence(): Sequence<Subcat<T>> {
+        return _semibricks.asSequence().map { homRightPerp(it) }
+    }
+
+    /**
+     * Returns the list of torsion-free classes of [algebra].
+     *
+     * @return the list of torsion-free classes of [algebra].
+     */
+    fun torsionFreeClasses(): List<Subcat<T>> {
+        return torsionFreeClassSequence().toList()
+    }
+
+    /**
+     * Generates the sequence of IE-closed subcategories of [algebra].
+     * Here a subcategory is IE-closed if it is closed under taking images and extensions.
+     *
+     * @return the sequence of IE-closed subcategories of [algebra].
+     */
     fun ieClosedSubcatsSequence(): Sequence<Subcat<T>> = sequence {
         val tors = _semibricks.map { homLeftPerp(it) }
         val torf = _semibricks.map { homRightPerp(it) }
@@ -157,46 +249,102 @@ class RFAlgebra<T>(
         }
     }
 
+    /**
+     * Returns the list of IE-closed subcategories of [algebra].
+     * Here a subcategory is IE-closed if it is closed under taking images and extensions.
+     *
+     * @return the list of IE-closed subcategories of [algebra].
+     */
     fun ieClosedSubcats(): List<Subcat<T>> {
         return ieClosedSubcatsSequence().toList()
     }
 
+    /**
+     * Returns the IE-closure of [cC], that is, the smallest IE-closed subcategory containing [cC].
+     * Here a subcategory is IE-closed if it is closed under taking images and extensions.
+     *
+     * @param cC a subcategory.
+     * @return the IE-closure of [cC].
+     */
     fun ieClosure(cC: Subcat<T>): Subcat<T> {
         return torsionClosure(cC) intersect torsionFreeClosure(cC)
     }
 
+    /**
+     * Generates the sequence of wide subcategories of [algebra].
+     *
+     * @return the sequence of wide subcategories of [algebra].
+     */
     fun wideSubcatSequence(): Sequence<Subcat<T>> {
         return _semibricks.asSequence().map { ieClosure(it) }
     }
 
+    /**
+     * Returns the list of wide subcategories of [algebra].
+     *
+     * @return the list of wide subcategories of [algebra].
+     */
     fun wideSubcats(): List<Subcat<T>> {
         return wideSubcatSequence().toList()
     }
 
-    fun torsionFreeClasses(): List<Subcat<T>> {
-        return torsionFreeClassSequence().toList()
-    }
-
+    /**
+     * Returns the torsion closure of [cC], that is, the smallest torsion class containing [cC].
+     *
+     * @param cC a subcategory.
+     * @return the torsion closure of [cC].
+     */
     fun torsionClosure(cC: Subcat<T>): Subcat<T> {
         return homLeftPerp(homRightPerp(cC))
     }
 
+    /**
+     * Returns the torsion-free closure of [cC], that is, the smallest torsion-free class containing [cC].
+     *
+     * @param cC a subcategory.
+     * @return the torsion-free closure of [cC].
+     */
     fun torsionFreeClosure(cC: Subcat<T>): Subcat<T> {
         return homRightPerp(homLeftPerp(cC))
     }
 
-    fun torsionClosureBricks(cC: Subcat<T>): Subcat<T> {
+    /**
+     * Returns the list of bricks contained in the torsion closure of [cC].
+     *
+     * @param cC a subcategory.
+     * @return the list of bricks contained in the torsion closure of [cC].
+     */
+    fun torsionClosureBricks(cC: Subcat<T>): List<Indec<T>> {
         return homLeftPerpBricks(homRightPerpBricks(cC))
     }
 
+    /**
+     * Returns the list of bricks contained in the torsion-free closure of [cC].
+     *
+     * @param cC a subcategory.
+     * @return the list of bricks contained in the torsion-free closure of [cC].
+     */
     fun torsionFreeClosureBricks(cC: Subcat<T>): Subcat<T> {
         return homRightPerpBricks(homLeftPerpBricks(cC))
     }
 
+    /**
+     * Returns the set of supports of [cC], the union of supports of modules in [cC].
+     *
+     * @param cC a subcategory.
+     * @return the set of supports of [cC].
+     */
     fun support(cC: Subcat<T>): Set<T> {
         return cC.flatMap { it.support() }.toSet()
     }
 
+    /**
+     * Returns the list of ICE-closed subcategories of [algebra].
+     * Here a subcategory is ICE-closed if it is closed
+     * under taking images, cokernels, and extensions.
+     *
+     * @return the list of ICE-closed subcategories of [algebra].
+     */
     fun iceClosedSubcats(): List<Subcat<T>> {
         val allSemibricks = _semibricks
         val result = mutableSetOf<Subcat<T>>()
@@ -212,6 +360,13 @@ class RFAlgebra<T>(
         return result.toList()
     }
 
+    /**
+     * Returns the list of IKE-closed subcategories of [algebra].
+     * Here a subcategory is IKE-closed if it is closed
+     * under taking images, kernels, and extensions.
+     *
+     * @return the list of IKE-closed subcategories of [algebra].
+     */
     fun ikeClosedSubcats(): List<Subcat<T>> {
         val allSemibricks = _semibricks
         val result = mutableSetOf<Subcat<T>>()
@@ -227,22 +382,50 @@ class RFAlgebra<T>(
         return result.toList()
     }
 
+    /**
+     * Returns the subcategory consisting of modules with finite projective dimension.
+     *
+     * @return the subcategory consisting of modules with finite projective dimension.
+     */
     fun indecsWithFiniteProjDim(): Subcat<T> {
         return indecs.filter { it.projDim() != null }
     }
 
+    /**
+     * Returns the subcategory consisting of modules with finite injective dimension.
+     *
+     * @return the subcategory consisting of modules with finite injective dimension.
+     */
     fun indecsWithFiniteInjDim(): Subcat<T> {
         return indecs.filter { it.injDim() != null }
     }
 
+    /**
+     * Returns the syzygy quiver of [algebra].
+     *
+     * @return the syzygy quiver of [algebra].
+     * @see Algebra.syzygyQuiverFrom
+     */
     fun syzygyQuiver(): Quiver<Indec<T>, Nothing> {
         return syzygyQuiverFrom(indecs)
     }
 
+    /**
+     * Returns the cosyzygy quiver of [algebra].
+     *
+     * @return the cosyzygy quiver of [algebra].
+     * @see Algebra.syzygyQuiverFrom
+     */
     fun cosyzygyQuiver(): Quiver<Indec<T>, Nothing> {
         return syzygyQuiverFrom(indecs, cosyzygy = true)
     }
 
+    /**
+     * Returns the list of tau-rigid modules, that is,
+     * modules `mX` such that `Hom(mX, \tau mX) = 0`.
+     *
+     * @return the list of tau-rigid modules.
+     */
     fun tauRigids(): List<List<Indec<T>>> {
         val neighbor = _indecTauRigids.associateWith { mX ->
             _indecTauRigids.filter {
@@ -513,7 +696,7 @@ class RFAlgebra<T>(
         return maximalCliques(neighbor).map { pairList ->
             (pairList.mapNotNull { it.first }
                     to pairList.mapNotNull
-                { it.second }.map { projAt(it) })
+            { it.second }.map { projAt(it) })
         }
     }
 

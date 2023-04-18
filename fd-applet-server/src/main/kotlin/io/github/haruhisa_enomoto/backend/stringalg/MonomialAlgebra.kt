@@ -2,7 +2,7 @@ package io.github.haruhisa_enomoto.backend.stringalg
 
 import io.github.haruhisa_enomoto.backend.algebra.Indec
 import io.github.haruhisa_enomoto.backend.algebra.QuiverAlgebra
-import io.github.haruhisa_enomoto.backend.algebra.RFAlgebra
+import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.quiver.*
 
 /**
@@ -321,7 +321,7 @@ open class MonomialAlgebra<T, U>(
         TODO("Only supported for special biserial algebras.")
     }
 
-    override fun toRFAlgebra(): RFAlgebra<T> {
+    override fun toRfAlgebra(): RfAlgebra<T> {
         TODO("Only supported for special biserial algebras.")
     }
 

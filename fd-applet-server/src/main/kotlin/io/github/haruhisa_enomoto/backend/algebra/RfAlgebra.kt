@@ -15,18 +15,18 @@ import io.github.haruhisa_enomoto.backend.types.TauTiltingData
 import io.github.haruhisa_enomoto.backend.types.toTauTiltingPair
 
 /**
- * A class for representation-finite algebras [algebra],
+ * A class for representation-finite algebras,
  * together with a list [indecs] of the complete set of indecomposable modules.
  * Throughout this class, all "modules" are finitely generated **basic** modules,
  * and all "subcategories" are assumed to be subcategories
  * of the category of finitely generated modules.
  *
  * @param T the type of vertex labels.
- * @property algebra the algebra.
+ * @property algebra the underlying algebra.
  * @property indecs the list of all indecomposable modules.
- * @property normalize a function that normalizes a given indecomposable module to the one in [indecs].
+ * @param normalize a function that normalizes a given indecomposable module to the one in [indecs].
  * @constructor Creates a representation-finite algebra.
- * @throws IllegalArgumentException if [algebra] is not representation-finite.
+ * @throws IllegalArgumentException if this algebra is not representation-finite.
  */
 class RfAlgebra<T>(
     private val algebra: Algebra<T>, val indecs: List<Indec<T>>, private val normalize: (Indec<T>) -> Indec<T>,
@@ -72,11 +72,11 @@ class RfAlgebra<T>(
     override fun toRfAlgebra() = this
 
     /**
-     * Returns the finitistic dimension of [algebra], that is,
+     * Returns the finitistic dimension of this algebra, that is,
      * the maximum of the projective dimensions of indecomposable modules
      * with finite projective dimension.
      *
-     * @return the finitistic dimension of [algebra].
+     * @return the finitistic dimension of this algebra.
      */
     fun finitisticDim(): Int = indecs.mapNotNull { it.projDim() }.max()
 
@@ -90,9 +90,9 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the Auslander-Reiten quiver of [algebra].
+     * Returns the Auslander-Reiten quiver of this algebra.
      *
-     * @return the Auslander-Reiten quiver of [algebra].
+     * @return the Auslander-Reiten quiver of this algebra.
      */
     fun arQuiver(): TranslationQuiver<Indec<T>> {
         return _arQuiver
@@ -195,46 +195,46 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Generates the sequence of torsion classes of [algebra].
+     * Generates the sequence of torsion classes of this algebra.
      *
-     * @return the sequence of torsion classes of [algebra].
+     * @return the sequence of torsion classes of this algebra.
      */
     fun torsionClassSequence(): Sequence<Subcat<T>> {
         return _semibricks.asSequence().map { homLeftPerp(it) }
     }
 
     /**
-     * Returns the list of torsion classes of [algebra].
+     * Returns the list of torsion classes of this algebra.
      *
-     * @return the list of torsion classes of [algebra].
+     * @return the list of torsion classes of this algebra.
      */
     fun torsionClasses(): List<Subcat<T>> {
         return torsionClassSequence().toList()
     }
 
     /**
-     * Generates the sequence of torsion-free classes of [algebra].
+     * Generates the sequence of torsion-free classes of this algebra.
      *
-     * @return the sequence of torsion-free classes of [algebra].
+     * @return the sequence of torsion-free classes of this algebra.
      */
     fun torsionFreeClassSequence(): Sequence<Subcat<T>> {
         return _semibricks.asSequence().map { homRightPerp(it) }
     }
 
     /**
-     * Returns the list of torsion-free classes of [algebra].
+     * Returns the list of torsion-free classes of this algebra.
      *
-     * @return the list of torsion-free classes of [algebra].
+     * @return the list of torsion-free classes of this algebra.
      */
     fun torsionFreeClasses(): List<Subcat<T>> {
         return torsionFreeClassSequence().toList()
     }
 
     /**
-     * Generates the sequence of IE-closed subcategories of [algebra].
+     * Generates the sequence of IE-closed subcategories of this algebra.
      * Here a subcategory is IE-closed if it is closed under taking images and extensions.
      *
-     * @return the sequence of IE-closed subcategories of [algebra].
+     * @return the sequence of IE-closed subcategories of this algebra.
      */
     fun ieClosedSubcatsSequence(): Sequence<Subcat<T>> = sequence {
         val tors = _semibricks.map { homLeftPerp(it) }
@@ -250,10 +250,10 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of IE-closed subcategories of [algebra].
+     * Returns the list of IE-closed subcategories of this algebra.
      * Here a subcategory is IE-closed if it is closed under taking images and extensions.
      *
-     * @return the list of IE-closed subcategories of [algebra].
+     * @return the list of IE-closed subcategories of this algebra.
      */
     fun ieClosedSubcats(): List<Subcat<T>> {
         return ieClosedSubcatsSequence().toList()
@@ -271,18 +271,18 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Generates the sequence of wide subcategories of [algebra].
+     * Generates the sequence of wide subcategories of this algebra.
      *
-     * @return the sequence of wide subcategories of [algebra].
+     * @return the sequence of wide subcategories of this algebra.
      */
     fun wideSubcatSequence(): Sequence<Subcat<T>> {
         return _semibricks.asSequence().map { ieClosure(it) }
     }
 
     /**
-     * Returns the list of wide subcategories of [algebra].
+     * Returns the list of wide subcategories of this algebra.
      *
-     * @return the list of wide subcategories of [algebra].
+     * @return the list of wide subcategories of this algebra.
      */
     fun wideSubcats(): List<Subcat<T>> {
         return wideSubcatSequence().toList()
@@ -339,11 +339,11 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of ICE-closed subcategories of [algebra].
+     * Returns the list of ICE-closed subcategories of this algebra.
      * Here a subcategory is ICE-closed if it is closed
      * under taking images, cokernels, and extensions.
      *
-     * @return the list of ICE-closed subcategories of [algebra].
+     * @return the list of ICE-closed subcategories of this algebra.
      */
     fun iceClosedSubcats(): List<Subcat<T>> {
         val allSemibricks = _semibricks
@@ -361,11 +361,11 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of IKE-closed subcategories of [algebra].
+     * Returns the list of IKE-closed subcategories of this algebra.
      * Here a subcategory is IKE-closed if it is closed
      * under taking images, kernels, and extensions.
      *
-     * @return the list of IKE-closed subcategories of [algebra].
+     * @return the list of IKE-closed subcategories of this algebra.
      */
     fun ikeClosedSubcats(): List<Subcat<T>> {
         val allSemibricks = _semibricks
@@ -401,9 +401,9 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the syzygy quiver of [algebra].
+     * Returns the syzygy quiver of this algebra.
      *
-     * @return the syzygy quiver of [algebra].
+     * @return the syzygy quiver of this algebra.
      * @see Algebra.syzygyQuiverFrom
      */
     fun syzygyQuiver(): Quiver<Indec<T>, Nothing> {
@@ -411,9 +411,9 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the cosyzygy quiver of [algebra].
+     * Returns the cosyzygy quiver of this algebra.
      *
-     * @return the cosyzygy quiver of [algebra].
+     * @return the cosyzygy quiver of this algebra.
      * @see Algebra.syzygyQuiverFrom
      */
     fun cosyzygyQuiver(): Quiver<Indec<T>, Nothing> {

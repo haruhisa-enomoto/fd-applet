@@ -245,10 +245,12 @@ abstract class Algebra<T> {
      *
      * @param mX an indecomposable module (`null` represents `0`).
      * @param mY an indecomposable module (`null` represents `0`).
-     * @param n the degree of `Ext`.
+     * @param n the degree of `Ext` (default: `1`, must be non-negative).
      * @return the dimension of `Ext^[n] ([mX], [mY])`.
+     * @throws IllegalArgumentException if `n < 0`.
      */
     fun ext(mX: Indec<T>?, mY: Indec<T>?, n: Int = 1): Int {
+        require(n >= 0) { "n must be non-negative" }
         if (mX == null || mY == null) return 0
         /**
          * By the AR duality, `Ext^1(X, Y) = D stableHom(tauMinus Y, X)`.
@@ -266,8 +268,9 @@ abstract class Algebra<T> {
      *
      * @param mX an indecomposable module (`null` represents `0`).
      * @param mYY a module as a collection of indecomposables.
-     * @param n the degree of `Ext`.
+     * @param n the degree of `Ext` (default: `1`, must be non-negative).
      * @return the dimension of `Ext^[n] ([mX], [mYY])`.
+     * @throws IllegalArgumentException if `n < 0`.
      */
     fun ext(mX: Indec<T>?, mYY: Collection<Indec<T>?>, n: Int = 1): Int {
         return mYY.sumOf { ext(mX, it, n) }
@@ -278,8 +281,9 @@ abstract class Algebra<T> {
      *
      * @param mXX a module as a collection of indecomposables.
      * @param mY an indecomposable module (`null` represents `0`).
-     * @param n the degree of `Ext`.
+     * @param n the degree of `Ext` (default: `1`, must be non-negative).
      * @return the dimension of `Ext^[n] ([mXX], [mY])`.
+     * @throws IllegalArgumentException if `n < 0`.
      */
     fun ext(mXX: Collection<Indec<T>?>, mY: Indec<T>?, n: Int = 1): Int {
         return mXX.sumOf { ext(it, mY, n) }
@@ -290,8 +294,9 @@ abstract class Algebra<T> {
      *
      * @param mXX a module as a collection of indecomposables.
      * @param mYY a module as a collection of indecomposables.
-     * @param n the degree of `Ext`.
+     * @param n the degree of `Ext` (default: `1`, must be non-negative).
      * @return the dimension of `Ext^[n] ([mXX], [mYY])`.
+     * @throws IllegalArgumentException if `n < 0`.
      */
     fun ext(mXX: Collection<Indec<T>?>, mYY: Collection<Indec<T>?>, n: Int = 1): Int {
         return mXX.sumOf { ext(it, mYY, n) }
@@ -411,7 +416,6 @@ abstract class Algebra<T> {
      * @return the indecomposable projective module corresponding to [vtx].
      */
     abstract fun projAt(vtx: T): Indec<T>
-
 
     /**
      * Returns the list of all indecomposable projective modules.

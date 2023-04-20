@@ -427,7 +427,7 @@ abstract class Indec<T> {
      * `Ext^i(Tr X, A) = 0` for `i = 1 .. [n]`.
      * This is equivalent to `Ext^i(DA, D Tr X) = 0`.
      *
-     * @param n the degree.
+     * @param n the degree (default: 1).
      * @return whether this module is [n]-torsionless.
      */
     fun isTorsionLess(n: Int = 1): Boolean {

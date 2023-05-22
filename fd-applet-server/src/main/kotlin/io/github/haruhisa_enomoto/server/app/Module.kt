@@ -40,7 +40,7 @@ fun Application.module() {
     }
 
     install(ShutDownUrl.ApplicationCallPlugin) {
-        shutDownUrl = "/shutdown"
+        shutDownUrl = "/api/shutdown"
         exitCodeSupplier = { 0 }
     }
 }

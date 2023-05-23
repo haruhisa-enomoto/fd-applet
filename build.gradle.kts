@@ -4,7 +4,7 @@ import org.gradle.api.tasks.Copy
 
 allprojects {
     group = "io.github.haruhisa_enomoto"
-    version = "0.2.1"
+    version = "0.3.0"
 
     repositories {
         mavenCentral()

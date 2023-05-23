@@ -14,7 +14,7 @@ export default function EnumerateTab({
 }: MyTabProps) {
   const fetchWithUiFeedback = useFetchWithUiFeedback();
 
-  async function makeRFAlgebra() {
+  async function makeRfAlgebra() {
     const response = await fetchWithUiFeedback({
       url: "/api/rf-algebra",
       expectJson: false,
@@ -27,7 +27,7 @@ export default function EnumerateTab({
   return (
     <>
       {!isComputed ? (
-        <UpdateButton onClick={makeRFAlgebra} />
+        <UpdateButton onClick={makeRfAlgebra} />
       ) : (
         <>
           <ModuleEnumerator />

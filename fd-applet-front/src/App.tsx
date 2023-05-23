@@ -131,7 +131,7 @@ const App: FC = () => {
       data.append("message", "WebUI will be closed!");
 
       const apiUrl = isLocal ? "/shutdown" : `/api/kill?client_id=${uuid}`; // For server hosting
-      navigator.sendBeacon(apiUrl, data);
+      // navigator.sendBeacon(apiUrl, data);
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);

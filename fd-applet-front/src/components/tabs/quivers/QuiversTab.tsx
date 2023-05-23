@@ -34,7 +34,7 @@ export default function QuiversTab({ isComputed, setIsComputed }: MyTabProps) {
     setSelected(chosenStringList);
   };
 
-  async function makeRFAlgebra() {
+  async function makeRfAlgebra() {
     const response = await fetchWithUiFeedback({
       url: "/api/rf-algebra",
       expectJson: false,
@@ -47,7 +47,7 @@ export default function QuiversTab({ isComputed, setIsComputed }: MyTabProps) {
   return (
     <>
       {!isComputed ? (
-        <UpdateButton onClick={makeRFAlgebra} />
+        <UpdateButton onClick={makeRfAlgebra} />
       ) : (
         <>
           <QuiverAccordion

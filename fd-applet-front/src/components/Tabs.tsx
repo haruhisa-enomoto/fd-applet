@@ -16,8 +16,9 @@ import { useSelection } from "../contexts/SelectionContext";
 import GenericQuiver from "./common/GenericQuiver";
 import AlgebraInfoTab from "./tabs/AlgebraInfo";
 import CalculatorTab from "./tabs/calculator/CalculatorTab";
+import ConverterTab from "./tabs/converter/ConverterTab";
 import EnumerateTab from "./tabs/enumerator/EnumeratorTab";
-import QuiversTab from "./tabs/quiver/QuiversTab";
+import QuiversTab from "./tabs/quivers/QuiversTab";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -51,7 +52,7 @@ export default function MyTabs({
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     // For "AR Quiver" switch.
-    if (newValue !== 4) {
+    if (newValue !== 5) {
       setTabValue(newValue);
     } else {
       setShowAR(!showAR);
@@ -80,6 +81,7 @@ export default function MyTabs({
           <Tab label="Basic Info" />
           <Tab label="Calculator" />
           <Tab label="Enumerator" />
+          <Tab label="Converter" />
           <Tab label="Quivers" />
           <Tab
             label={
@@ -122,9 +124,15 @@ export default function MyTabs({
             />
           </TabPanel>
           <TabPanel value={tabValue} index={3}>
-            <QuiversTab
+            <ConverterTab
               isComputed={computationState[3]}
               setIsComputed={handleComputationUpdate(3)}
+            />
+          </TabPanel>
+          <TabPanel value={tabValue} index={4}>
+            <QuiversTab
+              isComputed={computationState[4]}
+              setIsComputed={handleComputationUpdate(4)}
             />
           </TabPanel>
         </Grid>

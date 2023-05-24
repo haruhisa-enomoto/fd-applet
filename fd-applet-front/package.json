@@ -59,7 +59,7 @@
     "eslint": "^8.37.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-unused-imports": "^2.0.0",
+    "http-proxy-middleware": "^2.0.6",
     "react-scripts": "5.0.1"
-  },
-  "proxy": "http://localhost:8080/"
+  }
 }

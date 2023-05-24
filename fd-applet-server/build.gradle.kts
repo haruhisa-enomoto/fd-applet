@@ -52,7 +52,7 @@ tasks.register("copyFrontendBuild", Copy::class) {
 }
 
 tasks.processResources {
-    inputs.files(tasks.named("copyFrontendBuild").map { it.outputs.files })
+    mustRunAfter("copyFrontendBuild")
 }
 
 tasks.buildFatJar {

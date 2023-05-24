@@ -123,6 +123,7 @@ const App: FC = () => {
       });
 
     setIsLocal(isLocalhost());
+    console.log(isLocalhost());
   }, []);
 
   useEffect(() => {
@@ -130,7 +131,7 @@ const App: FC = () => {
       const data = new FormData();
       data.append("message", "WebUI will be closed!");
 
-      const apiUrl = isLocal ? "/shutdown" : `/api/kill?client_id=${uuid}`; // For server hosting
+      const apiUrl = isLocal ? "/api/shutdown" : `/api/kill?client_id=${uuid}`; // For server hosting
       // navigator.sendBeacon(apiUrl, data);
     };
 

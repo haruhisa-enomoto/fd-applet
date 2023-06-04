@@ -6,7 +6,7 @@ import io.github.haruhisa_enomoto.backend.algebra.QuiverAlgebra
 import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.quiver.Monomial
 import io.github.haruhisa_enomoto.backend.quiver.Word
-import io.github.haruhisa_enomoto.backend.sbalgebra.SBAlgebra
+import io.github.haruhisa_enomoto.backend.sbalgebra.SbAlgebra
 
 open class BinomialAlgebra<T, U>(
     val overAlgebra: MonomialAlgebra<T, U>,
@@ -98,7 +98,7 @@ open class BinomialAlgebra<T, U>(
             return overAlgebra.make()
         }
         return try {
-            SBAlgebra(this)
+            SbAlgebra(this)
         } catch (e: IllegalArgumentException) {
             this
         }

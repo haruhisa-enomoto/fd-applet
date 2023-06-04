@@ -1,7 +1,6 @@
 package io.github.haruhisa_enomoto.backend.algebra
 
 import io.github.haruhisa_enomoto.backend.utils.ListWithLeq
-import io.github.haruhisa_enomoto.backend.types.Subcat
 import io.github.haruhisa_enomoto.backend.utils.powerSetList
 import io.github.haruhisa_enomoto.backend.quiver.TranslationQuiver
 import io.github.haruhisa_enomoto.backend.graph.almostMaximalCliques
@@ -9,10 +8,7 @@ import io.github.haruhisa_enomoto.backend.graph.cliques
 import io.github.haruhisa_enomoto.backend.graph.maximalCliques
 import io.github.haruhisa_enomoto.backend.quiver.Arrow
 import io.github.haruhisa_enomoto.backend.quiver.Quiver
-import io.github.haruhisa_enomoto.backend.types.IndecTauRigidPair
-import io.github.haruhisa_enomoto.backend.types.ModuleWithSupport
-import io.github.haruhisa_enomoto.backend.types.TauTiltingData
-import io.github.haruhisa_enomoto.backend.types.toTauTiltingPair
+import io.github.haruhisa_enomoto.backend.types.*
 
 /**
  * A class for representation-finite algebras,
@@ -29,7 +25,7 @@ import io.github.haruhisa_enomoto.backend.types.toTauTiltingPair
  * @throws IllegalArgumentException if this algebra is not representation-finite.
  */
 class RfAlgebra<T>(
-    private val algebra: Algebra<T>, val indecs: List<Indec<T>>, private val normalize: (Indec<T>) -> Indec<T>,
+    val algebra: Algebra<T>, val indecs: List<Indec<T>>, val normalize: (Indec<T>) -> Indec<T>,
 ) : Algebra<T>() {
     init {
         require(algebra.isRepFinite()) {
@@ -49,9 +45,14 @@ class RfAlgebra<T>(
     private val _indecTauRigids by lazy { indecTauRigids() }
     private val _indecTauMinusRigids by lazy { indecTauMinusRigids() }
     private val _semibricks by lazy { obtainSemibricks() }
-    private val _torfToSemibrick by lazy {
-        _semibricks.associateBy { torsionFreeClosure(it) }
-    }
+    private val _semibricksSet by lazy { _semibricks.map { it.toSet() } }
+    private val _tauTiltingDataList by lazy { obtainTauTiltingDataList() }
+    val sbrickToTors by lazy { obtainSbrickToTors() }
+    val torsToSbrick by lazy { obtainTorsToSbrick() }
+    val sbrickToTorf by lazy { obtainSbrickToTorf() }
+    val torfToSbrick by lazy { obtainTorfToSbrick() }
+    val sbrickToWide by lazy { obtainSbrickToWide() }
+    val wideToSbrick by lazy { obtainWideToSbrick() }
 
     override fun isStringAlgebra() = algebra.isStringAlgebra()
 
@@ -361,6 +362,29 @@ class RfAlgebra<T>(
     }
 
     /**
+     * Returns the wide closure of [cC], that is, the smallest wide subcategory containing [cC].
+     * Currently, just returns the intersection of all wide subcategories containing [cC].
+     * So this may be slow.
+     */
+    fun wideClosure(cC: Subcat<T>): Subcat<T> {
+        return wideSubcats().filter { it.containsAll(cC) }.reduce { acc, subcat -> acc intersect subcat }
+    }
+
+    /**
+     * Returns the ICE-closure of [cC], that is, the smallest ICE-closed subcategory containing [cC].
+     */
+    fun iceClosure(cC: Subcat<T>): Subcat<T> {
+        return iceClosedSubcats().filter { it.containsAll(cC) }.reduce { acc, subcat -> acc intersect subcat }
+    }
+
+    /**
+     * Returns the IKE-closure of [cC], that is, the smallest IKE-closed subcategory containing [cC].
+     */
+    fun ikeClosure(cC: Subcat<T>): Subcat<T> {
+        return ikeClosedSubcats().filter { it.containsAll(cC) }.reduce { acc, subcat -> acc intersect subcat }
+    }
+
+    /**
      * Returns the list of IKE-closed subcategories of this algebra.
      * Here a subcategory is IKE-closed if it is closed
      * under taking images, kernels, and extensions.
@@ -503,95 +527,115 @@ class RfAlgebra<T>(
     /**
      * TODO
      *
-     * @param mS
      * @return
      */
-    fun semibrickToTauTiltingData(mS: List<Indec<T>>): TauTiltingData<T> {
-        val cT = torsionClosure(mS) // torsion class
-        val mM = _indecTauRigids.filter { mM ->
-            mM in cT && mS.all { homZero(it, tau[mM]) }
-        }
-        val support = vertices.filter { vtx -> mM.all { vtx !in it.vertexList() } }
-        val pres = projResolution(mM, 1)
-        val cF = homRightPerp(mS)
-        // Torsion-free class corresponding to [cT]: (cT)^\perp = (mS)^\perp.
-        val mN = mM.mapNotNull { tau[it] } + support.map { injAt(it) }
-        // Support tau^{-}-tilting module.
-        val mS2 = _torfToSemibrick[cF]!!
-        val support2 = vertices.filter { vtx -> mN.all { vtx !in it.vertexList() } }
-        val copre = injResolution(mN, 1)
-        return TauTiltingData(
-            semibrick = mS,
-            supportTauTilting = mM,
-            support = support,
-            torsionClass = cT,
-            silting = pres[0] to (pres[1] + support),
-            wideSubcat = cT.filter { it in torsionFreeClosure(mS) },
-            supportTauMinusTilting = mN,
-            torsionFreeClass = cF,
-            semibrick2 = mS2,
-            support2 = support2,
-            cosilting = copre[0] to (copre[1] + support2)
-        )
-    }
-
-    /**
-     * TODO
-     *
-     * @return
-     */
-    fun tauTiltingDataList(): List<TauTiltingData<T>> {
+    private fun obtainTauTiltingDataList(): List<TauTiltingData<T>> {
         val sbrickToTors = _semibricks.associateWith { torsionClosure(it) }
         val sbrickToTorf = _semibricks.associateWith { torsionFreeClosure(it) }
         val torfToSbrick = sbrickToTorf.entries.associate { (key, value) -> value to key }
         val result = mutableListOf<TauTiltingData<T>>()
-        for ((mS, cT) in sbrickToTors) {/*
+        for ((sbrickTors, tors) in sbrickToTors) {
+            /*
             For tau-rigid M and a semibrick S, we have
             Ext^1(M, T(S)) = 0 iff Ext^1(M, Filt Fac(S)) = 0 iff Ext^1(M, Fac S) = 0
             iff Hom(S, tau M) = 0.
              */
-            val mM = _indecTauRigids.filter { mM ->
-                mM in cT && mS.all { homZero(it, tau[mM]) }
+            val sTauTilt = _indecTauRigids.filter { mM ->
+                mM in tors && sbrickTors.all { homZero(it, tau[mM]) }
             }
-            val pres = projResolution(mM, 1)
-            val support = vertices.filter { vtx -> mM.all { vtx !in it.vertexList() } }
             // Support part of [mM] = vertices not appearing in any of [mM].
-            val cF = homRightPerp(mS)
-            // Torsion-free class corresponding to [cT]: (cT)^\perp = (mS)^\perp.
-            val mN = mM.mapNotNull { tau[it] } + support.map { injAt(it) }
+            val support = vertices.filter { vtx -> sTauTilt.all { vtx !in it.vertexList() } }
+            // Torsion-free class corresponding to [tors]: (tors)^\perp = (sbrickTors)^\perp.
+            val torf = homRightPerp(sbrickTors)
+            // Wide subcat corresponding to [tors]
+            // as intersection of torsion and torsion-free closure of [sbrickTors].
+            val wideTors = tors.filter { it in sbrickToTorf[sbrickTors]!! }
             // Tau-minus tilting module corresponding to the torsion-free class.
-            val support2 = vertices.filter { vtx -> mN.all { vtx !in it.vertexList() } }
-            val copre = injResolution(mN, 1)
+            val sTauTiltMinus = sTauTilt.mapNotNull { tau[it] } + support.map { injAt(it) }
+            val sbrickTorf = torfToSbrick[torf]!!
+            val wideTorf = torf.filter { it in sbrickToTors[sbrickTorf]!! }
 
             result.add(
                 TauTiltingData(
-                    semibrick = mS,
-                    supportTauTilting = mM,
-                    support = support,
-                    torsionClass = cT,
-                    silting = pres[0] to (pres[1] + support),
-                    wideSubcat = cT.filter { it in sbrickToTorf[mS]!! },
-                    supportTauMinusTilting = mN,
-                    torsionFreeClass = cF,
-                    semibrick2 = torfToSbrick[cF]!!,
-                    support2 = support2,
-                    cosilting = copre[0] to (copre[1] + support2)
+                    torsionClass = tors.toSet(),
+                    torsionFreeClass = torf.toSet(),
+                    wideTors = wideTors.toSet(),
+                    wideTorf = wideTorf.toSet(),
+                    supportTauTilting = sTauTilt.toSet(),
+                    supportTauMinusTilting = sTauTiltMinus.toSet(),
+                    semibrickTors = sbrickTors.toSet(),
+                    semibrickTorf = sbrickTorf.toSet(),
                 )
             )
         }
         return result
     }
 
-    /**
-     * TODO
-     *
-     * @param mS
-     * @return
-     */
-    fun semibrickToSupportTauTilting(mS: List<Indec<T>>): List<Indec<T>> {
-        return _indecTauRigids.filter { mM ->
-            mS.all { homZero(it, tau[mM]) } && mM in torsionClosure(mS)
-        }
+    fun tauTiltingDataList(): List<TauTiltingData<T>> {
+        return _tauTiltingDataList
+    }
+
+    private fun obtainSbrickToTors(): Map<IndecSet<T>, IndecSet<T>> {
+        return _semibricksSet.associateWith { torsionClosure(it).toSet() }
+    }
+
+    private fun obtainSbrickToTorf(): Map<IndecSet<T>, IndecSet<T>> {
+        return _semibricksSet.associateWith { torsionFreeClosure(it).toSet() }
+    }
+
+    private fun obtainTorsToSbrick(): Map<IndecSet<T>, IndecSet<T>> {
+        return sbrickToTors.entries.associate { (key, value) -> value to key }
+    }
+
+    private fun obtainTorfToSbrick(): Map<IndecSet<T>, IndecSet<T>> {
+        return sbrickToTorf.entries.associate { (key, value) -> value to key }
+    }
+
+    private fun obtainSbrickToWide(): Map<IndecSet<T>, IndecSet<T>> {
+        return _semibricksSet.associateWith { wideClosure(it).toSet() }
+    }
+
+    private fun obtainWideToSbrick(): Map<IndecSet<T>, IndecSet<T>> {
+        return sbrickToWide.entries.associate { (key, value) -> value to key }
+    }
+
+    fun sTauTiltToSTauMinusTilt(mX: List<Indec<T>>): List<Indec<T>> {
+        val support = vertices.filter { vtx -> mX.all { vtx !in it.vertexList() } }
+        return mX.mapNotNull { tau[it] } + support.map { injAt(it) }
+    }
+
+    fun sTauMinusTiltToSTauTilt(mX: List<Indec<T>>): List<Indec<T>> {
+        val support = vertices.filter { vtx -> mX.all { vtx !in it.vertexList() } }
+        return mX.mapNotNull { tauMinus[it] } + support.map { projAt(it) }
+    }
+
+    fun iceToWide(cC: Subcat<T>): Subcat<T> {
+        // Let cC be an ICE-closed subcategory.
+        // Then cC is the heart of the interval of [cU, cT], where
+        // cU = ^\perp cC, cT = T(^\perp cC \cup cC).
+        val cU = homLeftPerp(cC)
+        val cT = torsionClosure(cU + cC)
+        // For debug. This should be true.
+        require(cC.toSet() == cT intersect homRightPerp(cU))
+        // Take the brick labels of arrows starting at cT:
+        val bricks = torsToSbrick[cT.toSet()]!!
+        // (Each brick B gives a Hasse arrow cT -> cT \cap ^\perp B.)
+        // Take only bricks B above cU: that is, cT \cap ^\perp B \supseteq cU,
+        // that is, cU \subseteq ^\perp B, that is, Hom(cU, B) = 0.
+        val bricksAbove = bricks.filter { hom(cU, it) == 0 }
+        // Then its Filt = wide closure is the desired result.
+        return wideClosure(bricksAbove)
+    }
+
+    fun ikeToWide(cC: Subcat<T>): Subcat<T> {
+        // Dual of iceToWide. Realize cC as the heart of [cG, cF] in torf.
+        val cG = homRightPerp(cC)
+        val cF = torsionFreeClosure(cG + cC)
+        // For debug. This should be true.
+        require(cC.toSet() == cF intersect homLeftPerp(cG))
+        val bricks = torfToSbrick[cF.toSet()]!!
+        val bricksAbove = bricks.filter { hom(it, cG) == 0 }
+        return wideClosure(bricksAbove)
     }
 
     /**

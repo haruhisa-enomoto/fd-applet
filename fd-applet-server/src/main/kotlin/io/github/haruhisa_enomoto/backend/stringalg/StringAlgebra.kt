@@ -4,7 +4,7 @@ import io.github.haruhisa_enomoto.backend.algebra.Indec
 import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.quiver.Monomial
 import io.github.haruhisa_enomoto.backend.quiver.Quiver
-import io.github.haruhisa_enomoto.backend.sbalgebra.SBAlgebra
+import io.github.haruhisa_enomoto.backend.sbalgebra.SbAlgebra
 
 /**
  * A data class for string algebras.
@@ -77,8 +77,8 @@ open class StringAlgebra<T, U>(
         return RfAlgebra(this, allModules) { normalize(it) }
     }
 
-    fun toSBAlgebra(): SBAlgebra<T, U> {
-        return SBAlgebra(this, biRelations = listOf())
+    fun toSBAlgebra(): SbAlgebra<T, U> {
+        return SbAlgebra(this, biRelations = listOf())
     }
 
 }

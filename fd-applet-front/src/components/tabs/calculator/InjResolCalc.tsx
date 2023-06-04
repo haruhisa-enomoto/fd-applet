@@ -6,7 +6,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Autocomplete,
-  Divider,
   Grid,
   TextField,
   Typography,
@@ -76,11 +75,10 @@ export default function InjResolCalc({ options }: CalcProps) {
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>Injective resolution & cosyzygy</Typography>
+        <Typography fontWeight="medium">Injective resolution & cosyzygy</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
-        <Typography variant="subtitle1">
+        <Typography mb={2}>
           Compute the minimal injective (co)resolution of X of the form:
           <br />
           {"0 → X → I^0 → I^1 → … → I^n → Σ^{n+1}(X) → 0"}.
@@ -88,11 +86,7 @@ export default function InjResolCalc({ options }: CalcProps) {
         <Grid
           container
           spacing={1}
-          mt={1}
-          alignItems="center"
-          justifyContent="center"
-          display="flex"
-          sx={{ width: "auto" }}
+          mb={2}
         >
           <Grid item xs={8}>
             <Autocomplete
@@ -118,14 +112,14 @@ export default function InjResolCalc({ options }: CalcProps) {
                 setDegree(event.target.value);
               }}
               label="n"
-              // onKeyDown={handleKeyDown}
+            // onKeyDown={handleKeyDown}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getInjResol} />
           </Grid>
           <Grid item xs={12}>
-            <PairTable firstName="Terms" secondName="Data" data={result} />
+            <PairTable firstName="Term" secondName="Data" data={result} />
           </Grid>
         </Grid>
       </AccordionDetails>

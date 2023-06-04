@@ -40,8 +40,8 @@ export default function AlgebraInfoTab({
             {info.className}
           </Typography>
           <PairTable
-            firstName="Various Dimensions"
-            secondName="Values"
+            firstName="Type of dimension"
+            secondName="Value"
             data={info.dimInfo}
           />
           <PairTable

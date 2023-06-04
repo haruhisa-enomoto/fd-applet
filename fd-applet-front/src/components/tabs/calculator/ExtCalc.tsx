@@ -6,7 +6,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Autocomplete,
-  Divider,
   Grid,
   TextField,
   Typography,
@@ -66,22 +65,17 @@ export default function ExtCalc({ options }: CalcProps) {
 
   return (
     <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>Hom and Ext</Typography>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography fontWeight="medium">Hom and Ext</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
-        <Typography variant="subtitle1">
+        <Typography mb={2}>
           Compute dim Ext^n(X, Y) for modules X and Y (Hom if n = 0).
         </Typography>
         <Grid
           container
           spacing={1}
-          mt={1}
-          alignItems="center"
-          justifyContent="center"
-          display="flex"
-          sx={{ width: "auto" }}
+          mb={2}
         >
           <Grid item xs={4}>
             <Autocomplete
@@ -131,16 +125,14 @@ export default function ExtCalc({ options }: CalcProps) {
               label="n"
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getHom} />
           </Grid>
-          <Grid item xs={12}>
-            <Typography m={2}>
-              dim Ext^{degree}({mXX.join(" + ")}, {mYY.join(" + ")}) ={" "}
-              {computeClicked && result}
-            </Typography>
-          </Grid>
         </Grid>
+        <Typography align="center">
+          dim Ext^{degree}({mXX.join(" + ")}, {mYY.join(" + ")}) ={" "}
+          {computeClicked && result}
+        </Typography>
       </AccordionDetails>
     </Accordion>
   );

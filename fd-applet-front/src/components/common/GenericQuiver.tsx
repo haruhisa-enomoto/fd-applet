@@ -5,7 +5,6 @@ import VisGraph, {
   GraphEvents,
   Network,
   Node,
-  Options,
 } from "react-vis-graph-wrapper";
 
 import BlockIcon from "@mui/icons-material/Block";
@@ -28,7 +27,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { blue, grey, purple, red } from "@mui/material/colors";
 
 import useFetchWithUiFeedback from "../../hooks/useFetchWithUiFeedback";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
@@ -36,6 +34,7 @@ import { SlimQuiverData, fatten } from "../../types/QuiverTypes";
 
 import ComputeButton from "./ComputeButton";
 import LargerTooltip from "./LargerTooltip";
+import { defaultOptions } from "./QuiverOptions";
 import UpdateButton from "./UpdateButton";
 
 const defaultData: GraphData = {
@@ -43,82 +42,6 @@ const defaultData: GraphData = {
   edges: [],
 };
 
-const defaultOptions: Options = {
-  nodes: {
-    font: {
-      face: "roboto",
-    },
-    color: {
-      background: grey[100],
-      border: grey[600],
-      highlight: {
-        background: blue[100],
-        border: blue[600],
-      },
-    },
-  },
-  edges: {
-    chosen: false,
-    arrows: "to",
-    color: { inherit: false },
-    font: {
-      face: "roboto",
-      size: 30,
-    },
-    width: 3,
-    smooth: {
-      enabled: true,
-      type: "dynamic",
-      roundness: 0.5,
-    },
-    // selectionWidth: 0,
-  },
-  physics: {
-    solver: "barnesHut",
-    // solver: "forceAtlas2Based",
-    barnesHut: {
-      theta: 1,
-      springConstant: 0.05,
-      // springLength: 200,
-      // gravitationalConstant: -20000,
-    },
-  },
-  layout: {
-    // improvedLayout: false,
-  },
-  groups: {
-    default: {
-      color: {
-        background: grey[100],
-        border: grey[600],
-      },
-    },
-    groupOne: {
-      color: {
-        background: blue[100],
-        border: blue[600],
-      },
-    },
-    groupTwo: {
-      color: {
-        background: red[100],
-        border: red[600],
-      },
-    },
-    groupBoth: {
-      color: {
-        background: purple[100],
-        border: purple[600],
-      },
-    },
-    highlight: {
-      color: {
-        background: red[100],
-        border: red[600],
-      },
-    },
-  },
-};
 
 function changeGroup(node: Node, groupName: string): Node {
   return {
@@ -160,12 +83,11 @@ export default function GenericQuiver({
   height,
   updateButton = false,
   allowChosen = false,
-  // showNumber = true,
   buttonTitle,
   events,
   hide = false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  computationCallback = () => {},
+  computationCallback = () => { },
 }: GenericQuiverProps) {
   const { windowHeight } = useWindowDimensions();
   const fetchWithUiFeedback = useFetchWithUiFeedback();
@@ -296,19 +218,19 @@ export default function GenericQuiver({
                   physics: physics,
                   ...(showLabel
                     ? {
-                        shape: "ellipse",
-                        font: {
-                          face: "roboto",
-                          size: 30,
-                        },
-                      }
+                      shape: "ellipse",
+                      font: {
+                        face: "roboto",
+                        size: 30,
+                      },
+                    }
                     : {
-                        shape: "dot",
-                        font: {
-                          size: 0,
-                        },
-                        size: 25,
-                      }),
+                      shape: "dot",
+                      font: {
+                        size: 0,
+                      },
+                      size: 25,
+                    }),
                 },
                 physics:
                   physicOption === undefined

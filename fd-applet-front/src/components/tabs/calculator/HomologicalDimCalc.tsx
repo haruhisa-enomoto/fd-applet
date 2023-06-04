@@ -6,7 +6,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Autocomplete,
-  Divider,
   Grid,
   TextField,
   Typography,
@@ -45,21 +44,16 @@ export default function HomologicalDimCalc({ options }: CalcProps) {
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>Homological dimensions</Typography>
+        <Typography fontWeight="medium">Homological dimensions</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
-        <Typography variant="subtitle1">
+        <Typography mb={2}>
           Compute various homological dimensions of X.
         </Typography>
         <Grid
           container
           spacing={1}
-          mt={1}
-          alignItems="center"
-          justifyContent="center"
-          display="flex"
-          sx={{ width: "auto" }}
+          mb={2}
         >
           <Grid item xs={10}>
             <Autocomplete
@@ -78,17 +72,15 @@ export default function HomologicalDimCalc({ options }: CalcProps) {
               renderInput={(params) => <TextField {...params} label="X" />}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getDim} />
           </Grid>
-          <Grid item xs={12}>
-            <PairTable
-              firstName="Descriptions"
-              secondName="values"
-              data={result}
-            />
-          </Grid>
         </Grid>
+        <PairTable
+          firstName="Description"
+          secondName="Value"
+          data={result}
+        />
       </AccordionDetails>
     </Accordion>
   );

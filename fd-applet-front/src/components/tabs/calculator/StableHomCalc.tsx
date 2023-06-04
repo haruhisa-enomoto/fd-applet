@@ -6,7 +6,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Autocomplete,
-  Divider,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -61,48 +60,41 @@ export default function StableHomCalc({ options }: CalcProps) {
 
   return (
     <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>Stable Hom</Typography>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography fontWeight="medium">Stable Hom</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
-        <Typography variant="subtitle1">
+        <Typography mb={2}>
           Compute proj/inj-stable Hom (X, Y) for modules X and Y.
         </Typography>
+        <FormControl sx={{ m: 1 }}>
+          <FormLabel>Type</FormLabel>
+          <RadioGroup
+            defaultValue="proj"
+            onChange={(_, value) => {
+              setHomType(value);
+              setComputeClicked(false);
+            }}
+            value={homType}
+            row
+          >
+            <FormControlLabel
+              value="proj"
+              control={<Radio />}
+              label="Projectively stable"
+            />
+            <FormControlLabel
+              value="inj"
+              control={<Radio />}
+              label="Injectively stable"
+            />
+          </RadioGroup>
+        </FormControl>
         <Grid
           container
           spacing={1}
-          mt={1}
-          alignItems="center"
-          justifyContent="center"
-          display="flex"
-          sx={{ width: "auto" }}
+          mb={2}
         >
-          <Grid item xs={12}>
-            <FormControl sx={{ m: 1 }}>
-              <FormLabel>Type</FormLabel>
-              <RadioGroup
-                defaultValue="proj"
-                onChange={(_, value) => {
-                  setHomType(value);
-                  setComputeClicked(false);
-                }}
-                value={homType}
-                row
-              >
-                <FormControlLabel
-                  value="proj"
-                  control={<Radio />}
-                  label="Projectively stable"
-                />
-                <FormControlLabel
-                  value="inj"
-                  control={<Radio />}
-                  label="Injectively stable"
-                />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
           <Grid item xs={5}>
             <Autocomplete
               freeSolo
@@ -141,16 +133,14 @@ export default function StableHomCalc({ options }: CalcProps) {
               renderInput={(params) => <TextField {...params} label="Y" />}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getStableHom} />
           </Grid>
-          <Grid item xs={12}>
-            <Typography m={2}>
-              dim {homType}-stable Hom ({mXX.join(" + ")}, {mYY.join(" + ")}) ={" "}
-              {computeClicked && result}
-            </Typography>
-          </Grid>
         </Grid>
+        <Typography align="center">
+          dim {homType}-stable Hom ({mXX.join(" + ")}, {mYY.join(" + ")}) ={" "}
+          {computeClicked && result}
+        </Typography>
       </AccordionDetails>
     </Accordion>
   );

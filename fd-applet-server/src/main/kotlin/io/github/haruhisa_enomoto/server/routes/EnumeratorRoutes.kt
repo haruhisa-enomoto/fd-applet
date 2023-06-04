@@ -1,329 +1,131 @@
 package io.github.haruhisa_enomoto.server.routes
 
 import io.github.haruhisa_enomoto.backend.algebra.Indec
-import io.github.haruhisa_enomoto.server.utils.getRfAlgebra
-import io.github.haruhisa_enomoto.server.utils.getSubcatList
-import io.github.haruhisa_enomoto.server.utils.setSubcatList
+import io.github.haruhisa_enomoto.server.utils.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-
-fun <T> Collection<Indec<T>>.toListString(): List<String> {
-    return this.map { it.toString() }
-}
-
-fun <T> Collection<Collection<Indec<T>>>.toListListString(): List<List<String>> {
-    return this.sortedBy { it.size }.map { mXX -> mXX.map { it.toString() } }
-}
-
-fun <T> Collection<Pair<Collection<Indec<T>>, Collection<Indec<T>>>>.toListPairListString(): List<Pair<List<String>, List<String>>> {
-    return this.sortedBy { it.first.size }.map { (first, second) ->
-        (first.map { it.toString() } to second.map { it.toString() })
-    }
-}
-
 fun Route.enumeratorRoutes() {
-    route("/module") {
-        get("/sbrick") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.semibricks().toListListString())
-        }
-
-        get("/s-tau-tilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.supportTauTiltings().toListListString())
-        }
-
-        get("/tau-tilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.tauTiltings().toListListString())
-        }
-
-        get("/tau-rigid") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.tauRigids().toListListString())
-        }
-
-        get("/s-tau-minus-tilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.supportTauMinusTiltings().toListListString())
-        }
-
-        get("/tau-minus-tilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.tauMinusTiltings().toListListString())
-        }
-
-        get("/tau-minus-rigid") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.tauMinusRigids().toListListString())
-        }
-
-        get("/rigid") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.rigids().toListListString())
-        }
-
-        get("/excep") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.exceptionals().toListListString())
-        }
-
-        get("/self-ortho") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.selfOrthogonals().toListListString())
-        }
-
-        get("/partial-tilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.partialTiltings().toListListString())
-        }
-
-        get("/tilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.tiltings().toListListString())
-        }
-
-        get("/partial-cotilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.partialCotiltings().toListListString())
-        }
-
-        get("/cotilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.cotiltings().toListListString())
-        }
-
-        get("/gen-tilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.generalizedTiltings().toListListString())
-        }
-
-        get("/gen-cotilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.generalizedCotiltings().toListListString())
-        }
-
-        get("/w-tilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            call.respond(rfAlgebra.wakamatsuTiltings().toListListString())
-        }
-
-        get("/pure-w-tilt") {
-            val rfAlgebra = call.getRfAlgebra()
-            val waks = rfAlgebra.wakamatsuTiltings()
-            val pureWaks = waks.filter {
-                rfAlgebra.projDim(it) == null && rfAlgebra.injDim(it) == null
-            }
-            call.respond(pureWaks.toListListString())
-        }
-
-        route("/n") {
-            post("/cluster-tilt") {
-                val rfAlgebra = call.getRfAlgebra()
-                val n = call.receive<Int>()
-                call.respond(rfAlgebra.clusterTiltings(n).toListListString())
-            }
-
-            post("/n-tilt") {
-                val rfAlgebra = call.getRfAlgebra()
-                val n = call.receive<Int>()
-                call.respond(rfAlgebra.generalizedTiltings(n).toListListString())
-            }
-
-            post("/n-cotilt") {
-                val rfAlgebra = call.getRfAlgebra()
-                val n = call.receive<Int>()
-                call.respond(rfAlgebra.generalizedCotiltings(n).toListListString())
-            }
-        }
-    }
-
-    route("/indec") {
-        get("/all") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcat = rfAlgebra.indecs
-            call.respond(subcat.toListString())
-        }
-        get("fpd") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcat = rfAlgebra.indecsWithFiniteProjDim()
-            call.respond(subcat.toListString())
-        }
-        get("fid") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcat = rfAlgebra.indecsWithFiniteInjDim()
-            call.respond(subcat.toListString())
-        }
-
-        get("proj") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcat = rfAlgebra.projs()
-            call.respond(subcat.toListString())
-        }
-
-        get("inj") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcat = rfAlgebra.injs()
-            call.respond(subcat.toListString())
-        }
-
-        get("simple") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcat = rfAlgebra.simples()
-            call.respond(subcat.toListString())
-        }
-
-        get("brick") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcat = rfAlgebra.bricks()
-            call.respond(subcat.toListString())
-        }
-
-        get("gp") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcat = rfAlgebra.gorensteinProjs()
-            call.respond(subcat.toListString())
-        }
-
-        get("inf-torsless") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcat = rfAlgebra.infiniteTorsionless()
-            call.respond(subcat.toListString())
-        }
-
-        get("refl") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcat = rfAlgebra.reflexives()
-            call.respond(subcat.toListString())
-        }
-    }
-
-    route("subcat") {
-        get("tors") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcatList = rfAlgebra.torsionClasses()
-            call.setSubcatList(subcatList)
-            call.respond(subcatList.toListListString())
-        }
-        get("torf") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcatList = rfAlgebra.torsionFreeClasses()
-            call.setSubcatList(subcatList)
-            call.respond(subcatList.toListListString())
-        }
-        get("wide") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcatList = rfAlgebra.wideSubcats()
-            call.setSubcatList(subcatList)
-            call.respond(subcatList.toListListString())
-        }
-        get("ie") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcatList = rfAlgebra.ieClosedSubcats()
-            call.setSubcatList(subcatList)
-            call.respond(subcatList.toListListString())
-        }
-
-        get("ice") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcatList = rfAlgebra.iceClosedSubcats()
-            call.setSubcatList(subcatList)
-            call.respond(subcatList.toListListString())
-        }
-
-        get("ike") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcatList = rfAlgebra.ikeClosedSubcats()
-            call.setSubcatList(subcatList)
-            call.respond(subcatList.toListListString())
-        }
-
-        get("resolving") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcatList = rfAlgebra.resolvingSubcats()
-            call.setSubcatList(subcatList)
-            call.respond(subcatList.toListListString())
-        }
-
-        get("resolving") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcatList = rfAlgebra.resolvingSubcats()
-            call.setSubcatList(subcatList)
-            call.respond(subcatList.toListListString())
-        }
-
-        get("coresolving") {
-            val rfAlgebra = call.getRfAlgebra()
-            val subcatList = rfAlgebra.coresolvingSubcats()
-            call.setSubcatList(subcatList)
-            call.respond(subcatList.toListListString())
-        }
-
-        post("{type?}") {
-            val index = call.receive<Int>()
-            val type = call.parameters["type"] ?: return@post call.respond(HttpStatusCode.BadRequest)
-            val rfAlgebra = call.getRfAlgebra()
-            val subcatList = call.getSubcatList()
-            val subcat = subcatList[index]
-            when (type) {
-                "proj" -> {
-                    call.respond(subcat.filter {
-                        subcat.all { mX ->
-                            rfAlgebra.ext(it, mX) == 0
-                        }
-                    }.map { it.toString() })
-
+    get("/module/{param}") {
+        val rfAlgebra = call.getRfAlgebra()
+        val request = call.parameters["param"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+        val result =
+            when (request) {
+                "cotilt" -> rfAlgebra.cotiltings()
+                "excep" -> rfAlgebra.exceptionals()
+                "gen_cotilt" -> rfAlgebra.generalizedCotiltings()
+                "gen_tilt" -> rfAlgebra.generalizedTiltings()
+                "partial_tilt" -> rfAlgebra.partialTiltings()
+                "partial_cotilt" -> rfAlgebra.partialCotiltings()
+                "pure_w_tilt" -> {
+                    val waks = rfAlgebra.wakamatsuTiltings()
+                    waks.filter {
+                        rfAlgebra.projDim(it) == null && rfAlgebra.injDim(it) == null
+                    }
                 }
 
-                "inj" -> call.respond(subcat.filter {
-                    subcat.all { mX ->
-                        rfAlgebra.ext(mX, it) == 0
-                    }
-                }.map { it.toString() })
-
-                else -> call.respondText("Invalid type of modules", status = HttpStatusCode.BadRequest)
+                "rigid" -> rfAlgebra.rigids()
+                "sbrick" -> rfAlgebra.semibricks()
+                "self_ortho" -> rfAlgebra.selfOrthogonals()
+                "s_tau_tilt" -> rfAlgebra.supportTauTiltings()
+                "s_tau_minus_tilt" -> rfAlgebra.supportTauMinusTiltings()
+                "tau_tilt" -> rfAlgebra.tauTiltings()
+                "tau_rigid" -> rfAlgebra.tauRigids()
+                "tau_minus-tilt" -> rfAlgebra.tauMinusTiltings()
+                "tau_minus-rigid" -> rfAlgebra.tauMinusRigids()
+                "tilt" -> rfAlgebra.tiltings()
+                "w_tilt" -> rfAlgebra.wakamatsuTiltings()
+                else -> return@get call.respond(HttpStatusCode.BadRequest)
             }
+        call.respond(result.toListListString())
+    }
+
+    post("/module/n/{param}") {
+        val rfAlgebra = call.getRfAlgebra()
+        val n = call.receive<Int>()
+        val request =
+            call.parameters["param"] ?: return@post call.respond(HttpStatusCode.BadRequest)
+        val result =
+            when (request) {
+                "cluster_tilt" -> rfAlgebra.clusterTiltings(n)
+                "n_cotilt" -> rfAlgebra.generalizedCotiltings(n)
+                "n_tilt" -> rfAlgebra.generalizedTiltings(n)
+                else -> return@post call.respond(HttpStatusCode.BadRequest)
+            }
+        call.respond(result.toListListString())
+    }
+
+    get("/indec/{param}") {
+        val rfAlgebra = call.getRfAlgebra()
+        val request = call.parameters["param"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+        val result =
+            when (request) {
+                "all" -> rfAlgebra.indecs
+                "brick" -> rfAlgebra.bricks()
+                "fpd" -> rfAlgebra.indecsWithFiniteProjDim()
+                "fid" -> rfAlgebra.indecsWithFiniteInjDim()
+                "gp" -> rfAlgebra.gorensteinProjs()
+                "inf_torsless" -> rfAlgebra.infiniteTorsionless()
+                "inj" -> rfAlgebra.injs()
+                "proj" -> rfAlgebra.projs()
+                "refl" -> rfAlgebra.reflexives()
+                "simple" -> rfAlgebra.simples()
+                else -> return@get call.respond(HttpStatusCode.BadRequest)
+            }
+        call.respond(result.toListString())
+    }
+
+    get("/subcat/{param}") {
+        val rfAlgebra = call.getRfAlgebra()
+        val request = call.parameters["param"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+        val result =
+            when (request) {
+                "coresolving" -> rfAlgebra.coresolvingSubcats()
+                "ice" -> rfAlgebra.iceClosedSubcats()
+                "ike" -> rfAlgebra.ikeClosedSubcats()
+                "ie" -> rfAlgebra.ieClosedSubcats()
+                "resolving" -> rfAlgebra.resolvingSubcats()
+                "tors" -> rfAlgebra.torsionClasses()
+                "torf" -> rfAlgebra.torsionFreeClasses()
+                "wide" -> rfAlgebra.wideSubcats()
+                else -> return@get call.respond(HttpStatusCode.BadRequest)
+            }
+        val sortedResult = result.mySorted()
+        call.setSubcatList(sortedResult)
+        call.respond(sortedResult.toListListString(false))
+    }
+
+    get("/pair/{param}") {
+        val rfAlgebra = call.getRfAlgebra()
+        val request = call.parameters["param"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+        val result =
+            when (request) {
+                "2_smc" -> rfAlgebra.twoSMCs()
+                "cotors" -> rfAlgebra.cotorsionPairs()
+                "h_cotors" -> rfAlgebra.hereditaryCotorsionPairs()
+                "sbrick_full-rank" -> rfAlgebra.semibrickPairsFullRank()
+                "sbrick_maximal" -> rfAlgebra.semibrickPairsMaximal()
+                "tors" -> rfAlgebra.torsionPairs()
+                "tau_tilt" -> rfAlgebra.tauTiltingPairs()
+                else -> return@get call.respond(HttpStatusCode.BadRequest)
+            }
+        call.respond(result.toListPairListString())
+    }
+
+    post("/subcat/calculate/{type?}") {
+        val index = call.receive<Int>()
+        val type = call.parameters["type"] ?: return@post call.respond(HttpStatusCode.BadRequest)
+        val rfAlgebra = call.getRfAlgebra()
+        val subcatList = call.getSubcatList()
+        val subcat = subcatList[index]
+        val result = when (type) {
+            "proj" -> subcat.filter { subcat.all { mX -> rfAlgebra.ext(it, mX) == 0 } }
+            "inj" -> subcat.filter { subcat.all { mX -> rfAlgebra.ext(mX, it) == 0 } }
+            else -> return@post call.respond(HttpStatusCode.BadRequest)
         }
-
-        route("pair") {
-            get("tors") {
-                val rfAlgebra = call.getRfAlgebra()
-                call.respond(rfAlgebra.torsionPairs().toListPairListString())
-            }
-
-            get("tau-tilt") {
-                val rfAlgebra = call.getRfAlgebra()
-                call.respond(rfAlgebra.tauTiltingPairs().toListPairListString())
-            }
-
-            get("cotors") {
-                val rfAlgebra = call.getRfAlgebra()
-                call.respond(rfAlgebra.cotorsionPairs().toListPairListString())
-            }
-
-            get("h-cotors") {
-                val rfAlgebra = call.getRfAlgebra()
-                call.respond(rfAlgebra.hereditaryCotorsionPairs().toListPairListString())
-            }
-
-            get("2-smc") {
-                val rfAlgebra = call.getRfAlgebra()
-                call.respond(rfAlgebra.twoSMCs().toListPairListString())
-            }
-
-            get("sbrick-full-rank") {
-                val rfAlgebra = call.getRfAlgebra()
-                call.respond(rfAlgebra.semibrickPairsFullRank().toListPairListString())
-            }
-
-            get("sbrick-maximal") {
-                val rfAlgebra = call.getRfAlgebra()
-                call.respond(rfAlgebra.semibrickPairsMaximal().toListPairListString())
-            }
-        }
+        call.respond(result.toListString())
     }
 }

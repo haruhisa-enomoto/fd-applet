@@ -9,7 +9,7 @@ import io.github.haruhisa_enomoto.backend.stringalg.BinomialAlgebra
 import io.github.haruhisa_enomoto.backend.stringalg.StringAlgebra
 import io.github.haruhisa_enomoto.backend.stringalg.StringIndec
 
-class SBAlgebra<T, U>(
+class SbAlgebra<T, U>(
     overAlgebra: StringAlgebra<T, U>, biRelations: List<Pair<Monomial<T, U>, Monomial<T, U>>>
 ) : BinomialAlgebra<T, U>(overAlgebra, biRelations) {
 

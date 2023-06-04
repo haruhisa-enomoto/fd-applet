@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import useMeasure from "react-use-measure";
 import { FixedSizeList } from "react-window";
@@ -16,7 +16,10 @@ interface LargeListProps {
   data: string[];
   header?: string;
   onSelect?: (index: number) => void;
+  onChange?: (value: string[]) => void;
   text?: boolean;
+  multiple?: boolean;
+  selected?: string[];
 }
 
 export default function LargeList({
@@ -25,9 +28,14 @@ export default function LargeList({
   onSelect = () => {
     // Do nothing
   },
+  onChange = () => {
+    // Do nothing
+  },
   text = false,
+  multiple = false,
+  selected,
 }: LargeListProps) {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [, { width }] = useMeasure();
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -35,9 +43,33 @@ export default function LargeList({
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number
   ) => {
-    setSelectedIndex(index);
+    if (multiple) {
+      if (selectedIndices.includes(index)) {
+        setSelectedIndices(selectedIndices.filter((i) => i !== index));
+      } else {
+        setSelectedIndices([...selectedIndices, index]);
+      }
+    } else {
+      setSelectedIndices([index]);
+    }
     onSelect(index);
   };
+
+  useEffect(() => {
+    setSelectedIndices([]);
+  }, [data]);
+
+  useEffect(() => {
+    onChange(selectedIndices.map((i) => data[i]));
+  }, [selectedIndices]);
+
+
+  useEffect(() => {
+    if (selected !== undefined) {
+      const indices = selected.map((s) => data.indexOf(s));
+      setSelectedIndices(indices);
+    }
+  }, [selected]);
 
   return (
     <Paper
@@ -50,7 +82,7 @@ export default function LargeList({
         m: 0,
       }}
     >
-      {header && <Typography p={1}>{header}</Typography>}
+      {header && <Typography px={2} py={1}>{header}</Typography>}
       <Divider />
       <FixedSizeList
         height={200}
@@ -79,7 +111,7 @@ export default function LargeList({
                 <ListItemText primary={selected} />
               ) : (
                 <ListItemButton
-                  selected={index === selectedIndex}
+                  selected={selectedIndices.includes(index)}
                   dense
                   sx={{ height: style.height }}
                 >
@@ -91,7 +123,7 @@ export default function LargeList({
         }}
       </FixedSizeList>
       <Divider />
-      <Typography p={1}>Total: {data.length}</Typography>
-    </Paper>
+      <Typography px={2} py={1}>Total: {data.length}</Typography>
+    </Paper >
   );
 }

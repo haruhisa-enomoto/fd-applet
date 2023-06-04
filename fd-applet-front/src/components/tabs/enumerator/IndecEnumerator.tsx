@@ -5,7 +5,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Divider,
   Grid,
   Typography,
 } from "@mui/material";
@@ -30,7 +29,7 @@ const indecOptions: ComboOption[] = [
   { key: "-", label: "-" },
   { key: "gp", label: "Gorenstein-projective modules" },
   { key: "refl", label: "Reflexive modules" },
-  { key: "inf-torsless", label: "∞-torsionless modules" },
+  { key: "inf_torsless", label: "∞-torsionless modules" },
 ];
 
 export default function IndecEnumerator() {
@@ -53,14 +52,14 @@ export default function IndecEnumerator() {
 
   return (
     <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>Indecomposable modules (bricks, ...)</Typography>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography fontWeight="medium">Indecomposable modules (bricks, ...)</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
         <Grid
           container
           spacing={2}
+          mb={2}
           justifyContent="space-around"
           alignItems="center"
         >
@@ -72,21 +71,17 @@ export default function IndecEnumerator() {
               setSelected={setSelectedMenu}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getData} />
           </Grid>
         </Grid>
-        <Grid container spacing={2} minWidth={0}>
-          <Grid item xs={12}>
-            <LargeList
-              header="Indecs"
-              data={data}
-              onSelect={(index) => {
-                setHighlighted([data[index]]);
-              }}
-            />
-          </Grid>
-        </Grid>
+        <LargeList
+          header="Indecs"
+          data={data}
+          onSelect={(index) => {
+            setHighlighted([data[index]]);
+          }}
+        />
       </AccordionDetails>
     </Accordion>
   );

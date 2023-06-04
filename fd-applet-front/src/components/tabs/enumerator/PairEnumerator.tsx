@@ -5,7 +5,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Divider,
   Grid,
   Typography,
 } from "@mui/material";
@@ -24,7 +23,7 @@ export const pairOptions: ComboOption[] = [
     description: "1st: torsion class T, \n2nd: torsion-free class F",
   },
   {
-    key: "tau-tilt",
+    key: "tau_tilt",
     label: "τ-tilting pairs",
     description: "1st: support τ-tilting modules, \n2nd: support part (projs)",
   },
@@ -35,7 +34,7 @@ export const pairOptions: ComboOption[] = [
     description: "1st: X, 2nd: Y, \nwith Ext^1(X, Y) = 0",
   },
   {
-    key: "h-cotors",
+    key: "h_cotors",
     label: "Hereditary cotorsion pairs",
     description:
       "1st: X (resolving), 2nd: Y (coresolving), \nwith Ext^i(X, Y) = 0 for i > 0",
@@ -43,17 +42,17 @@ export const pairOptions: ComboOption[] = [
 
   { key: "-", label: "-" },
   {
-    key: "2-smc",
+    key: "2_smc",
     label: "2-simple minded collections",
     description: "1st: (mod A) part, \n2nd: (mod A) [1] part",
   },
   {
-    key: "sbrick-full-rank",
+    key: "sbrick_full_rank",
     label: "Semibrick pairs of full rank",
     description: "1st: (mod A) part, \n2nd: (mod A) [1] part",
   },
   {
-    key: "sbrick-maximal",
+    key: "sbrick_maximal",
     label: "Maximal semibrick pairs",
     description: "1st: (mod A) part, \n2nd: (mod A) [1] part",
   },
@@ -68,7 +67,7 @@ export default function SubcatEnumerator() {
 
   async function getData() {
     const response = await fetchWithUiFeedback<Pair<string[], string[]>[]>({
-      url: "/api/subcat/pair/" + selectedMenu,
+      url: "/api/pair/" + selectedMenu,
     });
     if (response.data === undefined) return;
     setData(response.data);
@@ -79,17 +78,17 @@ export default function SubcatEnumerator() {
 
   return (
     <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>Pair of objects ((co)torsion pairs, 2-SMC, ...)</Typography>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography fontWeight="medium">Pair of objects ((co)torsion pairs, 2-SMC, ...)</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
-        <Typography m={1}>
+        <Typography mb={2}>
           Blue: 1st part, Red: 2nd part, Purple: both parts
         </Typography>
         <Grid
           container
           spacing={2}
+          mb={2}
           justifyContent="space-around"
           alignItems="center"
         >
@@ -103,19 +102,15 @@ export default function SubcatEnumerator() {
               showDescriptions={true}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getData} />
           </Grid>
         </Grid>
-
         <LargePairLists
           data={data}
           header1="List of pairs"
           header2="1st (blue)"
           header3="2nd (red)"
-          setSelected={setSelected}
-          setSecondarySelected={setSecondarySelected}
-          setHighlighted={setHighlighted}
         />
       </AccordionDetails>
     </Accordion>

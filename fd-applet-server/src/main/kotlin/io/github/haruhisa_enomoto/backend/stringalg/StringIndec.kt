@@ -4,7 +4,7 @@ import io.github.haruhisa_enomoto.backend.algebra.Indec
 import io.github.haruhisa_enomoto.backend.algebra.QuiverAlgebra
 import io.github.haruhisa_enomoto.backend.quiver.Word
 import io.github.haruhisa_enomoto.backend.sbalgebra.BiserialIndec
-import io.github.haruhisa_enomoto.backend.sbalgebra.SBAlgebra
+import io.github.haruhisa_enomoto.backend.sbalgebra.SbAlgebra
 
 
 /**
@@ -47,6 +47,13 @@ class StringIndec<T, U> private constructor(
 
     override fun toString(): String = word.toString()
 
+    override fun compareTo(other: Indec<T>): Int {
+        if (other is BiserialIndec<*, *>) return -1
+        if (other is StringIndec<*, *>) {
+            return this.word.compareTo(other.word)
+        }
+        return super.compareTo(other)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -374,7 +381,7 @@ class StringIndec<T, U> private constructor(
     }
 
     private fun addRightHook(): List<StringIndec<T, U>> {
-        require(algebra is StringAlgebra || algebra is SBAlgebra) {
+        require(algebra is StringAlgebra || algebra is SbAlgebra) {
             "Only makes sense for special biserial algebras."
         }
         return algebra.arrows.filter { word.to == it.to && algebra.isLegal(word * !it) }.map {
@@ -387,7 +394,7 @@ class StringIndec<T, U> private constructor(
     }
 
     private fun addRightCohook(): List<StringIndec<T, U>> {
-        require(algebra is StringAlgebra || algebra is SBAlgebra) {
+        require(algebra is StringAlgebra || algebra is SbAlgebra) {
             "Only makes sense for special biserial algebras."
         }
         return algebra.arrows.filter { word.to == it.from && algebra.isLegal(word * it) }.map {
@@ -400,37 +407,37 @@ class StringIndec<T, U> private constructor(
     }
 
     override fun isProjective(): Boolean {
-        require(algebra is StringAlgebra || algebra is SBAlgebra) {
+        require(algebra is StringAlgebra || algebra is SbAlgebra) {
             TODO("Only supported for special biserial algebras.")
         }
         return if (algebra is StringAlgebra) (top().size == 1) && startsDeep() && endsDeep()
         else {
-            algebra as SBAlgebra
+            algebra as SbAlgebra
             if (topVertices()[0] in algebra.biserialTopVertices) false
             else (top().size == 1) && startsDeep() && endsDeep()
         }
     }
 
     override fun isInjective(): Boolean {
-        require(algebra is StringAlgebra || algebra is SBAlgebra) {
+        require(algebra is StringAlgebra || algebra is SbAlgebra) {
             TODO("Only supported for special biserial algebras.")
         }
         return if (algebra is StringAlgebra) (socle().size == 1) && startsPeak() && endsPeak()
         else {
-            algebra as SBAlgebra
+            algebra as SbAlgebra
             if (socleVertices()[0] in algebra.biserialSocleVertices) false
             else (socle().size == 1) && startsPeak() && endsPeak()
         }
     }
 
     override fun sourceSequence(): Pair<List<Indec<T>>, Indec<T>?> {
-        require(algebra is StringAlgebra || algebra is SBAlgebra) {
+        require(algebra is StringAlgebra || algebra is SbAlgebra) {
             TODO("Only supported for special biserial algebras.")
         }
         val socles = socleVertices()
         // Check if the module is radical of a biserial module.
         val isBSRadical = if (algebra is StringAlgebra) false else {
-            algebra as SBAlgebra
+            algebra as SbAlgebra
             (socles.size == 1 && socles[0] in algebra.biserialSocleVertices && dim() + 1 == algebra.injAt(socles[0])
                 .dim())
         }
@@ -473,7 +480,7 @@ class StringIndec<T, U> private constructor(
             }
             return Pair(middle, tauInverse)
         } else {
-            algebra as SBAlgebra
+            algebra as SbAlgebra
             // Now `this` is rad P for biserial proj-inj [proj].
             // thus 0 -> rad P -> (rad P)/(soc P) + P -> P/soc P -> 0
             // is AR sequence.
@@ -484,13 +491,13 @@ class StringIndec<T, U> private constructor(
     }
 
     override fun sinkSequence(): Pair<List<Indec<T>>, Indec<T>?> {
-        require(algebra is StringAlgebra || algebra is SBAlgebra) {
+        require(algebra is StringAlgebra || algebra is SbAlgebra) {
             TODO("Only supported for special biserial algebras.")
         }
         val tops = topVertices()
         // Check if the module is coradical of a biserial module.
         val isBSCoradical = if (algebra is StringAlgebra) false else {
-            algebra as SBAlgebra
+            algebra as SbAlgebra
             (tops.size == 1 && tops[0] in algebra.biserialTopVertices && dim() + 1 == algebra.projAt(tops[0]).dim())
         }
         if (!isBSCoradical) {
@@ -525,7 +532,7 @@ class StringIndec<T, U> private constructor(
             }
             return Pair(middle, tau)
         } else {
-            algebra as SBAlgebra
+            algebra as SbAlgebra
             // Now `this` is P/soc P for biserial proj-inj [proj].
             // thus 0 -> rad P -> (rad P)/(soc P) + P -> P/soc P -> 0
             // is AR sequence.
@@ -577,10 +584,10 @@ class StringIndec<T, U> private constructor(
     private fun mountainToValley(mX: StringIndec<T, U>): List<Word<T, U>> {
         require(mX.topVertices().size == 1)
         require(mX.dim() > 1)
-        require(algebra is SBAlgebra || algebra is StringAlgebra)
+        require(algebra is SbAlgebra || algebra is StringAlgebra)
         val top = mX.topVertices()[0]
         if (algebra is StringAlgebra ||
-            top !in (algebra as SBAlgebra).biserialTopVertices
+            top !in (algebra as SbAlgebra).biserialTopVertices
         ) {
             val leftLeg = algebra.wordsEndingWith(
                 mX.word, addOnlyInverse = true, onlyMaximal = true
@@ -719,11 +726,11 @@ class StringIndec<T, U> private constructor(
      * combination of left and right arms (of the form <--<-- -->-->).
      */
     fun valleyToMountain(mX: StringIndec<T, U>): List<Word<T, U>> {
-        require(algebra is StringAlgebra || algebra is SBAlgebra)
+        require(algebra is StringAlgebra || algebra is SbAlgebra)
         require(mX.socleVertices().size == 1)
         require(mX.dim() > 1)
         val socle = mX.socleVertices()[0]
-        if (algebra is StringAlgebra || socle !in (algebra as SBAlgebra).biserialSocleVertices) {
+        if (algebra is StringAlgebra || socle !in (algebra as SbAlgebra).biserialSocleVertices) {
             val leftArm = algebra.wordsEndingWith(
                 mX.word, addOnlyArrow = true, onlyMaximal = true
             ).first().dropLast(mX.word.length).not()

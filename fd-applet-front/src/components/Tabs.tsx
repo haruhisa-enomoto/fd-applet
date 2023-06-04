@@ -1,5 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import LinearScaleIcon from '@mui/icons-material/LinearScale';
 import {
   Box,
   FormControlLabel,
@@ -10,11 +15,15 @@ import {
   Typography,
 } from "@mui/material";
 
+
 import { ComputationState } from "../App";
 import { useSelection } from "../contexts/SelectionContext";
+import useFetchWithUiFeedback from "../hooks/useFetchWithUiFeedback";
 
 import GenericQuiver from "./common/GenericQuiver";
+import { defaultPhysicsOptions as defaultPhysicsOption } from "./common/QuiverOptions";
 import AlgebraInfoTab from "./tabs/AlgebraInfo";
+import ArMenu from "./tabs/arQuiver/ArMenu";
 import CalculatorTab from "./tabs/calculator/CalculatorTab";
 import ConverterTab from "./tabs/converter/ConverterTab";
 import EnumerateTab from "./tabs/enumerator/EnumeratorTab";
@@ -45,10 +54,13 @@ export default function MyTabs({
   computationState,
   handleComputationUpdate,
 }: MainTabsProps) {
-  const { selected, secondarySelected, highlighted } = useSelection();
+  const { selected, setSelected, secondarySelected, setSecondarySelected, highlighted, setHighlighted } = useSelection();
+  const fetchWithUiFeedback = useFetchWithUiFeedback();
 
   const [tabValue, setTabValue] = useState(0);
   const [showAR, setShowAR] = useState(true);
+
+  const [physics, setPhysics] = useState<unknown>(defaultPhysicsOption);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     // For "AR Quiver" switch.
@@ -62,6 +74,32 @@ export default function MyTabs({
   const handleARChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowAR(event.target.checked);
   };
+
+  // Currently async functions, so color change is not immediate.
+  // TODO: make it immediate (in <GenericQuiver> component?).
+  async function handleARComputed() {
+    handleComputationUpdate(5)(true);
+    const responseProj = await fetchWithUiFeedback<string[]>({
+      url: "/api/indec/proj",
+      showSuccess: false,
+    });
+    const responseInj = await fetchWithUiFeedback<string[]>({
+      url: "/api/indec/inj",
+      showSuccess: false,
+    });
+    if (responseProj.data === undefined) return;
+    if (responseInj.data === undefined) return;
+    setSecondarySelected(responseProj.data);
+    setSelected(responseInj.data);
+  }
+
+  useEffect(() => {
+    if (!showAR) {
+      setSelected([]);
+      setSecondarySelected([]);
+      setHighlighted([]);
+    }
+  }, [showAR]);
 
   return (
     <Box sx={{ width: "auto" }}>
@@ -78,12 +116,24 @@ export default function MyTabs({
             }
           }}
         >
-          <Tab label="Basic Info" />
-          <Tab label="Calculator" />
-          <Tab label="Enumerator" />
-          <Tab label="Converter" />
-          <Tab label="Quivers" />
           <Tab
+            icon={<InfoOutlinedIcon />}
+            label="Info"
+            sx={{ textTransform: 'none' }} />
+          <Tab
+            icon={<CalculateOutlinedIcon />}
+            label="Calculator"
+            sx={{ textTransform: 'none' }} />
+          <Tab
+            icon={<FormatListNumberedIcon />}
+            label="Enumerator" sx={{ textTransform: 'none' }} />
+          <Tab
+            icon={<AutoFixHighIcon />}
+            label="Converter" sx={{ textTransform: 'none' }} />
+          <Tab
+            icon={<LinearScaleIcon />}
+            label="Quivers" sx={{ textTransform: 'none' }} />
+          <Tab sx={{ textTransform: 'none' }}
             label={
               <FormControlLabel
                 control={
@@ -96,6 +146,7 @@ export default function MyTabs({
                     }}
                   />
                 }
+                labelPlacement="bottom"
                 label={<Typography variant="subtitle2">AR quiver</Typography>}
                 onClick={(e) => e.stopPropagation()}
               />
@@ -139,14 +190,19 @@ export default function MyTabs({
         {showAR && (
           <Grid item xs={6} mb={1}>
             <Box style={{ position: "sticky", top: "70px" }} sx={{ p: 1 }}>
+              <ArMenu
+                physics={physics}
+                setPhysics={setPhysics}
+              />
               <GenericQuiver
                 buttonTitle="Compute AR quiver"
                 url="/api/quiver/ar"
+                physicOption={physics}
                 selected={selected}
                 secondarySelected={secondarySelected}
                 highlighted={highlighted}
-                hide={!computationState[4]}
-                computationCallback={() => handleComputationUpdate(4)(true)}
+                hide={!computationState[5]}
+                computationCallback={handleARComputed}
               />
             </Box>
           </Grid>

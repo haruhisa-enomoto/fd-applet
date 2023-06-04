@@ -5,7 +5,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Divider,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -19,7 +18,7 @@ import { useSelection } from "../../../contexts/SelectionContext";
 import useFetchWithUiFeedback from "../../../hooks/useFetchWithUiFeedback";
 import { Combo, ComboOption } from "../../common/Combo";
 import ComputeButton from "../../common/ComputeButton";
-import LargeList from "../../common/LargeList";
+import ListWithIndecList from "../../common/ListWithIndecList";
 
 import StatisticsDialog from "./StatisticsDialog";
 
@@ -99,9 +98,9 @@ export default function SubcatEnumerator() {
       return;
     }
     const response = await fetchWithUiFeedback<string[]>({
-      url: "/api/calculator/subcat/" + type,
+      url: "/api/subcat/calculate/" + type,
       method: "POST",
-      body: data[index],
+      body: index,
       showSuccess: false,
     });
     if (response.data === undefined) return;
@@ -110,16 +109,14 @@ export default function SubcatEnumerator() {
 
   return (
     <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>Subcategories (torsion classes, resolving, ...)</Typography>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography fontWeight="medium">Subcategories (torsion classes, resolving, ...)</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
         <Grid
           container
           spacing={2}
-          justifyContent="space-around"
-          alignItems="center"
+          mb={2}
         >
           <Grid item xs={10}>
             <Combo
@@ -129,61 +126,47 @@ export default function SubcatEnumerator() {
               setSelected={setSelectedMenu}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getData} />
           </Grid>
         </Grid>
-        <Grid container spacing={1}>
-          <Grid item xs={6}>
-            <LargeList
-              header="Subcats"
-              data={data.map((modules) => modules.join(", "))}
-              onSelect={(index) => {
-                setSelected(data[index]);
-                setIndex(index);
-                setHighlighted([]);
-                setSecondarySelected([]);
-                setSelectedValue("none");
-              }}
+        <ListWithIndecList
+          candidates={data}
+          leftHeader="Subcats"
+          handleChange={(value) => {
+            setSelected(value);
+            setSecondarySelected([]);
+            setHighlighted([]);
+          }}
+          handleIndexChange={setIndex}
+        />
+        <FormControl sx={{ m: 1 }}>
+          <FormLabel>Highlight</FormLabel>
+          <RadioGroup
+            defaultValue="none"
+            name="highlight-modules"
+            onChange={highlightModules}
+            value={selectedValue}
+            row
+          >
+            <FormControlLabel
+              value="none"
+              control={<Radio />}
+              label="None"
             />
-          </Grid>
-          <Grid item xs={6}>
-            {data[index] && (
-              <LargeList header="Indecs in it" data={data[index]} text />
-            )}
-          </Grid>
-          <Grid item xs={12}>
-            <FormControl sx={{ m: 1 }}>
-              <FormLabel>Highlight</FormLabel>
-              <RadioGroup
-                defaultValue="none"
-                name="highlight-modules"
-                onChange={highlightModules}
-                value={selectedValue}
-                row
-              >
-                <FormControlLabel
-                  value="none"
-                  control={<Radio />}
-                  label="None"
-                />
-                <FormControlLabel
-                  value="proj"
-                  control={<Radio />}
-                  label="Ext-projectives"
-                />
-                <FormControlLabel
-                  value="inj"
-                  control={<Radio />}
-                  label="Ext-injectives"
-                />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12}>
-            {data && <StatisticsDialog data={data} />}
-          </Grid>
-        </Grid>
+            <FormControlLabel
+              value="proj"
+              control={<Radio />}
+              label="Ext-projectives"
+            />
+            <FormControlLabel
+              value="inj"
+              control={<Radio />}
+              label="Ext-injectives"
+            />
+          </RadioGroup>
+        </FormControl>
+        {data && <StatisticsDialog data={data} />}
       </AccordionDetails>
     </Accordion>
   );

@@ -5,7 +5,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Divider,
   Grid,
   TextField,
   Typography,
@@ -16,15 +15,14 @@ import { useUi } from "../../../contexts/UiContext";
 import useFetchWithUiFeedback from "../../../hooks/useFetchWithUiFeedback";
 import { Combo, ComboOption } from "../../common/Combo";
 import ComputeButton from "../../common/ComputeButton";
-import LargeList from "../../common/LargeList";
+import ListWithIndecList from "../../common/ListWithIndecList";
 
-import StatisticsDialog from "./StatisticsDialog";
 
 const moduleWithDegreeOptions: ComboOption[] = [
-  { key: "cluster-tilt", label: "n-cluster tilting modules" },
+  { key: "cluster_tilt", label: "n-cluster tilting modules" },
   { key: "-", label: "-" },
-  { key: "n-tilt", label: "Tilting modules with pd <= n" },
-  { key: "n-cotilt", label: "Cotilting modules with id <= n" },
+  { key: "n_tilt", label: "Tilting modules with pd <= n" },
+  { key: "n_cotilt", label: "Cotilting modules with id <= n" },
 ];
 
 export default function ModuleWithDegreeEnumerator() {
@@ -32,9 +30,9 @@ export default function ModuleWithDegreeEnumerator() {
   const fetchWithUiFeedback = useFetchWithUiFeedback();
   const { setSelected, setSecondarySelected, setHighlighted } = useSelection();
 
-  const [selectedMenu, setSelectedMenu] = useState("cluster-tilt");
+  const [selectedMenu, setSelectedMenu] = useState("cluster_tilt");
   const [data, setData] = useState<string[][]>([]);
-  const [index, setIndex] = useState<number>(0);
+
   const [degree, setDegree] = useState("");
 
   async function getData() {
@@ -61,16 +59,14 @@ export default function ModuleWithDegreeEnumerator() {
 
   return (
     <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>Modules with degree (n-cluster tilting, ...)</Typography>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography fontWeight="medium">Modules with degree (n-cluster tilting, ...)</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
         <Grid
           container
           spacing={2}
-          justifyContent="space-around"
-          alignItems="center"
+          mb={2}
         >
           <Grid item xs={8}>
             <Combo
@@ -89,30 +85,19 @@ export default function ModuleWithDegreeEnumerator() {
               label="n"
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getData} />
           </Grid>
         </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <LargeList
-              header="Modules"
-              data={data.map((modules) => modules.join(", "))}
-              onSelect={(index) => {
-                setSelected(data[index]);
-                setIndex(index);
-              }}
-            />
-          </Grid>{" "}
-          <Grid item xs={6}>
-            {data[index] && (
-              <LargeList header="Indecs in it" data={data[index]} text />
-            )}
-          </Grid>
-          <Grid item xs={12}>
-            {data && <StatisticsDialog data={data} />}
-          </Grid>
-        </Grid>
+        <ListWithIndecList
+          candidates={data}
+          leftHeader="Modules"
+          handleChange={(value) => {
+            setSelected(value);
+            setSecondarySelected([]);
+            setHighlighted([]);
+          }}
+        />
       </AccordionDetails>
     </Accordion>
   );

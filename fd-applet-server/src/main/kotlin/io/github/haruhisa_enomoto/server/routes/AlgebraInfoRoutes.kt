@@ -1,7 +1,7 @@
 package io.github.haruhisa_enomoto.server.routes
 
 import io.github.haruhisa_enomoto.backend.algebra.Algebra
-import io.github.haruhisa_enomoto.backend.sbalgebra.SBAlgebra
+import io.github.haruhisa_enomoto.backend.sbalgebra.SbAlgebra
 import io.github.haruhisa_enomoto.backend.stringalg.GentleAlgebra
 import io.github.haruhisa_enomoto.backend.stringalg.MonomialAlgebra
 import io.github.haruhisa_enomoto.backend.stringalg.StringAlgebra
@@ -28,7 +28,7 @@ fun <T> Algebra<T>.dimInfo(): List<Pair<String, Int?>> {
     }
     return if (dim == null) listOf(
         "rank A" to vertices.size, "dim A" to null
-    ) else if (this is StringAlgebra<*, *> || this is SBAlgebra<*, *>) {
+    ) else if (this is StringAlgebra<*, *> || this is SbAlgebra<*, *>) {
         listOf(
             "rank A" to vertices.size,
             "dim A" to dim,
@@ -57,7 +57,7 @@ fun <T> Algebra<T>.indecInfo(): List<Pair<String, Int?>> {
             )
         }
 
-        is SBAlgebra<*, *> -> {
+        is SbAlgebra<*, *> -> {
             val bands = this.reduction.primitiveBands().size
             listOf(
                 "mod A" to this.numberOfIndecs(),
@@ -85,7 +85,7 @@ fun <T> Algebra<T>.namedModules(): List<Pair<String, String>> {
             }
         }
 
-        is SBAlgebra<*, *> -> {
+        is SbAlgebra<*, *> -> {
             vertices.map { "P($it)" to projAt(it).toString() } + vertices.map { "I($it)" to injAt(it).toString() } + reduction.primitiveBands()
                 .map {
                     "Primitive band" to it.toString()
@@ -100,7 +100,7 @@ fun <T> Algebra<T>.classString(): String {
     val className = when (this) {
         is GentleAlgebra<*, *> -> "Gentle Algebra"
         is StringAlgebra<*, *> -> "String Algebra"
-        is SBAlgebra<*, *> -> "Special Biserial Algebra"
+        is SbAlgebra<*, *> -> "Special Biserial Algebra"
         is MonomialAlgebra<*, *> -> "Monomial Algebra"
         else -> "Binomial Algebra"
     }
@@ -110,7 +110,7 @@ fun <T> Algebra<T>.classString(): String {
     } catch (e: NotImplementedError) {
         ""
     }
-    if (this !is StringAlgebra<*, *> && this !is SBAlgebra<*, *>) {
+    if (this !is StringAlgebra<*, *> && this !is SbAlgebra<*, *>) {
         return algDimString + className
     }
     if (!this.isFiniteDimensional()) return algDimString + className

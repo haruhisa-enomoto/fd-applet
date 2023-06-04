@@ -5,10 +5,8 @@ package io.github.haruhisa_enomoto.backend.algebra
  *
  * @param T the type of vertices in the algebra.
  */
-abstract class Indec<T> {
-    /**
-     * The algebra over which this module is considered.
-     */
+abstract class Indec<T> : Comparable<Indec<T>> {
+    /** The algebra over which this module is considered. */
     abstract val algebra: Algebra<T>
 
     /**
@@ -40,17 +38,16 @@ abstract class Indec<T> {
     abstract fun isInjective(): Boolean
 
     /**
-     * Returns whether this module is a brick, that is,
-     * the endomorphism ring of it is a division ring.
-     * This is equivalent to that the dimension of its endomorphism ring is one.
+     * Returns whether this module is a brick, that is, the endomorphism ring of it is a division
+     * ring. This is equivalent to that the dimension of its endomorphism ring is one.
      *
      * @return whether this module is a brick.
      */
     fun isBrick() = (algebra.hom(this, this) == 1)
 
     /**
-     * Returns the dimension of `Hom(this, [other])`.
-     * It is recommended to use [Algebra.hom] instead because [Algebra.hom] caches the result.
+     * Returns the dimension of `Hom(this, [other])`. It is recommended to use [Algebra.hom] instead
+     * because [Algebra.hom] caches the result.
      *
      * @param other the other module.
      * @return the dimension of `Hom(this, [other])`.
@@ -59,10 +56,8 @@ abstract class Indec<T> {
     abstract fun hom(other: Indec<T>): Int
 
     /**
-     * Returns the dimension of projectively stable Hom space
-     * `\overline{Hom}(this, [other])`.
-     * It is recommended to use [Algebra.stableHom] instead
-     * because [Algebra.stableHom] caches the result.
+     * Returns the dimension of projectively stable Hom space `\overline{Hom}(this, [other])`. It is
+     * recommended to use [Algebra.stableHom] instead because [Algebra.stableHom] caches the result.
      *
      * @param other the other module.
      * @return the dimension of `\overline{Hom}(this, [other])`.
@@ -71,10 +66,9 @@ abstract class Indec<T> {
     abstract fun stableHom(other: Indec<T>): Int
 
     /**
-     * Returns the dimension of injectively stable Hom space
-     * `\overline{Hom}(this, [other])`.
-     * It is recommended to use [Algebra.injStableHom] instead
-     * because [Algebra.injStableHom] caches the result.
+     * Returns the dimension of injectively stable Hom space `\overline{Hom}(this, [other])`. It is
+     * recommended to use [Algebra.injStableHom] instead because [Algebra.injStableHom] caches the
+     * result.
      *
      * @param other the other module.
      * @return the dimension of `\overline{Hom}(this, [other])`.
@@ -83,8 +77,8 @@ abstract class Indec<T> {
     abstract fun injStableHom(other: Indec<T>): Int
 
     /**
-     * Returns the dimension of `Ext^1(this, [other])`.
-     * It is recommended to use [Algebra.ext1] instead because [Algebra.ext1] caches the result.
+     * Returns the dimension of `Ext^1(this, [other])`. It is recommended to use [Algebra.ext1]
+     * instead because [Algebra.ext1] caches the result.
      *
      * @param other the other module.
      * @return the dimension of `Ext^1(this, [other])`.
@@ -93,8 +87,8 @@ abstract class Indec<T> {
     abstract fun ext1(other: Indec<T>): Int
 
     /**
-     * Returns the dimension of `Ext^[n] (this, [other])`.
-     * It is recommended to use [Algebra.ext] instead because [Algebra.ext] caches the result.
+     * Returns the dimension of `Ext^[n] (this, [other])`. It is recommended to use [Algebra.ext]
+     * instead because [Algebra.ext] caches the result.
      *
      * @param other the other module.
      * @param n the degree of `Ext` (default: `1`).
@@ -125,7 +119,8 @@ abstract class Indec<T> {
      */
     abstract fun socleVertices(): List<T>
 
-    /** Returns the top of this module as a list of simple modules.
+    /**
+     * Returns the top of this module as a list of simple modules.
      *
      * @return the top of this module as a list of simple modules.
      */
@@ -133,7 +128,8 @@ abstract class Indec<T> {
         return topVertices().map { algebra.simpleAt(it) }
     }
 
-    /** Returns the socle of this module as a list of simple modules.
+    /**
+     * Returns the socle of this module as a list of simple modules.
      *
      * @return the socle of this module as a list of simple modules.
      */
@@ -148,7 +144,6 @@ abstract class Indec<T> {
      */
     abstract fun radical(): List<Indec<T>>
 
-
     /**
      * Returns the coradical of this module (`this`/socle).
      *
@@ -157,20 +152,17 @@ abstract class Indec<T> {
     abstract fun coradical(): List<Indec<T>>
 
     /**
-     * Returns the syzygy of this module (as a list of indecomposable modules).
-     * This is the kernel of the projective cover,
-     * so possibly with projective direct summands.
-     * This method is not intended to be used directly.
-     * Use [syzygy] instead (for cache).
+     * Returns the syzygy of this module (as a list of indecomposable modules). This is the kernel
+     * of the projective cover, so possibly with projective direct summands. This method is not
+     * intended to be used directly. Use [syzygy] instead (for cache).
      *
      * @return the syzygy of this module.
      */
     abstract fun _syzygy(): List<Indec<T>>
 
     /**
-     * Returns the syzygy of this module (as a list of indecomposable modules).
-     * This is a kernel of the projective cover,
-     * so possibly with projective direct summands.
+     * Returns the syzygy of this module (as a list of indecomposable modules). This is a kernel of
+     * the projective cover, so possibly with projective direct summands.
      *
      * @return the syzygy of this module.
      */
@@ -235,8 +227,8 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns the minimal projective presentation `P_1 -> P_0` of this module
-     * as the pair of vertices (with first: `P_0`, second: `P_1`).
+     * Returns the minimal projective presentation `P_1 -> P_0` of this module as the pair of
+     * vertices (with first: `P_0`, second: `P_1`).
      *
      * @return the minimal projective presentation of this module.
      */
@@ -253,13 +245,14 @@ abstract class Indec<T> {
     abstract fun sinkSequence(): Pair<List<Indec<T>>, Indec<T>?>
 
     /**
-     * Let `X` be this module. Then returns the domain `E`
-     * of the sink map (right minimal almost split) `E -> X` of `X`.
+     * Let `X` be this module. Then returns the domain `E` of the sink map (right minimal almost
+     * split) `E -> X` of `X`.
      */
     fun thetaPlus() = sinkSequence().first
 
-    /** Returns the Auslander-Reiten translation of this module,
-     * or `null` if this module is projective.
+    /**
+     * Returns the Auslander-Reiten translation of this module, or `null` if this module is
+     * projective.
      *
      * @return the Auslander-Reiten translation of this module.
      */
@@ -274,21 +267,22 @@ abstract class Indec<T> {
     abstract fun sourceSequence(): Pair<List<Indec<T>>, Indec<T>?>
 
     /**
-     * Let `X` be this module. Then returns the codomain `E`
-     * of the source map (left minimal almost split) `X -> E` of `X`.
+     * Let `X` be this module. Then returns the codomain `E` of the source map (left minimal almost
+     * split) `X -> E` of `X`.
      */
     fun thetaMinus() = sourceSequence().first
 
-    /** Returns the inverse of the Auslander-Reiten translation of this module,
-     * or `null` if this module is injective.
+    /**
+     * Returns the inverse of the Auslander-Reiten translation of this module, or `null` if this
+     * module is injective.
      *
      * @return the inverse of the Auslander-Reiten translation of this module.
      */
     fun tauMinus() = sourceSequence().second
 
     /**
-     * Returns the list of support vertices of modules **with multiplicity**,
-     * so it has the same information as the dimension vector.
+     * Returns the list of support vertices of modules **with multiplicity**, so it has the same
+     * information as the dimension vector.
      *
      * @return the list of support vertices of modules with multiplicity.
      * @see support
@@ -296,8 +290,8 @@ abstract class Indec<T> {
     abstract fun vertexList(): List<T>
 
     /**
-     * Returns the set of support vertices of this module: the set of vertices
-     * on which this module is non-zero.
+     * Returns the set of support vertices of this module: the set of vertices on which this module
+     * is non-zero.
      *
      * @return the set of support vertices of this module.
      */
@@ -351,10 +345,10 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns the dominant dimension of this module, determined using the minimal injective resolution:
-     * `0 -> this -> I^0 -> I^1 -> I^2 -> ...`
-     * The dominant dimension is the least n such that I^n is not projective. If all are projective (e.g., this module is a proj-injective module),
-     * it returns `null` for infinity.
+     * Returns the dominant dimension of this module, determined using the minimal injective
+     * resolution: `0 -> this -> I^0 -> I^1 -> I^2 -> ...` The dominant dimension is the least n
+     * such that I^n is not projective. If all are projective (e.g., this module is a proj-injective
+     * module), it returns `null` for infinity.
      *
      * @return the dominant dimension of this module, or `null` if infinite.
      */
@@ -376,7 +370,7 @@ abstract class Indec<T> {
             if (!isGood(currentPath.last())) {
                 // If the last vertex is not good, then we found dom.dim!
                 return currentPath.size - 1
-            }// Now all vertices in [currentPath] are good, so take cosyzygy and add paths.
+            } // Now all vertices in [currentPath] are good, so take cosyzygy and add paths.
             val nextVertices = currentPath.last().cosyzygy().distinct()
             for (next in nextVertices) {
                 val already = visited.any { it.isIsomorphic(next) }
@@ -390,11 +384,10 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns the co-dominant dimension of this module, determined using the minimal projective resolution:
-     * `... -> P_2 -> P_1 -> P_0 -> this -> 0`
-     * The dominant dimension is the least n such that P_n is not injective.
-     * If all are injective e.g., (this module is a proj-injective module),
-     * it returns `null` for infinity.
+     * Returns the co-dominant dimension of this module, determined using the minimal projective
+     * resolution: `... -> P_2 -> P_1 -> P_0 -> this -> 0` The dominant dimension is the least n
+     * such that P_n is not injective. If all are injective e.g., (this module is a proj-injective
+     * module), it returns `null` for infinity.
      *
      * @return the dominant dimension of this module, or `null` if infinite.
      */
@@ -409,7 +402,7 @@ abstract class Indec<T> {
             if (!isGood(currentPath.last())) {
                 // If the last vertex is not good, then we found dom.dim!
                 return currentPath.size - 1
-            }// Now all vertices in [currentPath] are good, so take cosyzygy and add paths.
+            } // Now all vertices in [currentPath] are good, so take cosyzygy and add paths.
             val nextVertices = currentPath.last().syzygy().distinct()
             for (next in nextVertices) {
                 val already = visited.any { it.isIsomorphic(next) }
@@ -423,23 +416,19 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns whether this module `X` is [n]-torsionless, that is,
-     * `Ext^i(Tr X, A) = 0` for `i = 1 .. [n]`.
-     * This is equivalent to `Ext^i(DA, D Tr X) = 0`.
+     * Returns whether this module `X` is [n]-torsionless, that is, `Ext^i(Tr X, A) = 0` for `i = 1
+     * .. [n]`. This is equivalent to `Ext^i(DA, D Tr X) = 0`.
      *
      * @param n the degree (default: 1).
      * @return whether this module is [n]-torsionless.
      */
     fun isTorsionLess(n: Int = 1): Boolean {
-        return (1..n).all { i ->
-            algebra.ext(algebra.injs(), this.tauPlus(), i) == 0
-        }
+        return (1..n).all { i -> algebra.ext(algebra.injs(), this.tauPlus(), i) == 0 }
     }
 
     /**
-     * Returns whether this module X is infinite-torsionless, that is,
-     * `Ext^i(Tr X, A) = 0` for all `i > 0`.
-     * This is equivalent to `Ext^i(DA, D Tr X) = 0`.
+     * Returns whether this module X is infinite-torsionless, that is, `Ext^i(Tr X, A) = 0` for all
+     * `i > 0`. This is equivalent to `Ext^i(DA, D Tr X) = 0`.
      *
      * @return whether this module is infinite-torsionless.
      */
@@ -448,8 +437,8 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns whether this module is semi-Gorenstein-projective,
-     * that is, `Ext^i(X, A) = 0` for all `i > 0`.
+     * Returns whether this module is semi-Gorenstein-projective, that is, `Ext^i(X, A) = 0` for all
+     * `i > 0`.
      *
      * @return whether this module is semi-Gorenstein-projective.
      */
@@ -458,11 +447,10 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns whether this module is Gorenstein-projective.
-     * There are many characterization and names (MCM, totally reflexive).
-     * Here we adopt the characterization that this module X is GP
-     * iff `Ext^{>0}(X, A) = Ext^{>0}(Tr X, A) = 0`, that is,
-     * semi-Gorenstein-projective and infinite-torsion-free.
+     * Returns whether this module is Gorenstein-projective. There are many characterization and
+     * names (MCM, totally reflexive). Here we adopt the characterization that this module X is GP
+     * iff `Ext^{>0}(X, A) = Ext^{>0}(Tr X, A) = 0`, that is, semi-Gorenstein-projective and
+     * infinite-torsion-free.
      *
      * @return whether this module is Gorenstein-projective.
      */
@@ -471,10 +459,10 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns the list of all indecomposable summands of the higher syzygies (`\Omega^i(X)`) for this module `X`, where i >= 0 (including `X`).
-     * Useful for checking if `Ext^{>0}(X, Y) = 0`.
-     * Note: This function may not terminate for non-monomial algebras, as there could be infinitely many syzygies.
-     * For monomial algebras, the function will eventually stop.
+     * Returns the list of all indecomposable summands of the higher syzygies (`\Omega^i(X)`) for
+     * this module `X`, where i >= 0 (including `X`). Useful for checking if `Ext^{>0}(X, Y) = 0`.
+     * Note: This function may not terminate for non-monomial algebras, as there could be infinitely
+     * many syzygies. For monomial algebras, the function will eventually stop.
      *
      * @return the list of all indecomposable summands of higher syzygies for this module.
      */
@@ -497,8 +485,8 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns whether this module is self-orthogonal, that is,
-     * `Ext^i(this, this) = 0` for all `i > 0`.
+     * Returns whether this module is self-orthogonal, that is, `Ext^i(this, this) = 0` for all `i >
+     * 0`.
      *
      * @return whether this module is self-orthogonal.
      */
@@ -513,10 +501,9 @@ abstract class Indec<T> {
      */
 
     /**
-     * Return the syzygy inverse operator of this module, that is,
-     * the cokernel of the left minimal proj-approximation.
-     * This is equal to the composition `Tr \Omega Tr`.
-     * Thus, this is `(Tr D) D \Omega D (D Tr) = \tau^{-} \Sigma \tau`.
+     * Return the syzygy inverse operator of this module, that is, the cokernel of the left minimal
+     * proj-approximation. This is equal to the composition `Tr \Omega Tr`. Thus, this is `(Tr D) D
+     * \Omega D (D Tr) = \tau^{-} \Sigma \tau`.
      *
      * @return the syzygy inverse operator of this module.
      */
@@ -525,8 +512,8 @@ abstract class Indec<T> {
     }
 
     /**
-     * Return the composition of the syzygy inverse operator [n] times.
-     * This is equal to `\tau^{-} \Sigma^{n} \tau`.
+     * Return the composition of the syzygy inverse operator [n] times. This is equal to `\tau^{-}
+     * \Sigma^{n} \tau`.
      *
      * @param n the number of times to compose.
      * @return the composition of the syzygy inverse operator [n] times.
@@ -537,8 +524,7 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns whether this module is torsionless, that is,
-     * a submodule of some projective module.
+     * Returns whether this module is torsionless, that is, a submodule of some projective module.
      *
      * @return whether this module is torsionless.
      */
@@ -562,13 +548,16 @@ abstract class Indec<T> {
     }
 
     /**
-     * Returns whether this module is reflexive, that is,
-     * the canonical map to its double ring-dual is isomorphism.
-     * This is equivalent to 2-torsionless.
+     * Returns whether this module is reflexive, that is, the canonical map to its double ring-dual
+     * is isomorphism. This is equivalent to 2-torsionless.
      *
      * @return whether this module is reflexive.
      */
     fun isReflexive(): Boolean {
         return isTorsionLess(2)
+    }
+
+    override fun compareTo(other: Indec<T>): Int {
+        TODO("Not yet implemented")
     }
 }

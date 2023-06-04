@@ -5,7 +5,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Divider,
   Grid,
   Typography,
 } from "@mui/material";
@@ -14,7 +13,7 @@ import { useSelection } from "../../../contexts/SelectionContext";
 import useFetchWithUiFeedback from "../../../hooks/useFetchWithUiFeedback";
 import { Combo, ComboOption } from "../../common/Combo";
 import ComputeButton from "../../common/ComputeButton";
-import LargeList from "../../common/LargeList";
+import ListWithIndecList from "../../common/ListWithIndecList";
 
 import StatisticsDialog from "./StatisticsDialog";
 
@@ -25,49 +24,55 @@ const moduleOptions: ComboOption[] = [
     description: "Modules M with Ext^1(M, M) = 0",
   },
   {
-    key: "self-ortho",
+    key: "self_ortho",
     label: "Self-orthogonal modules",
     description: "Modules M with Ext^i(M, M) = 0 for all i > 0",
   },
   {
     key: "excep",
     label: "Exceptional modules",
-    description: "Self-orthogonal modules with finite proj. dim.",
+    description: "Self-orthogonal modules with pd < ∞",
   },
   { key: "-", label: "-" },
   {
-    key: "partial-tilt",
+    key: "partial_tilt",
     label: "Classical partial tilting modules (pd <= 1)",
     description: "Rigid modules with pd <= 1",
   },
-  { key: "tilt", label: "Classical tilting modules (pd <= 1)" },
+  {
+    key: "tilt", label: "Classical tilting modules (pd <= 1)",
+    description: "= maximal partial tilting modules"
+  },
   { key: "-", label: "-" },
   {
-    key: "partial-cotilt",
+    key: "partial_cotilt",
     label: "Classical partial cotilting modules (id <= 1)",
     description: "Rigid modules with id <= 1",
   },
-  { key: "cotilt", label: "Classical cotilting modules (id <= 1)" },
+  {
+    key: "cotilt", label: "Classical cotilting modules (id <= 1)",
+    description: "= maximal partial cotilting modules"
+  },
   { key: "-", label: "-" },
   {
-    key: "gen-tilt",
+    key: "gen_tilt",
     label: "Generalized tilting modules (pd < ∞)",
-    description: "Miyashita tilting modules",
+    description: "Miyashita tilting modules = modules which are tilting complexes",
   },
   {
-    key: "gen-cotilt",
+    key: "gen_cotilt",
     label: "Generalized cotilting modules (id < ∞)",
-    description: "Miyashita cotilting modules",
+    description: "Dual of generalized tilting modules",
   },
   {
-    key: "w-tilt",
+    key: "w_tilt",
     label: "Wakamatsu tilting modules",
     description: "= maximal self-orthogonal modules",
   },
   {
-    key: "pure-w-tilt",
+    key: "pure_w_tilt",
     label: "Wakamatsu tilting but non-(co)tilting modules",
-    description: "Wakamatsu tilting, but neither tilting nor cotilting",
+    description: "Wakamatsu tilting, but neither tilting nor cotilting modules",
   },
   { key: "-", label: "-" },
   {
@@ -76,13 +81,13 @@ const moduleOptions: ComboOption[] = [
     description: "Pair-wise Hom-orthogonal bricks",
   },
   { key: "-", label: "-" },
-  { key: "s-tau-tilt", label: "Support τ-tilting modules" },
-  { key: "tau-tilt", label: "τ-tilting modules" },
-  { key: "tau-rigid", label: "τ-rigid modules" },
+  { key: "s_tau_tilt", label: "Support τ-tilting modules" },
+  { key: "tau_tilt", label: "τ-tilting modules" },
+  { key: "tau_rigid", label: "τ-rigid modules" },
   { key: "-", label: "-" },
-  { key: "s-tau-minus-tilt", label: "Support τ^{-}-tilting modules" },
-  { key: "tau-minus-tilt", label: "τ^{-}-tilting modules" },
-  { key: "tau-minus-rigid", label: "τ^{-}-rigid modules" },
+  { key: "s_tau_minus_tilt", label: "Support τ^{-}-tilting modules" },
+  { key: "tau_minus_tilt", label: "τ^{-}-tilting modules" },
+  { key: "tau_minus_rigid", label: "τ^{-}-rigid modules" },
 ];
 
 export default function ModuleEnumerator() {
@@ -91,7 +96,6 @@ export default function ModuleEnumerator() {
 
   const [selectedMenu, setSelectedMenu] = useState("tilt");
   const [data, setData] = useState<string[][]>([]);
-  const [index, setIndex] = useState<number>(0);
 
   async function getData() {
     const response = await fetchWithUiFeedback<string[][]>({
@@ -106,16 +110,14 @@ export default function ModuleEnumerator() {
 
   return (
     <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>Modules (tiltings, semibricks, ...)</Typography>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography fontWeight="medium">Modules (tiltings, semibricks, ...)</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
         <Grid
           container
           spacing={2}
-          justifyContent="space-around"
-          alignItems="center"
+          mb={2}
         >
           <Grid item xs={10}>
             <Combo
@@ -125,32 +127,20 @@ export default function ModuleEnumerator() {
               setSelected={setSelectedMenu}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getData} />
           </Grid>
         </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <LargeList
-              header="Modules"
-              data={data.map((modules) => modules.join(", "))}
-              onSelect={(index) => {
-                setSelected(data[index]);
-                setHighlighted([]);
-                setSecondarySelected([]);
-                setIndex(index);
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            {data[index] && (
-              <LargeList header="Indecs in it" data={data[index]} text />
-            )}
-          </Grid>
-          <Grid item xs={12}>
-            {data && <StatisticsDialog data={data} />}
-          </Grid>
-        </Grid>
+        <ListWithIndecList
+          candidates={data}
+          leftHeader="Modules"
+          handleChange={(value) => {
+            setSelected(value);
+            setSecondarySelected([]);
+            setHighlighted([]);
+          }}
+        />
+        {data && <StatisticsDialog data={data} />}
       </AccordionDetails>
     </Accordion>
   );

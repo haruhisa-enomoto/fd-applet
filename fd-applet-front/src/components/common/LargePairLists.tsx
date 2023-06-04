@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Grid } from "@mui/material";
+
+import { useSelection } from "../../contexts/SelectionContext";
 
 import LargeList from "./LargeList";
 import { Pair } from "./PairTable";
@@ -10,9 +12,6 @@ interface LargePairListsProps {
   header1: string;
   header2: string;
   header3: string;
-  setSelected: (value: string[]) => void;
-  setSecondarySelected: (value: string[]) => void;
-  setHighlighted: (value: string[]) => void;
 }
 
 function joinPair(pair: Pair<string[], string[]>): string {
@@ -24,11 +23,11 @@ export default function LargePairLists({
   header1,
   header2,
   header3,
-  setSelected,
-  setSecondarySelected,
-  setHighlighted,
 }: LargePairListsProps) {
+  const { setSelected, setSecondarySelected, setHighlighted } = useSelection();
+
   const [index, setIndex] = useState<number>(0);
+  const dataMemo = useMemo(() => data.map((pair) => joinPair(pair)), [data]);
 
   const handleSelect = (index: number) => {
     setSelected(data[index].first);
@@ -37,11 +36,11 @@ export default function LargePairLists({
     setHighlighted([]);
   };
   return (
-    <Grid container spacing={2} minWidth={0}>
+    <Grid container spacing={1} mb={2}>
       <Grid item xs={4}>
         <LargeList
           header={header1}
-          data={data.map((pair) => joinPair(pair))}
+          data={dataMemo}
           onSelect={handleSelect}
         />
       </Grid>

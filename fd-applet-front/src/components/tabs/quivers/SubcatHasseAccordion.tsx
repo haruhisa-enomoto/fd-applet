@@ -7,7 +7,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Divider,
+  Box,
   Typography,
 } from "@mui/material";
 
@@ -28,18 +28,18 @@ export default function SubcatHasseAccordion({
 
   return (
     <Accordion TransitionProps={{ unmountOnExit: true }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>Hasse quiver of subcategories</Typography>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography fontWeight="medium">Hasse quiver of subcategories</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
-        <Combo
-          title="Choose types"
-          options={subcatOptions}
-          selected={selectedMenu}
-          setSelected={setSelectedMenu}
-        />
-
+        <Box mb={2}>
+          <Combo
+            title="Choose types"
+            options={subcatOptions}
+            selected={selectedMenu}
+            setSelected={setSelectedMenu}
+          />
+        </Box>
         <GenericQuiver
           url={"/api/quiver/subcat/" + selectedMenu}
           physicOption={HassePhysicsOption}

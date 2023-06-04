@@ -6,7 +6,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Autocomplete,
-  Divider,
   Grid,
   TextField,
   Typography,
@@ -57,22 +56,17 @@ export default function ExtVanishCalc({ options }: CalcProps) {
 
   return (
     <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>Vanishing of higher Ext</Typography>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography fontWeight="medium">Vanishing of higher Ext</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
-        <Typography variant="subtitle1">
+        <Typography mb={2}>
           Check whether Ext^i(X, Y) = 0 for all {"i > 0"} for modules X and Y.
         </Typography>
         <Grid
           container
           spacing={1}
-          mt={1}
-          alignItems="center"
-          justifyContent="center"
-          display="flex"
-          sx={{ width: "auto" }}
+          mb={2}
         >
           <Grid item xs={5}>
             <Autocomplete
@@ -112,16 +106,14 @@ export default function ExtVanishCalc({ options }: CalcProps) {
               renderInput={(params) => <TextField {...params} label="Y" />}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getHom} />
           </Grid>
-          <Grid item xs={12}>
-            <Typography m={2}>
-              Ext^{"{>0}"}({mXX.join(" + ")}, {mYY.join(" + ")}) = 0 is
-              {computeClicked && result !== undefined && ` ${result}`}
-            </Typography>
-          </Grid>
         </Grid>
+        <Typography align="center">
+          Ext^{"{>0}"}({mXX.join(" + ")}, {mYY.join(" + ")}) = 0 is
+          {computeClicked && result !== undefined && ` ${result}`}
+        </Typography>
       </AccordionDetails>
     </Accordion>
   );

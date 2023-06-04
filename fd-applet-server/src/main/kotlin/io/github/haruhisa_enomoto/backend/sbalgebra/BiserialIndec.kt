@@ -5,7 +5,7 @@ import io.github.haruhisa_enomoto.backend.quiver.Monomial
 import io.github.haruhisa_enomoto.backend.stringalg.StringIndec
 
 class BiserialIndec<T, U>(
-    override val algebra: SBAlgebra<T, U>, val biRelations: Pair<Monomial<T, U>, Monomial<T, U>>
+    override val algebra: SbAlgebra<T, U>, val biRelations: Pair<Monomial<T, U>, Monomial<T, U>>
 ) : Indec<T>() {
     init {
         require(biRelations.first.from == biRelations.second.from) {
@@ -33,6 +33,11 @@ class BiserialIndec<T, U>(
 
     val top = biRelations.first.from
     val socle = biRelations.first.to
+
+    override fun compareTo(other: Indec<T>): Int {
+        if (other !is BiserialIndec<*, *>) return -other.compareTo(this)
+        return biRelations.first.compareTo(other.biRelations.first)
+    }
 
     override fun dim(): Int = biRelations.first.length + biRelations.second.length
 

@@ -6,6 +6,8 @@ import {
   Select,
   SelectChangeEvent,
   Typography,
+  FormHelperText,
+  Box,
 } from "@mui/material";
 
 import LargerTooltip from "./LargerTooltip";
@@ -31,6 +33,7 @@ interface ComboProps {
   setSelected: (value: string) => void;
   showTooltips?: boolean;
   showDescriptions?: boolean;
+  helperText?: string;
 }
 
 export function Combo({
@@ -40,6 +43,7 @@ export function Combo({
   setSelected,
   showTooltips = true,
   showDescriptions = false,
+  helperText,
 }: ComboProps) {
   const handleChange = (event: SelectChangeEvent) => {
     setSelected(event.target.value);
@@ -51,7 +55,7 @@ export function Combo({
         fullWidth
         // size="small"
         sx={{
-          m: 1,
+          // m: 1,
           // width: 100,
           // display: "flex",
           //  maxWidth: 100
@@ -60,29 +64,30 @@ export function Combo({
         <InputLabel>{title}</InputLabel>
         <Select value={selected} label={title} onChange={handleChange}>
           {options.map((option, index) =>
-            option.key !== "-" ? (
+            option.key.startsWith("-") ? <Divider key={index} /> :
               <MenuItem key={option.key} value={option.key}>
-                {showTooltips ? (
+                {showTooltips ?
                   <LargerTooltip
                     arrow
-                    enterDelay={500}
-                    enterNextDelay={500}
-                    leaveDelay={500}
+                    enterDelay={0}
+                    enterNextDelay={0}
+                    leaveDelay={0}
                     key={option.key}
                     title={option.description}
                     placement="right"
                   >
-                    <div>{option.label}</div>
+                    <Box sx={{ width: "100%" }}>
+                      {option.label}
+                    </Box>
                   </LargerTooltip>
-                ) : (
-                  <>{option.label}</>
-                )}
+                  :
+                  option.label}
               </MenuItem>
-            ) : (
-              <Divider key={index} />
-            )
           )}
         </Select>
+        {helperText && (
+          <FormHelperText>{helperText}</FormHelperText>
+        )}
         {showDescriptions && (
           <Typography m={1} whiteSpace="pre-line">
             {getDescriptionForKey(options, selected)}

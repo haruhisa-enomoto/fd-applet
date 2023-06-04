@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class Word<T, U> private constructor(
     val letters: List<Letter<T, U>>, val from: T, val to: T
-) {
+): Comparable<Word<*, *>> {
     companion object {
         /**
          * Creates a new instance of the [Word] class.
@@ -215,6 +215,25 @@ class Word<T, U> private constructor(
      */
     fun takeLast(i: Int): Word<T, U> {
         return subWord(length - i, length)
+    }
+
+    override fun compareTo(other: Word<*, *>): Int {
+        // Lexicographic order with respect to letters.
+        if (length == 0 && other.length == 0) {
+            val thisString = from.toString()
+            val otherString = other.from.toString()
+            return try {
+                thisString.toInt().compareTo(otherString.toInt())
+            } catch (e: NumberFormatException) {
+                thisString.compareTo(otherString)
+            }
+        }
+        if (length != other.length) return length.compareTo(other.length)
+        for (i in 0 until minOf(length, other.length)) {
+            val cmp = letters[i].compareTo(other.letters[i])
+            if (cmp != 0) return cmp
+        }
+        return 0
     }
 
     override fun equals(other: Any?): Boolean {

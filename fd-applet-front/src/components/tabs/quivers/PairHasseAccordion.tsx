@@ -7,8 +7,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Divider,
-  Grid,
+  Box,
   Typography,
 } from "@mui/material";
 
@@ -30,39 +29,29 @@ export default function PairHasseAccordion({
   return (
     <Accordion TransitionProps={{ unmountOnExit: true }}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>Hasse quiver of pair of subcategories</Typography>
+        <Typography fontWeight="medium">Hasse quiver of pair of subcategories</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
-        <Grid
-          container
-          spacing={2}
-          justifyContent="space-around"
-          alignItems="center"
-        >
-          <Grid item xs={12}>
-            <Typography>
-              Hasse quiver of inclusion with respect to 1st subcategories.
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Combo
-              title="Choose types"
-              options={pairOptions}
-              selected={selectedMenu}
-              setSelected={setSelectedMenu}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <GenericQuiver
-              url={"/api/quiver/pair/" + selectedMenu}
-              physicOption={HassePhysicsOption}
-              updateButton
-              allowChosen
-              events={events}
-            />
-          </Grid>
-        </Grid>
+        <Typography mb={2}>
+          Hasse quiver of inclusion with respect to 1st subcategories.
+        </Typography>
+
+        <Box mb={2}>
+          <Combo
+            title="Choose types"
+            options={pairOptions}
+            selected={selectedMenu}
+            setSelected={setSelectedMenu}
+          />
+        </Box>
+        <GenericQuiver
+          url={"/api/quiver/pair/" + selectedMenu}
+          physicOption={HassePhysicsOption}
+          updateButton
+          allowChosen
+          events={events}
+        />
+
       </AccordionDetails>
     </Accordion>
   );

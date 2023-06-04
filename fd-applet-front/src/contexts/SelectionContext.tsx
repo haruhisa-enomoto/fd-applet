@@ -12,11 +12,11 @@ type SelectionContextType = {
 
 const SelectionContext = createContext<SelectionContextType>({
   selected: [],
-  setSelected: () => {},
+  setSelected: () => { },
   secondarySelected: [],
-  setSecondarySelected: () => {},
+  setSecondarySelected: () => { },
   highlighted: [],
-  setHighlighted: () => {}
+  setHighlighted: () => { }
 });
 
 interface SelectionProviderProps {

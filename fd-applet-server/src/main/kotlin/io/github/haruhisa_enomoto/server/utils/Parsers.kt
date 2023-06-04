@@ -4,7 +4,7 @@ import io.github.haruhisa_enomoto.backend.algebra.Indec
 import io.github.haruhisa_enomoto.backend.algebra.QuiverAlgebra
 import io.github.haruhisa_enomoto.backend.quiver.*
 import io.github.haruhisa_enomoto.backend.sbalgebra.BiserialIndec
-import io.github.haruhisa_enomoto.backend.sbalgebra.SBAlgebra
+import io.github.haruhisa_enomoto.backend.sbalgebra.SbAlgebra
 import io.github.haruhisa_enomoto.backend.stringalg.StringIndec
 
 /** Trim a list of string `[" a ", " bb ", " "]` to `["a", "bb"]` */
@@ -15,7 +15,7 @@ fun List<String>.myTrim(): List<String> {
 fun <T> Quiver<T, String>.strToWord(string: String): Word<T, String> {
     val myList = string.split(" ", "*").myTrim()
     require(myList.isNotEmpty()) { "Invalid string." }
-    if (myList.size == 1) {// Search for vertices first.
+    if (myList.size == 1) { // Search for vertices first.
         val vtx = this.vertices.find { it.toString() == myList[0] }
         if (vtx != null) {
             return vtx.toTrivialWord()
@@ -39,18 +39,17 @@ fun <T> Quiver<T, String>.strToMonomial(string: String): Monomial<T, String> {
 
 fun <T> QuiverAlgebra<T, String>.strToIndec(string: String): Indec<T> {
     if (string.contains("=")) {
-        if (this !is SBAlgebra) {
+        if (this !is SbAlgebra) {
             throw IllegalArgumentException(
-                "Not Special Biserial Algebra, so cannot make biserial modules."
+                    "Not Special Biserial Algebra, so cannot make biserial modules."
             )
         }
         val (left, right) = string.split("=")
         val leftMonomial = this.quiver.strToMonomial(left)
         val rightMonomial = this.quiver.strToMonomial(right)
-        return BiserialIndec(
-            this,
-            leftMonomial to rightMonomial
-        )
+        return BiserialIndec(this, leftMonomial to rightMonomial)
     }
     return StringIndec.from(this, this.quiver.strToWord(string))
 }
+
+

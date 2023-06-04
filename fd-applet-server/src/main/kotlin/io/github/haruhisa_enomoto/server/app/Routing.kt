@@ -34,6 +34,7 @@ fun Application.configureRouting() {
             algebraInfoRoutes()
             quiverRoutes()
             enumeratorRoutes()
+            converterRoutes()
         }
     }
 }

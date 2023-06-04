@@ -6,7 +6,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Autocomplete,
-  Divider,
   Grid,
   TextField,
   Typography,
@@ -75,11 +74,10 @@ export default function ProjResolCalc({ options }: CalcProps) {
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>Projective resolution & syzygy</Typography>
+        <Typography fontWeight="medium">Projective resolution & syzygy</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
-        <Typography variant="subtitle1">
+        <Typography mb={2}>
           Compute the minimal projective resolution of X of the form:
           <br />
           {"0 → Ω^{n+1} → P_n → … → P_1 → P_0 → X → 0"}.
@@ -87,11 +85,7 @@ export default function ProjResolCalc({ options }: CalcProps) {
         <Grid
           container
           spacing={1}
-          mt={1}
-          alignItems="center"
-          justifyContent="center"
-          display="flex"
-          sx={{ width: "auto" }}
+          mb={2}
         >
           <Grid item xs={8}>
             <Autocomplete
@@ -118,14 +112,14 @@ export default function ProjResolCalc({ options }: CalcProps) {
               }}
               label="n"
               fullWidth
-              // onKeyDown={handleKeyDown}
+            // onKeyDown={handleKeyDown}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} display="flex" justifyContent="center">
             <ComputeButton onClick={getProjResol} />
           </Grid>
           <Grid item xs={12}>
-            <PairTable firstName="Terms" secondName="Data" data={result} />
+            <PairTable firstName="Term" secondName="Data" data={result} />
           </Grid>
         </Grid>
       </AccordionDetails>

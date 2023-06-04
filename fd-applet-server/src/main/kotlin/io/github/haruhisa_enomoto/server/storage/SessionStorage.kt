@@ -3,6 +3,7 @@ package io.github.haruhisa_enomoto.server.storage
 import io.github.haruhisa_enomoto.backend.algebra.QuiverAlgebra
 import io.github.haruhisa_enomoto.backend.algebra.RfAlgebra
 import io.github.haruhisa_enomoto.backend.types.Subcat
+import io.github.haruhisa_enomoto.backend.types.TauTiltingData
 import java.util.concurrent.ConcurrentHashMap
 
 object SessionStorage {

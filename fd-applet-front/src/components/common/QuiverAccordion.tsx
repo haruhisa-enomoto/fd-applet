@@ -5,7 +5,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Divider,
   Typography,
 } from "@mui/material";
 
@@ -29,10 +28,9 @@ export default function QuiverAccordion({
 }: QuiverAccordionProps) {
   return (
     <Accordion TransitionProps={{ unmountOnExit: true }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ m: 0 }}>
-        <Typography>{header}</Typography>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography fontWeight="medium">{header}</Typography>
       </AccordionSummary>
-      <Divider />
       <AccordionDetails>
         <Typography whiteSpace={"pre-wrap"}>{description}</Typography>
         <GenericQuiver

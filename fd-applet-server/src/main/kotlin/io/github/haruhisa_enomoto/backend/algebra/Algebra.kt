@@ -2,6 +2,7 @@ package io.github.haruhisa_enomoto.backend.algebra
 
 import io.github.haruhisa_enomoto.backend.quiver.Arrow
 import io.github.haruhisa_enomoto.backend.quiver.Quiver
+import io.github.haruhisa_enomoto.backend.types.Subcat
 
 /**
  * A class representing bound quiver algebras of the form `kQ/I` over a field `k`
@@ -71,6 +72,7 @@ abstract class Algebra<T> {
 
     /**
      * Returns the dimension of `Hom([mX], [mY])`.
+     * The result is cached.
      *
      * @param mX an indecomposable module (`null` represents `0`).
      * @param mY an indecomposable module (`null` represents `0`).
@@ -225,6 +227,7 @@ abstract class Algebra<T> {
 
     /**
      * Returns the dimension of `Ext^1([mX], [mY])`.
+     * The result is cached.
      *
      * @param mX an indecomposable module (`null` represents `0`).
      * @param mY an indecomposable module (`null` represents `0`).
@@ -784,4 +787,5 @@ abstract class Algebra<T> {
      * @throws IllegalArgumentException if this algebra is not representation-finite.
      */
     abstract fun toRfAlgebra(): RfAlgebra<T>
+
 }

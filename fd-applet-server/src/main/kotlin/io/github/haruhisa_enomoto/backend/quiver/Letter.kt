@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Letter<T, U>(
     val arrow: Arrow<T, U>, val isArrow: Boolean = true
-) {
+) : Comparable<Letter<*, *>> {
     val label: U
         get() {
             require(arrow.label != null) { "A label is required for letters." }
@@ -30,6 +30,20 @@ data class Letter<T, U>(
         }
     val from = if (isArrow) arrow.from else arrow.to
     val to = if (isArrow) arrow.to else arrow.from
+
+    /**
+     * Compares this letter with the other letter.
+     * The order is defined as follows:
+     * - If one of the letters represents an arrow and the other represents its inverse, the former is smaller.
+     * - Otherwise, the order is determined by the labels of the letters.
+     * @param other the other letter to be compared.
+     */
+    override fun compareTo(other: Letter<*, *>): Int {
+        if (other.isArrow != isArrow) {
+            return if (isArrow) -1 else 1
+        }
+        return label.toString().compareTo(other.label.toString())
+    }
 
     override fun toString(): String = if (isArrow) label.toString() else "!" + label.toString()
 

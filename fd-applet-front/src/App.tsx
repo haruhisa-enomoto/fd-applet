@@ -110,7 +110,7 @@ const App: FC = () => {
   );
 
   const [latestVersion, setLatestVersion] = useState<string | null>(null);
-  const [isLocal, setIsLocal] = useState(false);
+  const [isLocal, setIsLocal] = useState(true);
 
   useEffect(() => {
     fetch("https://haruhisa-enomoto.github.io/files/fd-applet-version.txt")
@@ -123,7 +123,6 @@ const App: FC = () => {
       });
 
     setIsLocal(isLocalhost());
-    console.log(isLocalhost());
   }, []);
 
   useEffect(() => {
@@ -132,7 +131,7 @@ const App: FC = () => {
       data.append("message", "WebUI will be closed!");
 
       const apiUrl = isLocal ? "/api/shutdown" : `/api/kill?client_id=${uuid}`; // For server hosting
-      // navigator.sendBeacon(apiUrl, data);
+      navigator.sendBeacon(apiUrl, data);
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -224,15 +223,13 @@ const App: FC = () => {
           </Alert>
         )}
         {!isLocal && (
-          <Alert severity="warning">
-            <AlertTitle>Online Demo with Limitations</AlertTitle>
+          <Alert severity="info">
+            <AlertTitle>Online Version</AlertTitle>
             <Typography variant="body1">
-              This online demo has restricted computation memory and may run at
-              a slower pace. Additionally, the connection could be unstable.
+              Our online version might be a bit slow sometimes and you might run into some connection issues.
             </Typography>
             <Typography variant="body1">
-              For a better experience, we recommend installing the local version
-              using the following link:
+              For an optimized experience, consider installing our local version:
             </Typography>
             <Link
               variant="body1"

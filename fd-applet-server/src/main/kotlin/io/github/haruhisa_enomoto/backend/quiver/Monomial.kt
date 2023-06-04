@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  * @constructor Creates a monomial with the given list of arrows.
  */
 @Serializable
-data class Monomial<T, U>(val arrows: List<Arrow<T, U>>) {
+data class Monomial<T, U>(val arrows: List<Arrow<T, U>>): Comparable<Monomial<*, *>> {
     init {
         require(arrows.isNotEmpty()) {
             "The length of the monomial must be positive."
@@ -51,6 +51,10 @@ data class Monomial<T, U>(val arrows: List<Arrow<T, U>>) {
      */
     fun toList(): List<U> {
         return arrows.map { it.label!! }
+    }
+
+    override fun compareTo(other: Monomial<*, *>): Int {
+        return this.toWord().compareTo(other.toWord())
     }
 
     override fun toString(): String {

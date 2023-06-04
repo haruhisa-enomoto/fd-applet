@@ -106,7 +106,7 @@ fun Route.enumeratorRoutes() {
                 "2_smc" -> rfAlgebra.twoSMCs()
                 "cotors" -> rfAlgebra.cotorsionPairs()
                 "h_cotors" -> rfAlgebra.hereditaryCotorsionPairs()
-                "sbrick_full-rank" -> rfAlgebra.semibrickPairsFullRank()
+                "sbrick_full_rank" -> rfAlgebra.semibrickPairsFullRank()
                 "sbrick_maximal" -> rfAlgebra.semibrickPairsMaximal()
                 "tors" -> rfAlgebra.torsionPairs()
                 "tau_tilt" -> rfAlgebra.tauTiltingPairs()

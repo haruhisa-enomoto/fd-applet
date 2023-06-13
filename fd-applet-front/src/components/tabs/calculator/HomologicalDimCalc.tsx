@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useSelection } from "../../../contexts/SelectionContext";
 import useFetchWithUiFeedback from "../../../hooks/useFetchWithUiFeedback";
 import ComputeButton from "../../common/ComputeButton";
 import { Pair, PairTable } from "../../common/PairTable";
@@ -19,6 +20,7 @@ import CalcProps from "./CalcProps";
 
 export default function HomologicalDimCalc({ options }: CalcProps) {
   const fetchWithUiFeedback = useFetchWithUiFeedback();
+  const { setSelected, setSecondarySelected, setHighlighted } = useSelection();
 
   const [mXX, setmXX] = useState<string[]>([]);
   const [valueX, setValueX] = useState("");
@@ -39,6 +41,9 @@ export default function HomologicalDimCalc({ options }: CalcProps) {
     });
     if (response.data === undefined) return;
     setResult(response.data);
+    setSelected(actualXX);
+    setSecondarySelected([]);
+    setHighlighted([]);
   }
 
   return (
@@ -62,6 +67,9 @@ export default function HomologicalDimCalc({ options }: CalcProps) {
               value={mXX}
               onChange={(event: unknown, newValue: string[]) => {
                 setmXX(newValue);
+                setSelected(newValue);
+                setSecondarySelected([]);
+                setHighlighted([]);
               }}
               inputValue={valueX}
               onInputChange={(event, newInputValue) => {

@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useSelection } from "../../../contexts/SelectionContext";
 import { useUi } from "../../../contexts/UiContext";
 import useFetchWithUiFeedback from "../../../hooks/useFetchWithUiFeedback";
 import ComputeButton from "../../common/ComputeButton";
@@ -20,6 +21,7 @@ import CalcProps from "./CalcProps";
 export default function ExtCalc({ options }: CalcProps) {
   const { setOpenNotify, setNotifyStatus } = useUi();
   const fetchWithUiFeedback = useFetchWithUiFeedback();
+  const { setSelected, setSecondarySelected, setHighlighted } = useSelection();
 
   const [mXX, setmXX] = useState<string[]>([]);
   const [valueX, setValueX] = useState("");
@@ -61,6 +63,9 @@ export default function ExtCalc({ options }: CalcProps) {
     if (response.data === undefined) return;
     setComputeClicked(true);
     setResult(response.data);
+    setSelected(actualXX);
+    setSecondarySelected(actualYY);
+    setHighlighted([]);
   }
 
   return (
@@ -84,6 +89,9 @@ export default function ExtCalc({ options }: CalcProps) {
               value={mXX}
               onChange={(_, newValue: string[]) => {
                 setmXX(newValue);
+                setSelected(newValue);
+                setSecondarySelected(mYY);
+                setHighlighted([]);
                 setComputeClicked(false);
               }}
               inputValue={valueX}
@@ -103,6 +111,9 @@ export default function ExtCalc({ options }: CalcProps) {
               value={mYY}
               onChange={(_, newValue: string[]) => {
                 setmYY(newValue);
+                setSelected(mXX);
+                setSecondarySelected(newValue);
+                setHighlighted([]);
                 setComputeClicked(false);
               }}
               inputValue={valueY}

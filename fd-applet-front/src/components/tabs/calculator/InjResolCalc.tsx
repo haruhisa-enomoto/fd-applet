@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useSelection } from "../../../contexts/SelectionContext";
 import { useUi } from "../../../contexts/UiContext";
 import useFetchWithUiFeedback from "../../../hooks/useFetchWithUiFeedback";
 import ComputeButton from "../../common/ComputeButton";
@@ -26,6 +27,7 @@ type ResolutionData = {
 export default function InjResolCalc({ options }: CalcProps) {
   const { setOpenNotify, setNotifyStatus } = useUi();
   const fetchWithUiFeedback = useFetchWithUiFeedback();
+  const { setSelected, setSecondarySelected, setHighlighted } = useSelection();
 
   const [mXX, setmXX] = useState<string[]>([]);
   const [valueX, setValueX] = useState("");
@@ -70,6 +72,9 @@ export default function InjResolCalc({ options }: CalcProps) {
       .flat();
     // .concat({ first: `${n + 1}-th syzygy`, second: syzygy });
     setResult(processed);
+    setSelected(actualXX);
+    setSecondarySelected([]);
+    setHighlighted([]);
   }
 
   return (
@@ -95,6 +100,9 @@ export default function InjResolCalc({ options }: CalcProps) {
               value={mXX}
               onChange={(_, newValue: string[]) => {
                 setmXX(newValue);
+                setSelected(newValue);
+                setSecondarySelected([]);
+                setHighlighted([]);
               }}
               inputValue={valueX}
               onInputChange={(event, newInputValue) => {

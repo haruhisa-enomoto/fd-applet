@@ -192,6 +192,9 @@ const operations: Record<string, Record<string, string>> = {
     sbrick: "S to T such that S ⊕ T[1] is 2-smc",
   },
   module: {
+    tors_as_perp: "M to ^\\perp M",
+    torf_as_perp: "M to M^\\perp",
+    "-subcat-": "",
     tors_closure: "M to its torsion closure",
     torf_closure: "M to the torsion-free closure",
     wide_closure: "M to its wide closure",
@@ -238,7 +241,7 @@ export default function ConverterTab({
   const [candidateComputed, setCandidateComputed] = useState(false);
   const [inputMethod, setInputMethod] = useState("candidates");
 
-  const [result, setResult] = useState<string[]>([]);
+  const [result, setResult] = useState<string[]>();
 
   const [forcedInput, setForcedInput] = useState<string[]>([]);
 
@@ -286,6 +289,7 @@ export default function ConverterTab({
   }
 
   const handleSendInput = () => {
+    if (result === undefined) return;
     const currentFromClass = fromClass;
     const newFromType = toType;
     const newFromClass = outputNameToInput(toClass);
@@ -349,7 +353,7 @@ export default function ConverterTab({
       setFrom([]);
       setFromType("module");
       setToType("module");
-      setResult([]);
+      setResult(undefined);
     }
   }, [isComputed]);
 
@@ -485,18 +489,22 @@ export default function ConverterTab({
                   </Button>
                 </Grid>
                 <Grid item xs={6} display="flex" justifyContent="center">
-                  <Button startIcon={<ArrowUpwardIcon />} variant="outlined" onClick={handleSendInput}>
+                  <Button startIcon={<ArrowUpwardIcon />} variant="outlined" onClick={handleSendInput}
+                    disabled={result === undefined}
+                  >
                     Send result to input
                   </Button>
                 </Grid>
               </Grid>
             }
-            <Box mb={2}>
-              <LargeList
-                header="Converted result (red):"
-                data={result}
-              />
-            </Box>
+            {result !== undefined &&
+              <Box mb={2}>
+                <LargeList
+                  header="Converted result (red):"
+                  data={result}
+                />
+              </Box>
+            }
           </>
         )}
     </>

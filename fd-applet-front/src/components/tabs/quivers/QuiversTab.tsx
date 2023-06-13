@@ -19,7 +19,7 @@ export const HassePhysicsOption = {
 
 export default function QuiversTab({ isComputed, setIsComputed }: MyTabProps) {
   const fetchWithUiFeedback = useFetchWithUiFeedback();
-  const { setSelected } = useSelection();
+  const { setSelected, setSecondarySelected, setHighlighted } = useSelection();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectNode = (params: any) => {
@@ -32,6 +32,8 @@ export default function QuiversTab({ isComputed, setIsComputed }: MyTabProps) {
       .map((str) => str.trim())
       .filter(Boolean);
     setSelected(chosenStringList);
+    setSecondarySelected([]);
+    setHighlighted([]);
   };
 
   async function makeRfAlgebra() {

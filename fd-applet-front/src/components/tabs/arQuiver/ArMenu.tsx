@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
+import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Box, ListItemIcon, ListItemText, Slider, Stack, Typography } from '@mui/material';
+import { Box, Divider, ListItemIcon, ListItemText, Slider, Stack, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -52,6 +53,13 @@ export default function ArMenu(
     setHighlighted([]);
   };
 
+  const handleUnColor = () => {
+    setAnchorEl(null);
+    setSelected([]);
+    setSecondarySelected([]);
+    setHighlighted([]);
+  };
+
   const handleChangePhysics = () => {
     setAnchorEl(null);
     setShowPhysics(true);
@@ -79,6 +87,15 @@ export default function ArMenu(
               Color projs (red) and injs (blue)
             </ListItemText>
           </MenuItem>
+          <MenuItem onClick={handleUnColor}>
+            <ListItemIcon>
+              <FormatColorResetIcon />
+            </ListItemIcon>
+            <ListItemText>
+              Reset Color
+            </ListItemText>
+          </MenuItem>
+          <Divider />
           <MenuItem onClick={handleChangePhysics}>
             <ListItemIcon>
               <SettingsIcon />

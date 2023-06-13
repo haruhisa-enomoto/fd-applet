@@ -2,7 +2,7 @@
 
 /build
 /release
-/deploy
+# /deploy
 
 *.jar
 *.zip

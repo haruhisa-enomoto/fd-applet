@@ -73,11 +73,22 @@ export default function QuiversTab({ isComputed, setIsComputed }: MyTabProps) {
             }}
           />
           <QuiverAccordion
-            header="Support tau-tilting quiver"
+            header="Support τ-tilting quiver"
             description={
               "Vertices: τ-tilting pairs (with support = set of vertices)\nArrows: Hasse or mutation arrow\nLabel: brick labeling"
             }
-            url="/api/quiver/s-tau-tilt"
+            url="/api/quiver/s_tau_tilt"
+            physicOption={HassePhysicsOption}
+            events={{
+              selectNode: handleSelectNode,
+            }}
+          />
+          <QuiverAccordion
+            header="Wide τ-tilting quiver"
+            description={
+              "Vertices: wide τ-tilting modules\nArrows: Hasse arrows of the corresponding ICE-closed subcats"
+            }
+            url="/api/quiver/wide_tau_tilt"
             physicOption={HassePhysicsOption}
             events={{
               selectNode: handleSelectNode,
@@ -88,7 +99,7 @@ export default function QuiversTab({ isComputed, setIsComputed }: MyTabProps) {
             description={
               "Vertices: Generalized tilting modules (with pd < ∞)\nArrows: Hasse arrows, with X >= Y iff Ext^{>0}(X, Y) = 0"
             }
-            url="/api/quiver/gen-tilt"
+            url="/api/quiver/gen_tilt"
             physicOption={HassePhysicsOption}
             events={{
               selectNode: handleSelectNode,
@@ -99,7 +110,7 @@ export default function QuiversTab({ isComputed, setIsComputed }: MyTabProps) {
             description={
               "Vertices: Wakamatsu tilting modules\nArrows: Hasse arrows, with X >= Y iff Ext^{>0}(X, Y) = 0\nRaise error if not poset."
             }
-            url="/api/quiver/w-tilt"
+            url="/api/quiver/w_tilt"
             physicOption={HassePhysicsOption}
             events={{
               selectNode: handleSelectNode,

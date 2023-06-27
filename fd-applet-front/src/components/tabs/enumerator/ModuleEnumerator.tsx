@@ -84,10 +84,12 @@ const moduleOptions: ComboOption[] = [
   { key: "s_tau_tilt", label: "Support τ-tilting modules" },
   { key: "tau_tilt", label: "τ-tilting modules" },
   { key: "tau_rigid", label: "τ-rigid modules" },
+  { key: "wide_tau_tilt", label: "wide τ-tilting modules" },
   { key: "-", label: "-" },
   { key: "s_tau_minus_tilt", label: "Support τ^{-}-tilting modules" },
   { key: "tau_minus_tilt", label: "τ^{-}-tilting modules" },
   { key: "tau_minus_rigid", label: "τ^{-}-rigid modules" },
+  { key: "wide_tau_minus_tilt", label: "wide τ^{-}-tilting modules" },
 ];
 
 export default function ModuleEnumerator() {

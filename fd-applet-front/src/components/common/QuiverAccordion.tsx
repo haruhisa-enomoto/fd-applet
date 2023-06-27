@@ -34,6 +34,7 @@ export default function QuiverAccordion({
       <AccordionDetails>
         <Typography whiteSpace={"pre-wrap"}>{description}</Typography>
         <GenericQuiver
+          showDuration={true}
           url={url}
           physicOption={physicOption}
           events={events}

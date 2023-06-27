@@ -72,6 +72,7 @@ interface GenericQuiverProps {
   buttonTitle?: string;
   hide?: boolean;
   computationCallback?: () => void;
+  showDuration?: boolean;
 }
 
 export default function GenericQuiver({
@@ -86,6 +87,7 @@ export default function GenericQuiver({
   buttonTitle,
   events,
   hide = false,
+  showDuration = false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   computationCallback = () => { },
 }: GenericQuiverProps) {
@@ -124,6 +126,7 @@ export default function GenericQuiver({
   async function getQuiver() {
     const response = await fetchWithUiFeedback<SlimQuiverData>({
       url: url,
+      showDuration: showDuration,
     });
     if (response.data === undefined) return;
 

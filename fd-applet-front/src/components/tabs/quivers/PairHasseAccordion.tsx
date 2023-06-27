@@ -45,6 +45,7 @@ export default function PairHasseAccordion({
           />
         </Box>
         <GenericQuiver
+          showDuration={true}
           url={"/api/quiver/pair/" + selectedMenu}
           physicOption={HassePhysicsOption}
           updateButton

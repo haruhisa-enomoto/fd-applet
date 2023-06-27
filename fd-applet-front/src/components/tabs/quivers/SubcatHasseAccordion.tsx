@@ -41,6 +41,7 @@ export default function SubcatHasseAccordion({
           />
         </Box>
         <GenericQuiver
+          showDuration={true}
           url={"/api/quiver/subcat/" + selectedMenu}
           physicOption={HassePhysicsOption}
           updateButton

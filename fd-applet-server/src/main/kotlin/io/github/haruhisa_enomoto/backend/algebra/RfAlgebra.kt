@@ -9,6 +9,7 @@ import io.github.haruhisa_enomoto.backend.graph.maximalCliques
 import io.github.haruhisa_enomoto.backend.quiver.Arrow
 import io.github.haruhisa_enomoto.backend.quiver.Quiver
 import io.github.haruhisa_enomoto.backend.types.*
+import io.github.haruhisa_enomoto.backend.utils.toListWithLeq
 
 /**
  * A class for representation-finite algebras,
@@ -232,11 +233,15 @@ class RfAlgebra<T>(
      * @return the list of IE-closed subcategories of this algebra.
      */
     fun ieClosedSubcats(): List<Subcat<T>> {
-        return _tors.flatMap { cTT ->
-            _torf.map { cFF ->
-                cTT intersect cFF
+        val tors = _tors
+        val torf = _torf
+        val result = mutableSetOf<Subcat<T>>()
+        for (cTT in tors) {
+            for (cFF in torf) {
+                result.add(cTT intersect cFF)
             }
-        }.distinct()
+        }
+        return result.toList()
     }
 
     /**
@@ -251,21 +256,12 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Generates the sequence of wide subcategories of this algebra.
-     *
-     * @return the sequence of wide subcategories of this algebra.
-     */
-    fun wideSubcatSequence(): Sequence<Subcat<T>> {
-        return _semibricks.asSequence().map { ieClosure(it) }
-    }
-
-    /**
      * Returns the list of wide subcategories of this algebra.
      *
      * @return the list of wide subcategories of this algebra.
      */
     fun wideSubcats(): List<Subcat<T>> {
-        return wideSubcatSequence().toList()
+        return _semibricks.map { ieClosure(it) }
     }
 
     /**
@@ -330,6 +326,7 @@ class RfAlgebra<T>(
         // ICE-closed subcategories are torsion classes in some wide subcategories.
         // Therefore, first obtain all wide subcats,
         // then compute tors in it using semibricks.
+        // So duplication may occur.
         // TODO: better implementation?
         val sbricks = _semibricks
         val result = mutableSetOf<Subcat<T>>()
@@ -343,6 +340,65 @@ class RfAlgebra<T>(
             }
         }
         return result.toList()
+    }
+
+    /**
+     * Returns the list of IKE-closed subcategories of this algebra.
+     * Here a subcategory is IKE-closed if it is closed
+     * under taking images, kernels, and extensions.
+     *
+     * @return the list of IKE-closed subcategories of this algebra.
+     */
+    fun ikeClosedSubcats(): List<Subcat<T>> {
+        val sbricks = _semibricks
+        val result = mutableSetOf<Subcat<T>>()
+        for (mS in sbricks) {
+            // Consider wide subcat [cW] corresponding to [mS].
+            val cW = ieClosure(mS)
+            // We will compute torsion-free classes in [cW].
+            // So loops over semibricks contained in [cW].
+            for (mS2 in sbricks.filter { cW.containsAll(it) }) {
+                result.add(cW.filter { hom(mS2, it) == 0 })
+            }
+        }
+        return result.toList()
+    }
+
+    /**
+     * Returns the list of wide tau-tilting modules =
+     * tau-tilting objects in wide subcategories.
+     * They are in bijection with ICE-closed subcategories.
+     */
+    fun wideTauTiltings(): List<List<Indec<T>>> {
+        // Currently obtain all ice-closed subcats,
+        // then compute Ext-projs of it.
+        // TODO: better implementation?
+        return iceClosedSubcats().map { algebra.extProj(it) }
+    }
+
+    fun wideTauMinusTiltings(): List<List<Indec<T>>> {
+        // Currently obtain all ike-closed subcats,
+        // then compute Ext-injs of it.
+        // TODO: better implementation?
+        return ikeClosedSubcats().map { algebra.extInj(it) }
+    }
+
+    fun wideTauTiltingQuiver(): Quiver<List<Indec<T>>, Nothing> {
+        val result = iceClosedSubcats().toListWithLeq().hasseQuiver().mapVertices { algebra.extProj(it) }
+        var counterExampleFound = false
+        for (vtx in result.vertices) {
+            val outgoing = result.arrows.filter { it.from == vtx }
+            if (vtx.size != outgoing.size) {
+                println("A counter-example found!")
+                println("Consider $vtx")
+                println("The number of arrows from this vertex is ${outgoing.size}.")
+                counterExampleFound = true
+            }
+        }
+        if (!counterExampleFound) {
+            println("No counter-example found!")
+        }
+        return result
     }
 
     /**
@@ -366,28 +422,6 @@ class RfAlgebra<T>(
      */
     fun ikeClosure(cC: Subcat<T>): Subcat<T> {
         return ikeClosedSubcats().filter { it.containsAll(cC) }.reduce { acc, subcat -> acc intersect subcat }
-    }
-
-    /**
-     * Returns the list of IKE-closed subcategories of this algebra.
-     * Here a subcategory is IKE-closed if it is closed
-     * under taking images, kernels, and extensions.
-     *
-     * @return the list of IKE-closed subcategories of this algebra.
-     */
-    fun ikeClosedSubcats(): List<Subcat<T>> {
-        val allSemibricks = _semibricks
-        val result = mutableSetOf<Subcat<T>>()
-        for (mS in allSemibricks) {
-            // Consider wide subcat [cW] corresponding to [mS].
-            val cW = ieClosure(mS)
-            // We will compute torsion-free classes in [cW].
-            // So loops over semibricks contained in [cW].
-            for (mS2 in allSemibricks.filter { cW.containsAll(it) }) {
-                result.add(cW.filter { hom(mS2, it) == 0 })
-            }
-        }
-        return result.toList()
     }
 
     /**

@@ -81,7 +81,7 @@ data class ListWithLeq<T>(
     }
 }
 
-fun <T> List<Collection<T>>.toListWithLeq(): ListWithLeq<Collection<T>> {
+fun <T, U : Collection<T>> List<U>.toListWithLeq(): ListWithLeq<U> {
     val leqs = this.flatMap { c1 ->
         this.filter { c2 -> c2.containsAll(c1) }.map { c2 -> c1 to c2 }
     }.toSet()

@@ -24,20 +24,25 @@ fun Route.quiverRoutes() {
             call.respond(rfAlgebra.cosyzygyQuiver().toStringQuiver())
         }
 
-        get("/s-tau-tilt") {
+        get("/s_tau_tilt") {
             val rfAlgebra = call.getRfAlgebra()
             call.respond(rfAlgebra.tauTiltingQuiverWithBrickLabel().toStringQuiver())
         }
 
-        get("/w-tilt") {
+        get("/w_tilt") {
             val rfAlgebra = call.getRfAlgebra()
             call.respond(rfAlgebra.wakamatsuTiltingsWithLeq().hasseQuiver().toStringQuiver())
 
         }
 
-        get("/gen-tilt") {
+        get("/gen_tilt") {
             val rfAlgebra = call.getRfAlgebra()
             call.respond(rfAlgebra.generalizedTiltingPoset().hasseQuiver().toStringQuiver())
+        }
+
+        get("/wide_tau_tilt") {
+            val rfAlgebra = call.getRfAlgebra()
+            call.respond(rfAlgebra.wideTauTiltingQuiver().toStringQuiver())
         }
 
         route("/subcat") {
@@ -86,14 +91,14 @@ fun Route.quiverRoutes() {
                 call.respond(rfAlgebra.cotorsionPairs().map { it.first }.toListWithLeq().hasseQuiver().toStringQuiver())
             }
 
-            get("/h-cotors") {
+            get("/h_cotors") {
                 val rfAlgebra = call.getRfAlgebra()
                 call.respond(
                     rfAlgebra.hereditaryCotorsionPairs().map { it.first }.toListWithLeq().hasseQuiver().toStringQuiver()
                 )
             }
 
-            get("/2-smc") {
+            get("/2_smc") {
                 val rfAlgebra = call.getRfAlgebra()
                 call.respond(rfAlgebra.twoSMCs().map { it.first }.toListWithLeq().hasseQuiver().toStringQuiver())
             }

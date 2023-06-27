@@ -177,4 +177,15 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
         require(isAcyclic(vtx)) { "There are infinitely many paths." }
         return pathsSequenceFrom(vtx).toList()
     }
+
+    /**
+     * Return a new quiver obtained by mapping the vertices of this quiver using the given function [f].
+     *
+     * @param f the function to map the vertices.
+     */
+    fun <V> mapVertices(f: (T) -> V): Quiver<V, U> {
+        return Quiver(
+            vertices.map(f),
+            arrows.map { Arrow(it.label, f(it.from), f(it.to)) })
+    }
 }

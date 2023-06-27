@@ -37,6 +37,8 @@ fun Route.enumeratorRoutes() {
                 "tau_minus-tilt" -> rfAlgebra.tauMinusTiltings()
                 "tau_minus-rigid" -> rfAlgebra.tauMinusRigids()
                 "tilt" -> rfAlgebra.tiltings()
+                "wide_tau_tilt" -> rfAlgebra.wideTauTiltings()
+                "wide_tau_minus_tilt" -> rfAlgebra.wideTauMinusTiltings()
                 "w_tilt" -> rfAlgebra.wakamatsuTiltings()
                 else -> return@get call.respond(HttpStatusCode.BadRequest)
             }

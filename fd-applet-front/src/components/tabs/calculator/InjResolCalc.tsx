@@ -95,7 +95,6 @@ export default function InjResolCalc({ options }: CalcProps) {
         >
           <Grid item xs={8}>
             <Autocomplete
-              freeSolo
               multiple
               value={mXX}
               onChange={(_, newValue: string[]) => {

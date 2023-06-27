@@ -56,7 +56,7 @@ export default function ExtCalc({ options }: CalcProps) {
     }
 
     const response = await fetchWithUiFeedback<number>({
-      url: "/api/calculator/2/ext",
+      url: "/api/calculator/3/ext",
       method: "POST",
       body: { first: actualXX, second: actualYY, third: n },
     });
@@ -84,7 +84,6 @@ export default function ExtCalc({ options }: CalcProps) {
         >
           <Grid item xs={4}>
             <Autocomplete
-              freeSolo
               multiple
               value={mXX}
               onChange={(_, newValue: string[]) => {
@@ -106,7 +105,6 @@ export default function ExtCalc({ options }: CalcProps) {
           </Grid>
           <Grid item xs={4}>
             <Autocomplete
-              freeSolo
               multiple
               value={mYY}
               onChange={(_, newValue: string[]) => {

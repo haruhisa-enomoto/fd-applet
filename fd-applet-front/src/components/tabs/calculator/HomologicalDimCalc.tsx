@@ -62,7 +62,6 @@ export default function HomologicalDimCalc({ options }: CalcProps) {
         >
           <Grid item xs={10}>
             <Autocomplete
-              freeSolo
               multiple
               value={mXX}
               onChange={(event: unknown, newValue: string[]) => {

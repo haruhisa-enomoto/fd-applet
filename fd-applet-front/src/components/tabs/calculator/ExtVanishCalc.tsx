@@ -46,7 +46,7 @@ export default function ExtVanishCalc({ options }: CalcProps) {
     }
 
     const response = await fetchWithUiFeedback<boolean>({
-      url: "/api/calculator/2/ext-zero",
+      url: "/api/calculator/2/ext_zero",
       method: "POST",
       body: { first: actualXX, second: actualYY },
     });
@@ -75,7 +75,6 @@ export default function ExtVanishCalc({ options }: CalcProps) {
         >
           <Grid item xs={5}>
             <Autocomplete
-              freeSolo
               multiple
               value={mXX}
               onChange={(_, newValue: string[]) => {
@@ -97,7 +96,6 @@ export default function ExtVanishCalc({ options }: CalcProps) {
           </Grid>
           <Grid item xs={5}>
             <Autocomplete
-              freeSolo
               multiple
               value={mYY}
               onChange={(_, newValue: string[]) => {

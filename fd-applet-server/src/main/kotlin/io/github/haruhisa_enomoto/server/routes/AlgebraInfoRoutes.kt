@@ -6,6 +6,7 @@ import io.github.haruhisa_enomoto.backend.stringalg.GentleAlgebra
 import io.github.haruhisa_enomoto.backend.stringalg.MonomialAlgebra
 import io.github.haruhisa_enomoto.backend.stringalg.StringAlgebra
 import io.github.haruhisa_enomoto.server.utils.getAlgebra
+import io.github.haruhisa_enomoto.server.utils.toListString
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -143,19 +144,8 @@ fun <T> Algebra<T>.info(): AlgebraInfo {
 }
 
 fun Route.algebraInfoRoutes() {
-    route("/algebra-info") {
-        get {
-            val algebra = call.getAlgebra()
-            call.respond(algebra.info())
-        }
-        get("/strings") {
-            val algebra = call.getAlgebra()
-            if (algebra.isWordFinite) {
-                call.respond(algebra.stringIndecs(nonIsomorphic = false).sortedBy { it.dim() }.map { it.toString() })
-            } else {
-                call.respond(algebra.stringIndecs(lengthBound = 10, nonIsomorphic = false).sortedBy { it.dim() }
-                    .map { it.toString() })
-            }
-        }
+    get("/algebra-info") {
+        val algebra = call.getAlgebra()
+        call.respond(algebra.info())
     }
 }

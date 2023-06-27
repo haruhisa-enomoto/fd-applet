@@ -10,6 +10,7 @@ interface FetchConfig {
   method?: HttpMethod;
   body?: unknown;
   showSuccess?: boolean;
+  showDuration?: boolean;
   expectJson?: boolean;
 }
 
@@ -28,6 +29,7 @@ const useFetchWithUiFeedback = () => {
       method = "GET",
       body,
       showSuccess = true,
+      showDuration = false,
       expectJson = true,
     }: FetchConfig): Promise<ApiResponse<T>> => {
       const headers: HeadersInit = { "Content-Type": "application/json" };
@@ -35,11 +37,13 @@ const useFetchWithUiFeedback = () => {
 
       try {
         setOpenBack(true);
+        const startTime = Date.now();
         const response = await fetch(`${url}?client_id=${uuid}`, {
           method,
           headers,
           body: requestBody,
         });
+        const endTime = Date.now();
         if (!response.ok) {
           setOpenBack(false);
           const message =
@@ -49,8 +53,14 @@ const useFetchWithUiFeedback = () => {
           return { success: false };
         }
         setOpenBack(false);
-        if (showSuccess) {
+        if (showSuccess && !showDuration) {
           setNotifyStatus({ message: "Success!", duration: 2000 });
+          setOpenNotify(true);
+        } else if (showSuccess && showDuration) {
+          setNotifyStatus({
+            message: `Success! (${endTime - startTime}ms)`,
+            // duration: 2000,
+          });
           setOpenNotify(true);
         }
         return {

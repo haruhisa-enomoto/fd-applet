@@ -100,6 +100,7 @@ export default function ModuleEnumerator() {
   async function getData() {
     const response = await fetchWithUiFeedback<string[][]>({
       url: "/api/module/" + selectedMenu,
+      showDuration: true
     });
     if (response.data === undefined) return;
     setData(response.data);

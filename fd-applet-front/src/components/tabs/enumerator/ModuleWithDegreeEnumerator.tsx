@@ -49,6 +49,7 @@ export default function ModuleWithDegreeEnumerator() {
       url: "/api/module/n/" + selectedMenu,
       method: "POST",
       body: n,
+      showDuration: true
     });
     if (response.data === undefined) return;
     setData(response.data);

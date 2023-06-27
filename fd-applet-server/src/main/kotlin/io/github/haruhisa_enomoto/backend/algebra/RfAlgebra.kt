@@ -47,6 +47,8 @@ class RfAlgebra<T>(
     private val _semibricks by lazy { obtainSemibricks() }
     private val _semibricksSet by lazy { _semibricks.map { it.toSet() } }
     private val _tauTiltingDataList by lazy { obtainTauTiltingDataList() }
+    private val _tors by lazy { obtainTorsionClasses() }
+    private val _torf by lazy { obtainTorsionFreeClasses() }
     val sbrickToTors by lazy { obtainSbrickToTors() }
     val torsToSbrick by lazy { obtainTorsToSbrick() }
     val sbrickToTorf by lazy { obtainSbrickToTorf() }
@@ -177,6 +179,8 @@ class RfAlgebra<T>(
 
     /**
      * Returns the list of bricks `X` such that `Hom([cC], X) = 0`.
+     * Will be useful if we only have to consider bricks, such as
+     * considering the torsion closure (= left perp of homRightPerpBricks)
      *
      * @param cC a subcategory.
      * @return the list of bricks `X` such that `Hom([cC], X) = 0`.
@@ -195,13 +199,8 @@ class RfAlgebra<T>(
         return _bricks.filter { hom(it, cC) == 0 }
     }
 
-    /**
-     * Generates the sequence of torsion classes of this algebra.
-     *
-     * @return the sequence of torsion classes of this algebra.
-     */
-    fun torsionClassSequence(): Sequence<Subcat<T>> {
-        return _semibricks.asSequence().map { homLeftPerp(it) }
+    private fun obtainTorsionClasses(): List<Subcat<T>> {
+        return _semibricks.map { homLeftPerp(it) }
     }
 
     /**
@@ -210,16 +209,11 @@ class RfAlgebra<T>(
      * @return the list of torsion classes of this algebra.
      */
     fun torsionClasses(): List<Subcat<T>> {
-        return torsionClassSequence().toList()
+        return _tors
     }
 
-    /**
-     * Generates the sequence of torsion-free classes of this algebra.
-     *
-     * @return the sequence of torsion-free classes of this algebra.
-     */
-    fun torsionFreeClassSequence(): Sequence<Subcat<T>> {
-        return _semibricks.asSequence().map { homRightPerp(it) }
+    private fun obtainTorsionFreeClasses(): List<Subcat<T>> {
+        return _semibricks.map { homRightPerp(it) }
     }
 
     /**
@@ -228,26 +222,7 @@ class RfAlgebra<T>(
      * @return the list of torsion-free classes of this algebra.
      */
     fun torsionFreeClasses(): List<Subcat<T>> {
-        return torsionFreeClassSequence().toList()
-    }
-
-    /**
-     * Generates the sequence of IE-closed subcategories of this algebra.
-     * Here a subcategory is IE-closed if it is closed under taking images and extensions.
-     *
-     * @return the sequence of IE-closed subcategories of this algebra.
-     */
-    fun ieClosedSubcatsSequence(): Sequence<Subcat<T>> = sequence {
-        val tors = _semibricks.map { homLeftPerp(it) }
-        val torf = _semibricks.map { homRightPerp(it) }
-        val result = mutableSetOf<Subcat<T>>()
-        for (cTT in tors) {
-            for (cFF in torf) {
-                val candidate = cTT intersect cFF
-                if (result.add(candidate)) yield(candidate)
-//                if (result.size % 1000 == 0) println(result.size)
-            }
-        }
+        return _torf
     }
 
     /**
@@ -257,7 +232,11 @@ class RfAlgebra<T>(
      * @return the list of IE-closed subcategories of this algebra.
      */
     fun ieClosedSubcats(): List<Subcat<T>> {
-        return ieClosedSubcatsSequence().toList()
+        return _tors.flatMap { cTT ->
+            _torf.map { cFF ->
+                cTT intersect cFF
+            }
+        }.distinct()
     }
 
     /**
@@ -296,7 +275,7 @@ class RfAlgebra<T>(
      * @return the torsion closure of [cC].
      */
     fun torsionClosure(cC: Subcat<T>): Subcat<T> {
-        return homLeftPerp(homRightPerp(cC))
+        return homLeftPerp(homRightPerpBricks(cC))
     }
 
     /**
@@ -306,7 +285,7 @@ class RfAlgebra<T>(
      * @return the torsion-free closure of [cC].
      */
     fun torsionFreeClosure(cC: Subcat<T>): Subcat<T> {
-        return homRightPerp(homLeftPerp(cC))
+        return homRightPerp(homLeftPerpBricks(cC))
     }
 
     /**
@@ -347,14 +326,19 @@ class RfAlgebra<T>(
      * @return the list of ICE-closed subcategories of this algebra.
      */
     fun iceClosedSubcats(): List<Subcat<T>> {
-        val allSemibricks = _semibricks
+        // In this implementation, we use the fact that
+        // ICE-closed subcategories are torsion classes in some wide subcategories.
+        // Therefore, first obtain all wide subcats,
+        // then compute tors in it using semibricks.
+        // TODO: better implementation?
+        val sbricks = _semibricks
         val result = mutableSetOf<Subcat<T>>()
-        for (mS in allSemibricks) {
+        for (mS in sbricks) {
             // Consider wide subcat [cW] corresponding to [mS].
             val cW = ieClosure(mS)
             // We will compute torsion classes in [cW].
             // So loops over semibricks contained in [cW].
-            for (mS2 in allSemibricks.filter { cW.containsAll(it) }) {
+            for (mS2 in sbricks.filter { cW.containsAll(it) }) {
                 result.add(cW.filter { hom(it, mS2) == 0 })
             }
         }
@@ -534,8 +518,7 @@ class RfAlgebra<T>(
         val sbrickToTorf = _semibricks.associateWith { torsionFreeClosure(it) }
         val torfToSbrick = sbrickToTorf.entries.associate { (key, value) -> value to key }
         val result = mutableListOf<TauTiltingData<T>>()
-        for ((sbrickTors, tors) in sbrickToTors) {
-            /*
+        for ((sbrickTors, tors) in sbrickToTors) {/*
             For tau-rigid M and a semibrick S, we have
             Ext^1(M, T(S)) = 0 iff Ext^1(M, Filt Fac(S)) = 0 iff Ext^1(M, Fac S) = 0
             iff Hom(S, tau M) = 0.
@@ -856,9 +839,7 @@ class RfAlgebra<T>(
             }
         }
         return maximalCliques(neighbor).map { pairList ->
-            (pairList.mapNotNull { it.first }
-                    to pairList.mapNotNull
-            { it.second }.map { projAt(it) })
+            (pairList.mapNotNull { it.first } to pairList.mapNotNull { it.second }.map { projAt(it) })
         }
     }
 
@@ -961,8 +942,7 @@ class RfAlgebra<T>(
      * @param n the upper bound of projective dimension.
      * @return the list of generalized tilting modules with pd <= [n].
      */
-    fun generalizedTiltings(n: Int): List<List<Indec<T>>> {
-        /*
+    fun generalizedTiltings(n: Int): List<List<Indec<T>>> {/*
         Algorithm: they are precisely self-orthogonal modules with pd <= n
         which are maximal with respect to this property.
         */
@@ -987,8 +967,7 @@ class RfAlgebra<T>(
      * @param n the upper bound of injective dimension.
      * @return the list of generalized cotilting modules with id <= [n].
      */
-    fun generalizedCotiltings(n: Int): List<List<Indec<T>>> {
-        /*
+    fun generalizedCotiltings(n: Int): List<List<Indec<T>>> {/*
         Algorithm: they are precisely self-orthogonal modules with id <= n
         which are maximal with respect to this property.
          */
@@ -1012,8 +991,7 @@ class RfAlgebra<T>(
      *
      * @return the list of generalized tilting modules.
      */
-    fun generalizedTiltings(): List<List<Indec<T>>> {
-        /*
+    fun generalizedTiltings(): List<List<Indec<T>>> {/*
         Algorithm: they are precisely self-orthogonal modules with finite proj. dim.
         which are maximal with respect to this property.
          */
@@ -1034,8 +1012,7 @@ class RfAlgebra<T>(
      *
      * @return the list of generalized cotilting modules.
      */
-    fun generalizedCotiltings(): List<List<Indec<T>>> {
-        /*
+    fun generalizedCotiltings(): List<List<Indec<T>>> {/*
         Algorithm: they are precisely self-orthogonal modules with finite inj. dim.
         which are maximal with respect to this property.
          */
@@ -1080,8 +1057,7 @@ class RfAlgebra<T>(
      * @return the list of [n]-cluster tilting modules.
      * @throws IllegalArgumentException if [n] < 1.
      */
-    fun clusterTiltings(n: Int): List<List<Indec<T>>> {
-        /*
+    fun clusterTiltings(n: Int): List<List<Indec<T>>> {/*
         Algorithm:
         - First, find maximal Ext^[1,n)-orthogonal modules containing projs and injs.
         - Then check whether each satisfies the above conditions.
@@ -1334,8 +1310,7 @@ class RfAlgebra<T>(
         }
         val result = maximalCliques(neighbor)
         return result.map { list ->
-            Pair(list.filter { it.second == 0 }.map { it.first },
-                list.filter { it.second == 1 }.map { it.first })
+            Pair(list.filter { it.second == 0 }.map { it.first }, list.filter { it.second == 1 }.map { it.first })
         }
     }
 

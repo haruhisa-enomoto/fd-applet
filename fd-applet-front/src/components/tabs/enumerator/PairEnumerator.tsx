@@ -68,6 +68,7 @@ export default function SubcatEnumerator() {
   async function getData() {
     const response = await fetchWithUiFeedback<Pair<string[], string[]>[]>({
       url: "/api/pair/" + selectedMenu,
+      showDuration: true
     });
     if (response.data === undefined) return;
     setData(response.data);

@@ -1,22 +1,21 @@
 package io.github.haruhisa_enomoto.backend.algebra
 
-import io.github.haruhisa_enomoto.backend.utils.ListWithLeq
-import io.github.haruhisa_enomoto.backend.utils.powerSetList
-import io.github.haruhisa_enomoto.backend.quiver.TranslationQuiver
 import io.github.haruhisa_enomoto.backend.graph.almostMaximalCliques
 import io.github.haruhisa_enomoto.backend.graph.cliques
 import io.github.haruhisa_enomoto.backend.graph.maximalCliques
 import io.github.haruhisa_enomoto.backend.quiver.Arrow
 import io.github.haruhisa_enomoto.backend.quiver.Quiver
+import io.github.haruhisa_enomoto.backend.quiver.TranslationQuiver
 import io.github.haruhisa_enomoto.backend.types.*
+import io.github.haruhisa_enomoto.backend.utils.ListWithLeq
+import io.github.haruhisa_enomoto.backend.utils.powerSetList
 import io.github.haruhisa_enomoto.backend.utils.toListWithLeq
 
 /**
- * A class for representation-finite algebras,
- * together with a list [indecs] of the complete set of indecomposable modules.
- * Throughout this class, all "modules" are finitely generated **basic** modules,
- * and all "subcategories" are assumed to be subcategories
- * of the category of finitely generated modules.
+ * A class for representation-finite algebras, together with a list [indecs] of the complete set of
+ * indecomposable modules. Throughout this class, all "modules" are finitely generated **basic**
+ * modules, and all "subcategories" are assumed to be subcategories of the category of finitely
+ * generated modules.
  *
  * @param T the type of vertex labels.
  * @property algebra the underlying algebra.
@@ -26,12 +25,12 @@ import io.github.haruhisa_enomoto.backend.utils.toListWithLeq
  * @throws IllegalArgumentException if this algebra is not representation-finite.
  */
 class RfAlgebra<T>(
-    val algebra: Algebra<T>, val indecs: List<Indec<T>>, val normalize: (Indec<T>) -> Indec<T>,
+    val algebra: Algebra<T>,
+    val indecs: List<Indec<T>>,
+    val normalize: (Indec<T>) -> Indec<T>,
 ) : Algebra<T>() {
     init {
-        require(algebra.isRepFinite()) {
-            "This is not representation-finite. "
-        }
+        require(algebra.isRepFinite()) { "This is not representation-finite. " }
     }
 
     override val vertices = algebra.vertices
@@ -76,9 +75,8 @@ class RfAlgebra<T>(
     override fun toRfAlgebra() = this
 
     /**
-     * Returns the finitistic dimension of this algebra, that is,
-     * the maximum of the projective dimensions of indecomposable modules
-     * with finite projective dimension.
+     * Returns the finitistic dimension of this algebra, that is, the maximum of the projective
+     * dimensions of indecomposable modules with finite projective dimension.
      *
      * @return the finitistic dimension of this algebra.
      */
@@ -131,18 +129,14 @@ class RfAlgebra<T>(
             }
         }
         if (irreducibles.toSet() != irreducibles2.toSet()) {
-            throw IllegalStateException(
-                "The two ways of constructing the AR quiver are different."
-            )
+            throw IllegalStateException("The two ways of constructing the AR quiver are different.")
         }
         return TranslationQuiver(Quiver(indecs, irreducibles), tau)
     }
 
     private fun obtainSemibricks(): List<List<Indec<T>>> {
         val neighbor = _bricks.associateWith { mX ->
-            _bricks.filter {
-                it !== mX && homZero(mX, it) && homZero(it, mX)
-            }
+            _bricks.filter { it !== mX && homZero(mX, it) && homZero(it, mX) }
         }
         return cliques(neighbor)
     }
@@ -157,8 +151,8 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the right hom-perpendicular category of [cC],
-     * the subcategory consisting of `X` such that `Hom([cC], X) = 0`.
+     * Returns the right hom-perpendicular category of [cC], the subcategory consisting of `X` such
+     * that `Hom([cC], X) = 0`.
      *
      * @param cC a subcategory.
      * @return the right hom-perpendicular category of [cC].
@@ -168,8 +162,8 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the left hom-perpendicular category of [cC],
-     * the subcategory consisting of `X` such that `Hom(X, [cC]) = 0`.
+     * Returns the left hom-perpendicular category of [cC], the subcategory consisting of `X` such
+     * that `Hom(X, [cC]) = 0`.
      *
      * @param cC a subcategory.
      * @return the left hom-perpendicular category of [cC].
@@ -179,9 +173,9 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of bricks `X` such that `Hom([cC], X) = 0`.
-     * Will be useful if we only have to consider bricks, such as
-     * considering the torsion closure (= left perp of homRightPerpBricks)
+     * Returns the list of bricks `X` such that `Hom([cC], X) = 0`. Will be useful if we only have
+     * to consider bricks, such as considering the torsion closure (= left perp of
+     * homRightPerpBricks)
      *
      * @param cC a subcategory.
      * @return the list of bricks `X` such that `Hom([cC], X) = 0`.
@@ -227,8 +221,8 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of IE-closed subcategories of this algebra.
-     * Here a subcategory is IE-closed if it is closed under taking images and extensions.
+     * Returns the list of IE-closed subcategories of this algebra. Here a subcategory is IE-closed
+     * if it is closed under taking images and extensions.
      *
      * @return the list of IE-closed subcategories of this algebra.
      */
@@ -275,7 +269,8 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the torsion-free closure of [cC], that is, the smallest torsion-free class containing [cC].
+     * Returns the torsion-free closure of [cC], that is, the smallest torsion-free class containing
+     * [cC].
      *
      * @param cC a subcategory.
      * @return the torsion-free closure of [cC].
@@ -315,9 +310,8 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of ICE-closed subcategories of this algebra.
-     * Here a subcategory is ICE-closed if it is closed
-     * under taking images, cokernels, and extensions.
+     * Returns the list of ICE-closed subcategories of this algebra. Here a subcategory is
+     * ICE-closed if it is closed under taking images, cokernels, and extensions.
      *
      * @return the list of ICE-closed subcategories of this algebra.
      */
@@ -343,9 +337,8 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of IKE-closed subcategories of this algebra.
-     * Here a subcategory is IKE-closed if it is closed
-     * under taking images, kernels, and extensions.
+     * Returns the list of IKE-closed subcategories of this algebra. Here a subcategory is
+     * IKE-closed if it is closed under taking images, kernels, and extensions.
      *
      * @return the list of IKE-closed subcategories of this algebra.
      */
@@ -365,8 +358,7 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of wide tau-tilting modules =
-     * tau-tilting objects in wide subcategories.
+     * Returns the list of wide tau-tilting modules = tau-tilting objects in wide subcategories.
      * They are in bijection with ICE-closed subcategories.
      */
     fun wideTauTiltings(): List<List<Indec<T>>> {
@@ -403,25 +395,33 @@ class RfAlgebra<T>(
 
     /**
      * Returns the wide closure of [cC], that is, the smallest wide subcategory containing [cC].
-     * Currently, just returns the intersection of all wide subcategories containing [cC].
-     * So this may be slow.
+     * Currently, just returns the intersection of all wide subcategories containing [cC]. So this
+     * may be slow.
      */
     fun wideClosure(cC: Subcat<T>): Subcat<T> {
-        return wideSubcats().filter { it.containsAll(cC) }.reduce { acc, subcat -> acc intersect subcat }
+        return wideSubcats().filter { it.containsAll(cC) }.reduce { acc, subcat ->
+            acc intersect subcat
+        }
     }
 
     /**
-     * Returns the ICE-closure of [cC], that is, the smallest ICE-closed subcategory containing [cC].
+     * Returns the ICE-closure of [cC], that is, the smallest ICE-closed subcategory containing [cC]
+     * .
      */
     fun iceClosure(cC: Subcat<T>): Subcat<T> {
-        return iceClosedSubcats().filter { it.containsAll(cC) }.reduce { acc, subcat -> acc intersect subcat }
+        return iceClosedSubcats().filter { it.containsAll(cC) }.reduce { acc, subcat ->
+            acc intersect subcat
+        }
     }
 
     /**
-     * Returns the IKE-closure of [cC], that is, the smallest IKE-closed subcategory containing [cC].
+     * Returns the IKE-closure of [cC], that is, the smallest IKE-closed subcategory containing [cC]
+     * .
      */
     fun ikeClosure(cC: Subcat<T>): Subcat<T> {
-        return ikeClosedSubcats().filter { it.containsAll(cC) }.reduce { acc, subcat -> acc intersect subcat }
+        return ikeClosedSubcats().filter { it.containsAll(cC) }.reduce { acc, subcat ->
+            acc intersect subcat
+        }
     }
 
     /**
@@ -463,31 +463,27 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of tau-rigid modules, that is,
-     * modules `mX` such that `Hom(mX, \tau mX) = 0`.
+     * Returns the list of tau-rigid modules, that is, modules `mX` such that `Hom(mX, \tau mX) =
+     * 0`.
      *
      * @return the list of tau-rigid modules.
      */
     fun tauRigids(): List<List<Indec<T>>> {
         val neighbor = _indecTauRigids.associateWith { mX ->
-            _indecTauRigids.filter {
-                it !== mX && homTauOrtho(it, mX)
-            }
+            _indecTauRigids.filter { it !== mX && homTauOrtho(it, mX) }
         }
         return cliques(neighbor)
     }
 
     /**
-     * Returns the list of tau^{-}-rigid modules, that is,
-     * modules `mX` such that `Hom(\tau^{-1} mX, mX) = 0`.
+     * Returns the list of tau^{-}-rigid modules, that is, modules `mX` such that `Hom(\tau^{-1} mX,
+     * mX) = 0`.
      *
      * @return the list of tau^{-}-rigid modules.
      */
     fun tauMinusRigids(): List<List<Indec<T>>> {
         val neighbor = _indecTauMinusRigids.associateWith { mX ->
-            _indecTauMinusRigids.filter {
-                it !== mX && homTauMinusOrtho(it, mX)
-            }
+            _indecTauMinusRigids.filter { it !== mX && homTauMinusOrtho(it, mX) }
         }
         return cliques(neighbor)
     }
@@ -498,9 +494,7 @@ class RfAlgebra<T>(
      * @return the list of support tau-tilting modules.
      */
     fun supportTauTiltings(): List<List<Indec<T>>> {
-        return tauRigids().filter { mMM ->
-            mMM.size == mMM.flatMap { it.support() }.toSet().size
-        }
+        return tauRigids().filter { mMM -> mMM.size == mMM.flatMap { it.support() }.toSet().size }
     }
 
     /**
@@ -521,9 +515,7 @@ class RfAlgebra<T>(
      */
     fun tauTiltings(): List<List<Indec<T>>> {
         val neighbor = _indecTauRigids.associateWith { mX ->
-            _indecTauRigids.filter {
-                it !== mX && homTauOrtho(it, mX)
-            }
+            _indecTauRigids.filter { it !== mX && homTauOrtho(it, mX) }
         }
         return maximalCliques(neighbor)
     }
@@ -535,9 +527,7 @@ class RfAlgebra<T>(
      */
     fun tauMinusTiltings(): List<List<Indec<T>>> {
         val neighbor = _indecTauMinusRigids.associateWith { mX ->
-            _indecTauMinusRigids.filter {
-                it !== mX && homTauMinusOrtho(it, mX)
-            }
+            _indecTauMinusRigids.filter { it !== mX && homTauMinusOrtho(it, mX) }
         }
         return maximalCliques(neighbor)
     }
@@ -656,8 +646,8 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of indecomposable rigid modules, that is,
-     * indecomposable modules `mX` with `Ext^1(mX, mX) = 0`.
+     * Returns the list of indecomposable rigid modules, that is, indecomposable modules `mX` with
+     * `Ext^1(mX, mX) = 0`.
      *
      * @return
      */
@@ -666,106 +656,89 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of rigid modules, that is,
-     * modules `mXX` with `Ext^1(mXX, mXX) = 0`.
+     * Returns the list of rigid modules, that is, modules `mXX` with `Ext^1(mXX, mXX) = 0`.
      *
      * @return
      */
     fun rigids(): List<List<Indec<T>>> {
         val neighbor = _indecRigids.associateWith { mX ->
-            _indecRigids.filter {
-                it !== mX && ext1(it, mX) == 0 && ext1(mX, it) == 0
-            }
+            _indecRigids.filter { it !== mX && ext1(it, mX) == 0 && ext1(mX, it) == 0 }
         }
         return cliques(neighbor)
     }
 
     /**
-     * Returns the list of indecomposable partial tilting modules, that is,
-     * indecomposable modules `mX` with `Ext^1(mX, mX) = 0` and `pd (mX) <= 1`.
+     * Returns the list of indecomposable partial tilting modules, that is, indecomposable modules
+     * `mX` with `Ext^1(mX, mX) = 0` and `pd (mX) <= 1`.
      *
      * @return the list of indecomposable partial tilting modules.
      */
     fun indecPartialTiltings(): List<Indec<T>> {
-        return _indecRigids.filter {
-            it.isProjective() || it.projDim() == 1
-        }
+        return _indecRigids.filter { it.isProjective() || it.projDim() == 1 }
     }
 
     /**
-     * Returns the list of partial tilting modules, that is,
-     * modules `mXX` with `Ext^1(mXX, mXX) = 0` and `pd (mXX) <= 1`.
+     * Returns the list of partial tilting modules, that is, modules `mXX` with `Ext^1(mXX, mXX) =
+     * 0` and `pd (mXX) <= 1`.
      *
      * @return the list of partial tilting modules.
      */
     fun partialTiltings(): List<List<Indec<T>>> {
         val nodes = indecPartialTiltings()
         val neighbor = nodes.associateWith { mX ->
-            nodes.filter {
-                it !== mX && ext1(it, mX) == 0 && ext1(mX, it) == 0
-            }
+            nodes.filter { it !== mX && ext1(it, mX) == 0 && ext1(mX, it) == 0 }
         }
         return cliques(neighbor)
     }
 
     /**
-     * Returns the list of *classical* tilting modules.
-     * Since this algebra is representation-finite, tilting modules are precisely
-     * maximal partial tilting modules.
+     * Returns the list of *classical* tilting modules. Since this algebra is representation-finite,
+     * tilting modules are precisely maximal partial tilting modules.
      *
      * @return the list of classical tilting modules.
      */
     fun tiltings(): List<List<Indec<T>>> {
         val nodes = indecPartialTiltings()
         val neighbor = nodes.associateWith { mX ->
-            nodes.filter {
-                it !== mX && ext1(it, mX) == 0 && ext1(mX, it) == 0
-            }
+            nodes.filter { it !== mX && ext1(it, mX) == 0 && ext1(mX, it) == 0 }
         }
         return maximalCliques(neighbor)
     }
 
     /**
-     * Returns the list of indecomposable partial cotilting modules, that is,
-     * indecomposable modules `mX` with `Ext^1(mX, mX) = 0` and `id (mX) <= 1`.
+     * Returns the list of indecomposable partial cotilting modules, that is, indecomposable modules
+     * `mX` with `Ext^1(mX, mX) = 0` and `id (mX) <= 1`.
      *
      * @return the list of indecomposable partial cotilting modules.
      */
     fun indecPartialCotiltings(): List<Indec<T>> {
-        return _indecRigids.filter {
-            it.isInjective() || it.injDim() == 1
-        }
+        return _indecRigids.filter { it.isInjective() || it.injDim() == 1 }
     }
 
     /**
-     * Returns the list of partial cotilting modules, that is,
-     * modules `mXX` with `Ext^1(mXX, mXX) = 0` and `id (mXX) <= 1`.
+     * Returns the list of partial cotilting modules, that is, modules `mXX` with `Ext^1(mXX, mXX) =
+     * 0` and `id (mXX) <= 1`.
      *
      * @return the list of partial cotilting modules.
      */
     fun partialCotiltings(): List<List<Indec<T>>> {
         val nodes = indecPartialCotiltings()
         val neighbor = nodes.associateWith { mX ->
-            nodes.filter {
-                it !== mX && ext1(it, mX) == 0 && ext1(mX, it) == 0
-            }
+            nodes.filter { it !== mX && ext1(it, mX) == 0 && ext1(mX, it) == 0 }
         }
         return cliques(neighbor)
     }
 
     /**
-     * Returns the list of *classical* cotilting modules.
-     * Since this algebra is representation-finite, cotilting modules are precisely
-     * maximal partial cotilting modules.
+     * Returns the list of *classical* cotilting modules. Since this algebra is
+     * representation-finite, cotilting modules are precisely maximal partial cotilting modules.
      *
      * @return the list of classical cotilting modules.
      */
     fun cotiltings(): List<List<Indec<T>>> {
         val nodes = indecPartialCotiltings()
         val neighbor = nodes.associateWith { mX ->
-            nodes.filter {
-                it !== mX && ext1(it, mX) == 0 && ext1(mX, it) == 0
-            }
+            nodes.filter { it !== mX && ext1(it, mX) == 0 && ext1(mX, it) == 0 }
         }
         return maximalCliques(neighbor)
     }
@@ -800,8 +773,7 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns whether [mX] is tau^{-}-rigid, that is,
-     * `Hom(tau^{-}[mX], [mX]) = 0`.
+     * Returns whether [mX] is tau^{-}-rigid, that is, `Hom(tau^{-}[mX], [mX]) = 0`.
      *
      * @param mX an indecomposable module.
      */
@@ -828,17 +800,14 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of indecomposable tau-rigid pair:
-     * either of the form (`mM`, `null`) for `mM` indec tau-rigid, or
-     * (`null`, `vtx`) for `vtx` in [vertices]
+     * Returns the list of indecomposable tau-rigid pair: either of the form (`mM`, `null`) for `mM`
+     * indec tau-rigid, or (`null`, `vtx`) for `vtx` in [vertices]
      */
     fun indecTauRigidPairs(): List<IndecTauRigidPair<T>> {
         return _indecTauRigids.map { Pair(it, null) } + vertices.map { Pair(null, it) }
     }
 
-    fun indecTauRigidPairsOrtho(
-        pair1: IndecTauRigidPair<T>, pair2: IndecTauRigidPair<T>
-    ): Boolean {
+    fun indecTauRigidPairsOrtho(pair1: IndecTauRigidPair<T>, pair2: IndecTauRigidPair<T>): Boolean {
         val (mX, v) = pair1
         val (mY, w) = pair2
         return if (mX != null && mY != null) {
@@ -852,9 +821,7 @@ class RfAlgebra<T>(
         } else throw IllegalArgumentException("Invalid form.")
     }
 
-    /**
-     * Returns the list of facets of support tau-tilting simplicial complex.
-     */
+    /** Returns the list of facets of support tau-tilting simplicial complex. */
     fun tauTiltingFacet(): List<List<IndecTauRigidPair<T>>> {
         val indecs = indecTauRigidPairs()
         val neighbor = indecs.associateWith { pair1 ->
@@ -898,14 +865,18 @@ class RfAlgebra<T>(
             var larger = one
             var smaller = two // Modify them below.
             if (mM1 != null && mM2 == null) {
-                larger = one; smaller = two
+                larger = one
+                smaller = two
             } else if (mM1 == null && mM2 != null) {
-                larger = two; smaller = one
+                larger = two
+                smaller = one
             } else if (mM1 != null && mM2 != null) {
                 if (homZero(mM1, tau[mM2])) {
-                    larger = two; smaller = one
+                    larger = two
+                    smaller = one
                 } else if (homZero(mM2, tau[mM1])) {
-                    larger = one; smaller = two
+                    larger = one
+                    smaller = two
                 }
             } else throw IllegalStateException("Mutation property fails!")
             hasseArrows.add(Arrow(null, larger, smaller))
@@ -918,8 +889,8 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of brick contained in the interval of [pair1] > [pair2].
-     * We don't check whether it's actually an interval or not.
+     * Returns the list of brick contained in the interval of [pair1] > [pair2]. We don't check
+     * whether it's actually an interval or not.
      */
     fun bricksInTauTiltingPairInterval(
         pair1: ModuleWithSupport<T>, pair2: ModuleWithSupport<T>
@@ -929,6 +900,7 @@ class RfAlgebra<T>(
         }
     }
 
+    /** Returns the support tau-tilting quiver with brick labels. */
     fun tauTiltingQuiverWithBrickLabel(): Quiver<ModuleWithSupport<T>, Indec<T>> {
         val indecs = indecTauRigidPairs()
         val neighbor = indecs.associateWith { pair1 ->
@@ -950,28 +922,36 @@ class RfAlgebra<T>(
             var larger = one
             var smaller = two // Modify them below.
             if (mM1 != null && mM2 == null) {
-                larger = one; smaller = two
+                larger = one
+                smaller = two
             } else if (mM1 == null && mM2 != null) {
-                larger = two; smaller = one
+                larger = two
+                smaller = one
             } else if (mM1 != null && mM2 != null) {
                 if (homZero(mM1, tau[mM2])) {
-                    larger = two; smaller = one
+                    larger = two
+                    smaller = one
                 } else if (homZero(mM2, tau[mM1])) {
-                    larger = one; smaller = two
+                    larger = one
+                    smaller = two
                 }
             } else throw IllegalStateException("Mutation property fails!")
             val labelCandidates = bricksInTauTiltingPairInterval(larger, smaller)
-            if (labelCandidates.size != 1) throw IllegalStateException(
-                "There are ${labelCandidates.size} brick labels!"
-            )
+            if (labelCandidates.size != 1) throw IllegalStateException("There are ${labelCandidates.size} brick labels!")
             hasseArrows.add(Arrow(labelCandidates[0], larger, smaller))
         }
         return Quiver(siltings, hasseArrows)
     }
 
+    fun maximalGreenSequences(): List<List<Indec<T>>> {
+        val hasseQuiver = tauTiltingQuiverWithBrickLabel()
+        val largest = ModuleWithSupport(mMM = projs().toSortedSet(), support = sortedSetOf())
+        val mgs = hasseQuiver.pathsFrom(largest, onlyMaximal = true, check = false)
+        return mgs.map { it.letters.map { it.label } }
+    }
+
     /**
-     * Returns the list of generalized (Miyashita) tilting modules
-     * with projective dimension <= [n].
+     * Returns the list of generalized (Miyashita) tilting modules with projective dimension <= [n].
      *
      * @param n the upper bound of projective dimension.
      * @return the list of generalized tilting modules with pd <= [n].
@@ -986,17 +966,14 @@ class RfAlgebra<T>(
         // Indec modules with pd <= n and self-orthogonal.
         val neighbor = nodes.associateWith { mX ->
             nodes.filter { mY ->
-                mX !== mY && (1..n).all { i ->
-                    ext(mX, mY, i) == 0 && ext(mY, mX, i) == 0
-                }
+                mX !== mY && (1..n).all { i -> ext(mX, mY, i) == 0 && ext(mY, mX, i) == 0 }
             }
         }
         return maximalCliques(neighbor)
     }
 
     /**
-     * Returns the list of generalized (Miyashita) cotilting modules
-     * with injective dimension <= [n]
+     * Returns the list of generalized (Miyashita) cotilting modules with injective dimension <= [n]
      *
      * @param n the upper bound of injective dimension.
      * @return the list of generalized cotilting modules with id <= [n].
@@ -1011,17 +988,14 @@ class RfAlgebra<T>(
         // Indec modules with id <= n and self-orthogonal.
         val neighbor = nodes.associateWith { mX ->
             nodes.filter { mY ->
-                mX !== mY && (1..n).all { i ->
-                    ext(mX, mY, i) == 0 && ext(mY, mX, i) == 0
-                }
+                mX !== mY && (1..n).all { i -> ext(mX, mY, i) == 0 && ext(mY, mX, i) == 0 }
             }
         }
         return maximalCliques(neighbor)
     }
 
     /**
-     * Returns the list of generalized (Miyashita) tilting modules
-     * with finite projective dimension.
+     * Returns the list of generalized (Miyashita) tilting modules with finite projective dimension.
      *
      * @return the list of generalized tilting modules.
      */
@@ -1029,9 +1003,7 @@ class RfAlgebra<T>(
         Algorithm: they are precisely self-orthogonal modules with finite proj. dim.
         which are maximal with respect to this property.
          */
-        val nodes = indecs.filter { mX ->
-            mX.projDim() != null && higherExtZero(mX, mX)
-        }
+        val nodes = indecs.filter { mX -> mX.projDim() != null && higherExtZero(mX, mX) }
         val neighbor = nodes.associateWith { mX ->
             nodes.filter { mY ->
                 mX !== mY && higherExtZero(mX, mY) && higherExtZero(mY, mX)
@@ -1041,8 +1013,8 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of generalized (Miyashita) cotilting modules
-     * with finite injective dimension.
+     * Returns the list of generalized (Miyashita) cotilting modules with finite injective
+     * dimension.
      *
      * @return the list of generalized cotilting modules.
      */
@@ -1050,9 +1022,7 @@ class RfAlgebra<T>(
         Algorithm: they are precisely self-orthogonal modules with finite inj. dim.
         which are maximal with respect to this property.
          */
-        val nodes = indecs.filter { mX ->
-            mX.injDim() != null && higherExtZero(mX, mX)
-        }
+        val nodes = indecs.filter { mX -> mX.injDim() != null && higherExtZero(mX, mX) }
         val neighbor = nodes.associateWith { mX ->
             nodes.filter { mY ->
                 mX !== mY && higherExtZero(mX, mY) && higherExtZero(mY, mX)
@@ -1062,15 +1032,13 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of exceptional modules, that is,
-     * a self-orthogonal module with finite projective dimension.
+     * Returns the list of exceptional modules, that is, a self-orthogonal module with finite
+     * projective dimension.
      *
      * @return the list of exceptional modules.
      */
     fun exceptionals(): List<List<Indec<T>>> {
-        val nodes = indecs.filter { mX ->
-            mX.projDim() != null && higherExtZero(mX, mX)
-        }
+        val nodes = indecs.filter { mX -> mX.projDim() != null && higherExtZero(mX, mX) }
         val neighbor = nodes.associateWith { mX ->
             nodes.filter { mY ->
                 mX !== mY && higherExtZero(mX, mY) && higherExtZero(mY, mX)
@@ -1096,9 +1064,7 @@ class RfAlgebra<T>(
         - First, find maximal Ext^[1,n)-orthogonal modules containing projs and injs.
         - Then check whether each satisfies the above conditions.
          */
-        require(n >= 1) {
-            "n must be >= 1."
-        }
+        require(n >= 1) { "n must be >= 1." }
         fun vanish(mX: Indec<T>, mY: Indec<T>): Boolean {
             return (1 until n).all { i -> ext(mX, mY, i) == 0 }
         }
@@ -1108,9 +1074,7 @@ class RfAlgebra<T>(
             vanish(mX, mX) && projs().all { vanish(mX, it) } && injs().all { vanish(it, mX) }
         }
         val neighbor = nodes.associateWith { mX ->
-            nodes.filter { mY ->
-                mY !== mX && vanish(mX, mY) && vanish(mY, mX)
-            }
+            nodes.filter { mY -> mY !== mX && vanish(mX, mY) && vanish(mY, mX) }
         }
         val maximals = maximalCliques(neighbor)
         val result = mutableListOf<List<Indec<T>>>()
@@ -1133,9 +1097,9 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of Gorenstein-projective modules.
-     * Note: Since this algebra is representation-finite,
-     * Gorenstein-projective modules are the same as semi-Gorenstein-projective modules.
+     * Returns the list of Gorenstein-projective modules. Note: Since this algebra is
+     * representation-finite, Gorenstein-projective modules are the same as
+     * semi-Gorenstein-projective modules.
      *
      * @return the list of Gorenstein-projective modules.
      */
@@ -1144,8 +1108,8 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of semi-Gorenstein projective modules, that is,
-     * a module `mXX` such that `Ext^{>0}(mXX, A) = 0`.
+     * Returns the list of semi-Gorenstein projective modules, that is, a module `mXX` such that
+     * `Ext^{>0}(mXX, A) = 0`.
      *
      * @return the list of semi-Gorenstein projective modules.
      */
@@ -1185,16 +1149,13 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of Wakamatsu tilting modules.
-     * Since the algebra is representation-finite, these are precisely
-     * maximal self-orthogonal modules.
+     * Returns the list of Wakamatsu tilting modules. Since the algebra is representation-finite,
+     * these are precisely maximal self-orthogonal modules.
      *
      * @return the list of Wakamatsu tilting modules.
      */
     fun wakamatsuTiltings(): List<List<Indec<T>>> {
-        val nodes = indecs.filter { mX ->
-            higherExtZero(mX, mX)
-        }
+        val nodes = indecs.filter { mX -> higherExtZero(mX, mX) }
         val neighbor = nodes.associateWith { mX ->
             nodes.filter { mY ->
                 mX !== mY && higherExtZero(mX, mY) && higherExtZero(mY, mX)
@@ -1204,15 +1165,13 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of self-orthogonal modules,
-     * that is, a module `mXX` with `Ext^{>0}(mXX, mXX) = 0`.
+     * Returns the list of self-orthogonal modules, that is, a module `mXX` with `Ext^{>0}(mXX, mXX)
+     * = 0`.
      *
      * @return the list of self-orthogonal modules.
      */
     fun selfOrthogonals(): List<List<Indec<T>>> {
-        val nodes = indecs.filter { mX ->
-            higherExtZero(mX, mX)
-        }
+        val nodes = indecs.filter { mX -> higherExtZero(mX, mX) }
         val neighbor = nodes.associateWith { mX ->
             nodes.filter { mY ->
                 mX !== mY && higherExtZero(mX, mY) && higherExtZero(mY, mX)
@@ -1222,29 +1181,33 @@ class RfAlgebra<T>(
     }
 
     /**
-     * Returns the list of generalized tilting modules with the binary relation
-     * defined by `mTT1 >= mTT2` if `Ext^{>0}(mTT1, mTT2) = 0`.
+     * Returns the list of generalized tilting modules with the binary relation defined by `mTT1 >=
+     * mTT2` if `Ext^{>0}(mTT1, mTT2) = 0`.
      *
      * @return the list of generalized tilting modules with the binary relation.
      */
     fun wakamatsuTiltingsWithLeq(): ListWithLeq<List<Indec<T>>> {
         val wTiltings = wakamatsuTiltings()
         val leqs = wTiltings.flatMap { mTT1 ->
-            wTiltings.filter { mTT2 -> higherExtZero(mTT1, mTT2) }.map { mTT2 -> mTT2 to mTT1 }
+            wTiltings.filter { mTT2 -> higherExtZero(mTT1, mTT2) }.map { mTT2 ->
+                mTT2 to mTT1
+            }
         }.toSet()
         return ListWithLeq(wTiltings, leqs, alwaysPoset = false)
     }
 
     /**
-     * Returns the poset of generalized tilting modules.
-     * Here `mTT1 >= mTT2` if `Ext^{>0}(mTT1, mTT2) = 0`.
+     * Returns the poset of generalized tilting modules. Here `mTT1 >= mTT2` if `Ext^{>0}(mTT1,
+     * mTT2) = 0`.
      *
      * @return the poset of generalized tilting modules.
      */
     fun generalizedTiltingPoset(): ListWithLeq<List<Indec<T>>> {
         val tiltings = generalizedTiltings()
         val leqs = tiltings.flatMap { mTT1 ->
-            tiltings.filter { mTT2 -> higherExtZero(mTT1, mTT2) }.map { mTT2 -> mTT2 to mTT1 }
+            tiltings.filter { mTT2 -> higherExtZero(mTT1, mTT2) }.map { mTT2 ->
+                mTT2 to mTT1
+            }
         }.toSet()
         return ListWithLeq(tiltings, leqs)
     }
@@ -1365,5 +1328,3 @@ class RfAlgebra<T>(
         return hereditaryCotorsionPairs().map { it.second }
     }
 }
-
-

@@ -8,7 +8,6 @@ import kotlinx.serialization.Serializable
  * - `U`: a type for arrow labels.
  */
 
-
 /**
  * A data class representing a finite quiver with the list of [vertices] and [arrows].
  *
@@ -17,25 +16,19 @@ import kotlinx.serialization.Serializable
  * @property vertices the list of vertices of the quiver.
  * @property arrows the list of arrows of the quiver.
  * @constructor Creates a quiver with the given vertices and arrows.
- * @throws IllegalArgumentException if some vertices in [arrows] are not in [vertices],
- * or if some letters in [arrows] are inverses.
+ * @throws IllegalArgumentException if some vertices in [arrows] are not in [vertices], or if some
+ * letters in [arrows] are inverses.
  */
 @Serializable
 data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arrow<T, U>>) {
     init {
         for (arrow in arrows) {
-            require(arrow.from in vertices) {
-                "Source of $arrow: ${arrow.from} is not a vertex."
-            }
-            require(arrow.to in vertices) {
-                "Target of $arrow: ${arrow.to} is not a vertex."
-            }
+            require(arrow.from in vertices) { "Source of $arrow: ${arrow.from} is not a vertex." }
+            require(arrow.to in vertices) { "Target of $arrow: ${arrow.to} is not a vertex." }
         }
     }
 
-    /**
-     * Prints the quiver information, including its vertices and arrows.
-     */
+    /** Prints the quiver information, including its vertices and arrows. */
     fun printInfo() {
         println("Vertices:")
         println(vertices)
@@ -71,8 +64,25 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Returns a (possibly infinite) sequence of paths starting at [vtx].
-     * Depth-first search is used for faster acyclicity check.
+     * Recursive depth-first search for finding all maximal paths beginning from [currentPath].
+     *
+     * @param currentPath the current path in the depth-first search.
+     * @return a sequence of all maximal paths starting from the current path.
+     */
+    private fun maximalPathDFS(currentPath: Word<T, U>): Sequence<Word<T, U>> = sequence {
+        val nextArrows = arrows.filter { currentPath.to == it.from }
+        if (nextArrows.isEmpty()) {
+            yield(currentPath) // this is a maximal path, as it cannot be extended further
+        } else {
+            for (arrow in nextArrows) {
+                yieldAll(maximalPathDFS(currentPath * arrow))
+            }
+        }
+    }
+
+    /**
+     * Returns a (possibly infinite) sequence of paths starting at [vtx]. Depth-first search is used
+     * for faster acyclicity check.
      *
      * @param vtx the starting vertex of the paths.
      * @return a sequence of paths starting at the given vertex.
@@ -82,8 +92,19 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Recursive depth-first search for generating all cycles beginning with [currentPath].
-     * If a path ending at some vertex in [visited] is obtained, the recursion stops.
+     * Returns a (possibly infinite) sequence of paths starting at [vtx]. Depth-first search is used
+     * for faster acyclicity check.
+     *
+     * @param vtx the starting vertex of the paths.
+     * @return a sequence of paths starting at the given vertex.
+     */
+    private fun maximalPathsSequenceFrom(vtx: T): Sequence<Word<T, U>> {
+        return maximalPathDFS(vtx.toTrivialWord())
+    }
+
+    /**
+     * Recursive depth-first search for generating all cycles beginning with [currentPath]. If a
+     * path ending at some vertex in [visited] is obtained, the recursion stops.
      *
      * @param currentPath the current path in the depth-first search.
      * @param visited a list of visited vertices.
@@ -95,11 +116,11 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
         if (currentPath.to !in visited) {
             val vertexList = currentPath.vertexList()
             val index = vertexList.indexOf(currentPath.to)
-            if (index != vertexList.lastIndex) {// if not a simple path
-                if (index == 0) {// if cycle
+            if (index != vertexList.lastIndex) { // if not a simple path
+                if (index == 0) { // if cycle
                     yield(currentPath)
                 }
-            } else {// if simple path, create children.
+            } else { // if simple path, create children.
                 for (arrow in arrows.filter { currentPath.to == it.from }) {
                     yieldAll(cycleDFS(currentPath * arrow, visited))
                 }
@@ -108,10 +129,10 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Returns all simple cycles in the quiver.
-     * A cycle is considered "simple" if no vertex is visited more than once, except for the first and last vertices.
-     * This method returns only one representative for each cycle:
-     * For example, if `[a, b, c]` is a cycle, this method will not report `[b, c, a]` and `[c, a, b]`.
+     * Returns all simple cycles in the quiver. A cycle is considered "simple" if no vertex is
+     * visited more than once, except for the first and last vertices. This method returns only one
+     * representative for each cycle: For example, if `[a, b, c]` is a cycle, this method will not
+     * report `[b, c, a]` and `[c, a, b]`.
      *
      * @return a sequence of simple cycles in the quiver.
      */
@@ -134,9 +155,9 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Returns whether the quiver has a finite number of primitive cycles:
-     * cycles that cannot be expressed as a power of smaller cycles.
-     * This condition holds if and only if none of the simple cycles share common vertices.
+     * Returns whether the quiver has a finite number of primitive cycles: cycles that cannot be
+     * expressed as a power of smaller cycles. This condition holds if and only if none of the
+     * simple cycles share common vertices.
      *
      * @return true if the quiver has a finite number of primitive cycles, false otherwise.
      */
@@ -150,11 +171,12 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
     }
 
     /**
-     * Returns whether the quiver is acyclic. If [vtx] is provided, this method checks
-     * if there are only a finite number of paths starting from [vtx].
+     * Returns whether the quiver is acyclic. If [vtx] is provided, this method checks if there are
+     * only a finite number of paths starting from [vtx].
      *
      * @param vtx the vertex to check for acyclicity (optional).
-     * @return true if the quiver is acyclic or if the specified vertex has only finite paths, false otherwise.
+     * @return true if the quiver is acyclic or if the specified vertex has only finite paths, false
+     * otherwise.
      */
     fun isAcyclic(vtx: T? = null): Boolean {
         val checkList = if (vtx == null) vertices else listOf(vtx)
@@ -173,19 +195,19 @@ data class Quiver<T, U>(val vertices: Collection<T>, val arrows: Collection<Arro
      * @return a list of all paths originating from the specified vertex.
      * @throws IllegalArgumentException if there are infinitely many paths.
      */
-    fun pathsFrom(vtx: T): List<Word<T, U>> {
-        require(isAcyclic(vtx)) { "There are infinitely many paths." }
-        return pathsSequenceFrom(vtx).toList()
+    fun pathsFrom(vtx: T, onlyMaximal: Boolean = false, check: Boolean = true): List<Word<T, U>> {
+        require(!check || isAcyclic(vtx)) { "There are infinitely many paths." }
+        val pathSeq = if (onlyMaximal) maximalPathsSequenceFrom(vtx) else pathsSequenceFrom(vtx)
+        return pathSeq.toList()
     }
 
     /**
-     * Return a new quiver obtained by mapping the vertices of this quiver using the given function [f].
+     * Return a new quiver obtained by mapping the vertices of this quiver using the given function
+     * [f].
      *
      * @param f the function to map the vertices.
      */
     fun <V> mapVertices(f: (T) -> V): Quiver<V, U> {
-        return Quiver(
-            vertices.map(f),
-            arrows.map { Arrow(it.label, f(it.from), f(it.to)) })
+        return Quiver(vertices.map(f), arrows.map { Arrow(it.label, f(it.from), f(it.to)) })
     }
 }

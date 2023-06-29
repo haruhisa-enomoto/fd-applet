@@ -130,4 +130,12 @@ fun Route.enumeratorRoutes() {
         }
         call.respond(result.toListString())
     }
+
+    route("/others") {
+        get("/mgs") {
+            val rfAlgebra = call.getRfAlgebra()
+            val result = rfAlgebra.maximalGreenSequences()
+            call.respond(result.toListListString(deep = false))
+        }
+    }
 }

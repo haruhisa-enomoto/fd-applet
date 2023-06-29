@@ -5,6 +5,7 @@ import MyTabProps from "../MyTabProps";
 import IndecEnumerator from "./IndecEnumerator";
 import ModuleEnumerator from "./ModuleEnumerator";
 import ModuleWithDegreeEnumerator from "./ModuleWithDegreeEnumerator";
+import OtherEnumerator from "./OtherEnumerator";
 import PairEnumerator from "./PairEnumerator";
 import SubcatEnumerator from "./SubcatEnumerator";
 
@@ -35,6 +36,7 @@ export default function EnumerateTab({
           <SubcatEnumerator />
           <IndecEnumerator />
           <PairEnumerator />
+          <OtherEnumerator />
         </>
       )}
     </>

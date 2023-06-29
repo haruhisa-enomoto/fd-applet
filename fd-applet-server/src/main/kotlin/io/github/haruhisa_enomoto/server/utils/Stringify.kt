@@ -24,12 +24,12 @@ fun <T : Comparable<T>> getMyComparator(): Comparator<List<T>> {
  *
  * @return Sorted list of lists.
  */
-fun <T : Comparable<T>> Collection<Collection<T>>.mySorted(): List<List<T>> {
+fun <T : Comparable<T>> Collection<Collection<T>>.mySorted(deep : Boolean = true): List<List<T>> {
     // Sort the elements of the original lists first
-    val sortedLists = this.map { it.sorted() }
+    val tempList = if (deep) this.map { it.sorted() } else this.map { it.toList() }
 
     // Apply the comparator to sort the list of lists
-    return sortedLists.sortedWith(getMyComparator())
+    return tempList.sortedWith(getMyComparator())
 }
 
 
@@ -42,9 +42,9 @@ fun <T> Collection<Indec<T>>.toListString(sort: Boolean = true): List<String> {
 }
 
 
-fun <T> Collection<Collection<Indec<T>>>.toListListString(sort: Boolean = true): List<List<String>> {
+fun <T> Collection<Collection<Indec<T>>>.toListListString(sort: Boolean = true, deep: Boolean = true): List<List<String>> {
     return if (sort) {
-        this.mySorted().map { it.map { indec -> indec.toString() } }
+        this.mySorted(deep).map { it.map { indec -> indec.toString() } }
     } else {
         this.map { it.map { indec -> indec.toString() } }
     }

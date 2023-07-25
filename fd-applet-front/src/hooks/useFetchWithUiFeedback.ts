@@ -38,7 +38,10 @@ const useFetchWithUiFeedback = () => {
       try {
         setOpenBack(true);
         const startTime = Date.now();
-        const response = await fetch(`${url}?client_id=${uuid}`, {
+        // If `url` contains a query string, append `&client_id` to it.
+        // Otherwise, append `?client_id` to it.
+        const urlWithQuery = url.includes("?") ? `${url}&client_id=${uuid}` : `${url}?client_id=${uuid}`;
+        const response = await fetch(urlWithQuery, {
           method,
           headers,
           body: requestBody,

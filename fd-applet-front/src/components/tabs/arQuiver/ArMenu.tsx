@@ -14,7 +14,10 @@ import useFetchWithUiFeedback from '../../../hooks/useFetchWithUiFeedback';
 import { defaultPhysicsOptions } from '../../common/QuiverOptions';
 
 interface ArMenuProps {
+  // Currently the type of physics is not implemented.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   physics: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPhysics: React.Dispatch<React.SetStateAction<any>>;
 }
 

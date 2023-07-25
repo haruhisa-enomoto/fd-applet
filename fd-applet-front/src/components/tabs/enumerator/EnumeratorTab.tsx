@@ -2,6 +2,7 @@ import useFetchWithUiFeedback from "../../../hooks/useFetchWithUiFeedback";
 import UpdateButton from "../../common/UpdateButton";
 import MyTabProps from "../MyTabProps";
 
+import IceSeqEnumerator from "./IceSeqEnumerator";
 import IndecEnumerator from "./IndecEnumerator";
 import ModuleEnumerator from "./ModuleEnumerator";
 import ModuleWithDegreeEnumerator from "./ModuleWithDegreeEnumerator";
@@ -37,6 +38,7 @@ export default function EnumerateTab({
           <IndecEnumerator />
           <PairEnumerator />
           <OtherEnumerator />
+          <IceSeqEnumerator />
         </>
       )}
     </>

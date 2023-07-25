@@ -310,6 +310,27 @@ class RfAlgebra<T>(
     }
 
     /**
+     * Returns the list of torsion classes of a given wide subcategory.
+     * We do not check that the given subcategory is wide.
+     */
+    private fun torsionClassesOf(cW: Subcat<T>): List<Subcat<T>> {
+        if (cW.isEmpty()) return listOf(emptyList())
+        val result = mutableSetOf<Subcat<T>>()
+        for (mS in _semibricks.filter { cW.containsAll(it) }) {
+            result.add(cW.filter { hom(it, mS) == 0 })
+        }
+        return result.toList()
+    }
+
+    private fun torsionFreeClassesOf(cW: Subcat<T>): List<Subcat<T>> {
+        val result = mutableSetOf<Subcat<T>>()
+        for (mS in _semibricks.filter { cW.containsAll(it) }) {
+            result.add(cW.filter { hom(mS, it) == 0 })
+        }
+        return result.toList()
+    }
+
+    /**
      * Returns the list of ICE-closed subcategories of this algebra. Here a subcategory is
      * ICE-closed if it is closed under taking images, cokernels, and extensions.
      *
@@ -319,19 +340,12 @@ class RfAlgebra<T>(
         // In this implementation, we use the fact that
         // ICE-closed subcategories are torsion classes in some wide subcategories.
         // Therefore, first obtain all wide subcats,
-        // then compute tors in it using semibricks.
+        // then compute tors in it using semibricks (in [torsionClassesOf]).
         // So duplication may occur.
         // TODO: better implementation?
-        val sbricks = _semibricks
         val result = mutableSetOf<Subcat<T>>()
-        for (mS in sbricks) {
-            // Consider wide subcat [cW] corresponding to [mS].
-            val cW = ieClosure(mS)
-            // We will compute torsion classes in [cW].
-            // So loops over semibricks contained in [cW].
-            for (mS2 in sbricks.filter { cW.containsAll(it) }) {
-                result.add(cW.filter { hom(it, mS2) == 0 })
-            }
+        for (cW in wideSubcats()) {
+            result.addAll(torsionClassesOf(cW))
         }
         return result.toList()
     }
@@ -343,16 +357,9 @@ class RfAlgebra<T>(
      * @return the list of IKE-closed subcategories of this algebra.
      */
     fun ikeClosedSubcats(): List<Subcat<T>> {
-        val sbricks = _semibricks
         val result = mutableSetOf<Subcat<T>>()
-        for (mS in sbricks) {
-            // Consider wide subcat [cW] corresponding to [mS].
-            val cW = ieClosure(mS)
-            // We will compute torsion-free classes in [cW].
-            // So loops over semibricks contained in [cW].
-            for (mS2 in sbricks.filter { cW.containsAll(it) }) {
-                result.add(cW.filter { hom(mS2, it) == 0 })
-            }
+        for (cW in wideSubcats()) {
+            result.addAll(torsionFreeClassesOf(cW))
         }
         return result.toList()
     }
@@ -616,6 +623,12 @@ class RfAlgebra<T>(
         return mX.mapNotNull { tauMinus[it] } + support.map { projAt(it) }
     }
 
+    /**
+     * Marks-Stovicek's or Ingalls-Thomas's \alpa operator,
+     * or Asai's W_L operator, extending to ICE-closed subcategories,
+     * not only torsion classes.
+     * Returns the wide subcategory obtained from a given ICE-closed subcategory.
+     */
     fun iceToWide(cC: Subcat<T>): Subcat<T> {
         // Let cC be an ICE-closed subcategory.
         // Then cC is the heart of the interval of [cU, cT], where
@@ -630,8 +643,9 @@ class RfAlgebra<T>(
         // Take only bricks B above cU: that is, cT \cap ^\perp B \supseteq cU,
         // that is, cU \subseteq ^\perp B, that is, Hom(cU, B) = 0.
         val bricksAbove = bricks.filter { hom(cU, it) == 0 }
-        // Then its Filt = wide closure is the desired result.
-        return wideClosure(bricksAbove)
+        // Then it is a semibrick, and
+        // its Filt = IE closure = wide closure is the desired result.
+        return ieClosure(bricksAbove)
     }
 
     fun ikeToWide(cC: Subcat<T>): Subcat<T> {
@@ -643,6 +657,59 @@ class RfAlgebra<T>(
         val bricks = torfToSbrick[cF.toSet()]!!
         val bricksAbove = bricks.filter { hom(it, cG) == 0 }
         return wideClosure(bricksAbove)
+    }
+
+
+    private fun iceSequenceDFS(
+        cCList: List<Subcat<T>>,
+        length: Int?,
+        bound: Boolean,
+        proper: Boolean,
+        endsAtZero: Boolean
+    ): Sequence<List<Subcat<T>>> = sequence {
+        if (length != null && cCList.size > length + 1) return@sequence
+//        println("iceSequenceDFS: cCList = $cCList")
+        val lastIce = cCList.last()
+        val wide = iceToWide(lastIce)
+//        println("wide = $wide")
+        if (wide.toSet() == lastIce.toSet()) {
+            // The last one is wide, so can be the end of an ICE sequence.
+            if (!endsAtZero || lastIce.isEmpty()) {
+                if (bound || cCList.size - 1 == length) yield(cCList)
+//                println("yielded: $cCList")
+            }
+        }
+        val nextIces = if (proper) {
+            torsionClassesOf(wide).filter { it.toSet() != lastIce.toSet() }
+        } else {
+            torsionClassesOf(wide)
+        }
+//        println("nextIces = $nextIces")
+        for (nextIce in nextIces) {
+            yieldAll(iceSequenceDFS(cCList + listOf(nextIce), length, bound, proper, endsAtZero))
+        }
+    }
+
+    fun iceSequences(
+        initialWide: Subcat<T>? = null,
+        length: Int? = null,
+        bound: Boolean = false,
+        proper: Boolean = false,
+        endsAtZero: Boolean = false
+    ): List<List<Subcat<T>>> {
+        require(length != null || proper) {
+            "If not proper, length must be specified."
+        }
+        val startPoints = if (initialWide != null) {
+            listOf(initialWide)
+        } else {
+            wideSubcats()
+        }
+        return startPoints.flatMap { iceSequenceDFS(listOf(it), length, bound, proper, endsAtZero) }
+    }
+
+    fun fullIceSequences(length: Int? = null, bound: Boolean = false, proper: Boolean = false): List<List<Subcat<T>>> {
+        return iceSequences(indecs, length, bound, proper,true)
     }
 
     /**

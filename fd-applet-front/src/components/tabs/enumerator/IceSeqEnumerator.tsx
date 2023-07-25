@@ -48,7 +48,7 @@ export default function IceSeqEnumerator() {
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography fontWeight="medium">ICE sequences</Typography>
+        <Typography fontWeight="medium">Full ICE sequences</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Typography mb={2}>
